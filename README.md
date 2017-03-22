@@ -1,4 +1,5 @@
 ## Vega
+![alt tag](https://cdn-images-1.medium.com/max/1200/1*S5uPPLkh3B-03lV482Ddrg.png)
 
 ##### A Decentralized Venture Capital Funding Platform
 ----
