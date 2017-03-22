@@ -1,1 +1,0 @@
-# Vega Tokens README
