@@ -1,6 +1,6 @@
 ## Vega
 
-###### A Decentralized Venture Capital Funding Platform
+##### A Decentralized Venture Capital Funding Platform
 ----
 Overview
 ----
