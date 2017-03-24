@@ -1,29 +1,35 @@
-# truffle-init-webpack
-Example webpack project with Truffle. Includes contracts, migrations, tests, user interface and webpack build pipeline.
+## Vega
+##### A Decentralized Venture Capital Funding Platform
+----
+Overview
+----
+A decentralized, crowd-managed, venture capital and crowdfunding platform built on Ethereum, designed to leverage the impact of individual investors in the Ethereum-Based Token market. Investment decisions directed by a community of token holders taking advantage of the wisdom of the crowd effect. Focused on the investment of tokenized assets, without the need to charge a fee. A platform that provides the ICO market with deal structure standards that add value to both investors and startups.
 
-## Usage
+----
+#### Projects
+- Access to capital
+- Funding options
+- Click and create a funding contract
+- Security
+- Backing of the Vega community
+- Multiple rounds of funding
 
-To initialize a project with this exapmple, run `truffle init webpack` inside an empty directory.
+#### Investors
+- Project diversification
+- Milestone based
+- Flexibility of active to passive participation
+- Multiple funding contracts available
+- Access and exposure to a new asset class
 
-## Building and the frontend
+#### Developers
+- Bounties and reward programs
+- Value creation
+- Involved development
 
-1. First run `truffle compile`, then run `truffle migrate` to deploy the contracts onto your network of choice (default "development").
-1. Then run `npm run dev` to build the app and serve it on http://localhost:8080
-
-## Possible upgrades
-
-* Use the webpack hotloader to sense when contracts or javascript have been recompiled and rebuild the application. Contributions welcome!
-
-## Common Errors
-
-* **Error: Can't resolve '../build/contracts/MetaCoin.json'**
-
-This means you haven't compiled or migrated your contracts yet. Run `truffle compile` and `truffle migrate` first.
-
-Full error:
-
-```
-ERROR in ./app/main.js
-Module not found: Error: Can't resolve '../build/contracts/MetaCoin.json' in '/Users/tim/Documents/workspace/Consensys/test3/app'
- @ ./app/main.js 11:16-59
-```
+#### Regulators
+- Safer investment in the Token Launch space
+- Transparency
+- Security
+---
+##### License
+Vega Software License
