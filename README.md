@@ -32,4 +32,4 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 - Security
 ---
 ##### License
-Vega Software License
+MIT

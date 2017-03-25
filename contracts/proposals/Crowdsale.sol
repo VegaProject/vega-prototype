@@ -1,75 +1,46 @@
-pragma solidity ^0.4.2;
-contract token { function transfer(address receiver, uint amount){  } }
+pragma solidity ^0.4.6;
+contract CrowdFunding {
 
-contract Crowdsale {
-    address public beneficiary;
-    uint public fundingGoal; uint public amountRaised; uint public deadline; uint public price;
-    token public tokenReward;
-    mapping(address => uint256) public balanceOf;
-    bool fundingGoalReached = false;
-    event GoalReached(address beneficiary, uint amountRaised);
-    event FundTransfer(address backer, uint amount, bool isContribution);
-    bool crowdsaleClosed = false;
-
-    /* data structure to hold information about campaign contributors */
-
-    /*  at initialization, setup the owner */
-    function Crowdsale(
-        address ifSuccessfulSendTo,
-        uint fundingGoalInEthers,
-        uint durationInMinutes,
-        uint etherCostOfEachToken,
-        token addressOfTokenUsedAsReward
-    ) {
-        beneficiary = ifSuccessfulSendTo;
-        fundingGoal = fundingGoalInEthers * 1 ether;
-        deadline = now + durationInMinutes * 1 minutes;
-        price = etherCostOfEachToken * 1 ether;
-        tokenReward = token(addressOfTokenUsedAsReward);
+    struct Campaign {
+        address beneficiary;
+        uint fundingGoal;
+        uint numFunders;
+        uint amount;
+        mapping (address => uint) funders;
     }
 
-    /* The function without name is the default function that is called whenever anyone sends funds to a contract */
-    function () payable {
-        if (crowdsaleClosed) throw;
-        uint amount = msg.value;
-        balanceOf[msg.sender] = amount;
-        amountRaised += amount;
-        tokenReward.transfer(msg.sender, amount / price);
-        FundTransfer(msg.sender, amount, true);
+    uint numCampaigns;
+    mapping (uint => Campaign) campaigns;
+
+    function newCampaign(address beneficiary, uint goal) returns (uint campaignID) {
+        campaignID = numCampaigns++; // campaignID is return variable
+        // Creates new struct and saves in storage. We leave out the mapping type.
+        campaigns[campaignID] = Campaign(beneficiary, goal, 0, 0);
     }
 
-    modifier afterDeadline() { if (now >= deadline) _; }
-
-    /* checks if the goal or time limit has been reached and ends the campaign */
-    function checkGoalReached() afterDeadline {
-        if (amountRaised >= fundingGoal){
-            fundingGoalReached = true;
-            GoalReached(beneficiary, amountRaised);
-        }
-        crowdsaleClosed = true;
+    function contribute(uint campaignID) payable {
+        Campaign c = campaigns[campaignID];
+        // Creates a new temporary memory struct, initialised with the given values
+        // and copies it over to storage.
+        // Note that you can also use Funder(msg.sender, msg.value) to initialise.
+        c.funders[msg.sender] += msg.value;
+        c.amount += msg.value;
     }
 
-
-    function safeWithdrawal() afterDeadline {
-        if (!fundingGoalReached) {
-            uint amount = balanceOf[msg.sender];
-            balanceOf[msg.sender] = 0;
-            if (amount > 0) {
-                if (msg.sender.send(amount)) {
-                    FundTransfer(msg.sender, amount, false);
-                } else {
-                    balanceOf[msg.sender] = amount;
-                }
-            }
-        }
-
-        if (fundingGoalReached && beneficiary == msg.sender) {
-            if (beneficiary.send(amountRaised)) {
-                FundTransfer(beneficiary, amountRaised, false);
-            } else {
-                //If we fail to send the funds to beneficiary, unlock funders balance
-                fundingGoalReached = false;
-            }
-        }
+    function getContribution(uint campaignID, address _address) constant returns (uint) {
+        Campaign c = campaigns[campaignID];
+        uint amount = c.funders[_address];
+        return amount;
     }
+
+    function checkGoalReached(uint campaignID) returns (bool reached) {
+        Campaign c = campaigns[campaignID];
+        if (c.amount < c.fundingGoal)
+            return false;
+        uint amount = c.amount;
+        c.amount = 0;
+        if (!c.beneficiary.send(amount)) throw;
+            return true;
+    }
+
 }
