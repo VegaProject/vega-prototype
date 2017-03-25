@@ -1,6 +1,6 @@
 pragma solidity ^0.4.6;
 
-import '../VegaToken.sol';
+import './VegaToken.sol';
 
 contract Project is VegaToken{
 
@@ -8,21 +8,24 @@ contract Project is VegaToken{
     address beneficiary;
     uint fundingGoal;
     uint amount;
+    uint duration;
     mapping (address => uint) funders;
   }
 
   uint numCampaigns;
   mapping (uint => Campaign) campaigns;
 
-  function newCampaign(address beneficiary, uint goal) returns (uint campaignID) {
+  function newCampaign(address beneficiary, uint goal, uint duration) returns (uint campaignID) {
     campaignID = numCampaigns++;
-    campaigns[campaignID] = Campaign(beneficiary, goal, 0);
+    campaigns[campaignID] = Campaign(beneficiary, goal, 0, duration);
   }
 
   function participate(uint campaignID, uint value) {
-    if(balances[msg.sender] < value) throw;
     Campaign c = campaigns[campaignID];
+    if(now >= c.duration) throw;
+    if(balances[msg.sender] < value) throw;
     c.funders[msg.sender] += value;
+    balances[msg.sender] -= value;
     c.amount += value;
   }
 
@@ -34,4 +37,11 @@ contract Project is VegaToken{
     if(!c.beneficiary.send(amount)) throw;
       return true;
   }
+
+  function getContribution(uint campaignID, address _address) constant returns (uint) {
+      Campaign c = campaigns[campaignID];
+      uint amount = c.funders[_address];
+      return amount;
+  }
+
 }
