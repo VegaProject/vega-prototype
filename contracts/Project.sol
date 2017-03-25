@@ -30,6 +30,7 @@ contract Project {
       c.amount += value;
   }
 
+  // check goal if tokens are the amount
   function checkGoalReached(uint campaignID) returns (bool reached) {
     Campaign c = campaigns[campaignID];
     if(c.amount < c.fundingGoal) return false;
@@ -39,10 +40,25 @@ contract Project {
       return true;
   }
 
+  function checkEthGoal(uint campaignID, address tokenAddress) external returns (bool reached) {
+      VegaToken v = VegaToken(tokenAddress);
+      Campaign c = campaigns[campaignID];
+      uint tokenPrice = 25000000000000000000;                 // hard price as of now, until better solution for division
+      uint weiSupply = tokenAddress.balance;
+      uint weiAmount = c.amount * tokenPrice;
+      if(weiAmount > weiSupply) throw;
+      uint amount = weiAmount;
+      c.amount = 0;
+      weiAmount = 0;
+      if(!c.beneficiary.send(amount)) throw;
+      return true;
+  }
+
   function getContribution(uint campaignID, address _address) constant returns (uint) {
       Campaign c = campaigns[campaignID];
       uint amount = c.funders[_address];
       return amount;
   }
+
 
 }
