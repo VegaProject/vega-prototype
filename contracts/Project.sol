@@ -60,5 +60,11 @@ contract Project {
       return amount;
   }
 
+  function getTokenAddress(uint campaignID) constant returns (address) {
+    Campaign c = campaigns[campaignID];
+    address tokenAddr = c.beneficiary;
+    return tokenAddr;
+  }
+
 
 }
