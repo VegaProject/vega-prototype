@@ -39,6 +39,10 @@ import './IncomingMigrationTokenInterface.sol';
    function getBalance(address _account) returns (uint) {
        return balances[_account];
    }
+
+
+
+
    //
    // Migration methods
    //

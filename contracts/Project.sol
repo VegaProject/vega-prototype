@@ -7,9 +7,9 @@ contract Project {
   struct Campaign {
     address beneficiary;
     uint fundingGoal;
-    uint amount;
+    uint amount;                      // total amount of funders balance
     uint duration;
-    mapping (address => uint) funders;
+    mapping (address => uint) funders; // when someone participates they move vega tokens to the funders balance.
   }
 
   uint numCampaigns;
@@ -50,13 +50,13 @@ contract Project {
       uint amount = weiAmount;
       c.amount = 0;
       weiAmount = 0;
-      if(!c.beneficiary.send(amount)) throw;
+      if(!c.beneficiary.send(amount)) throw;                // may have to fix to make sure to send ether as wei, not just uint
       return true;
   }
 
   function getContribution(uint campaignID, address _address) constant returns (uint) {
       Campaign c = campaigns[campaignID];
-      uint amount = c.funders[_address];
+      uint amount = c.funders[_address]; 
       return amount;
   }
 
