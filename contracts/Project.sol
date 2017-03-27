@@ -16,11 +16,15 @@ contract Project {
   uint numCampaigns;
   mapping (uint => Campaign) campaigns;
 
-  function newCampaign(address creator, address beneficiary, uint goal, uint duration) returns (uint campaignID) {
-    // add logic here to check if when called the caller has enough Vega Tokens to create a new proposal.
-    // subtract a small amount of tokens if they have enough Tokens, put those tokens toward the amount of the proposal, they go to the project.
+  function newCampaign(address beneficiary, uint goal, uint duration, address tokenAddress) external returns (uint campaignID) {
+    VegaToken v = VegaToken(tokenAddress);
+    if(v.getBalance(msg.sender <= 0)) throw;          // add logic here to check if when called the caller has enough Vega Tokens to create a new proposal.
+    uint cost = 1;
+    if(v.getBalance(msg.sender < cost)) throw;
+    c.funders[msg.sender] += cost;
+    v.transferFrom(msg.sender, c.beneficiary, cost);        // subtract a small amount of tokens if they have enough Tokens, put those tokens toward the amount of the proposal, they go to the project.
     campaignID = numCampaigns++;
-    campaigns[campaignID] = Campaign(creator, beneficiary, goal, 0, duration);
+    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration);
   }
 
   function participate(uint campaignID, uint value, address tokenAddress) external {
