@@ -3,6 +3,7 @@ pragma solidity ^0.4.8;
 import '../installed_contracts/zeppelin/contracts/token/StandardToken.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
+import './Project';
 
 /*
  * Vega Token
@@ -29,12 +30,6 @@ import './IncomingMigrationTokenInterface.sol';
     _;
   }
 
-  modifier onlyIfPositivePerformance() {
-      // checks if user made money on
-      // the investment decisions made
-      _;
-  }
-
    function VegaToken(address _migrationMaster) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
@@ -48,11 +43,6 @@ import './IncomingMigrationTokenInterface.sol';
 
    function getFundWeiBalance() returns (uint) {
      return this.balance;
-   }
-
-   function mintTokens(uint mint) onlyIfPositivePerformance {
-       balances[msg.sender] += mint;
-       totalSupply += mint;
    }
 
 

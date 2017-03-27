@@ -21,6 +21,10 @@ import '../installed_contracts/etherdelta/EtherDelta.sol';
 
 contract Liquidate is Project {
 
+  struct Rewards {                                            // use struct for paying back returns just like paying campaigns in proposal creation. Keeps track of stuff
+    uint amount;
+    mapping (address => uint) funders;
+  }
 
   function deposit(uint campaignID, uint amount, address _exchangeAddr) {
     // instance of EtherDelta as e
@@ -42,6 +46,15 @@ contract Liquidate is Project {
     EtherDelta e = EtherDelta(_exchangeAddr);
     address tokenAddr = getTokenAddress(campaignID);
     //e.trade(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce, address user, uint8 v, bytes32 r, bytes32 s, uint amount);
+  }
+
+  function test(address account) {
+    uint gain = 10; // acts as if a person make 10 ether.
+  }
+
+  function mintTokens(uint mint) {
+      balances[msg.sender] += mint;
+      totalSupply += mint;
   }
 
 
