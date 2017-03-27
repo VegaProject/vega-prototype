@@ -11,7 +11,7 @@ than they put in, they will receive new minted Vega tokens as a reward for
 their performance. This is done through looking at the address of funders, not
 the tokens.
 If they withdrawl less than they put into the project, they will not receive
-any new Vega Tokens, and the ether will be put back into the fund. The Idea
+any new Vega Tokens, and the ether will be put back into the fund (the token address). The Idea
 is to only reward people based on their performance.
 */
 
