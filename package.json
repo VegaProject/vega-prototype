@@ -1,13 +1,15 @@
 {
   "name": "vega-platform",
+  "author": "George K. Van Hoomissen",
   "version": "0.0.1",
+  "license": "MIT",
   "description": "A decentralized VC funding platform, built on Ethereum.",
   "scripts": {
     "lint": "eslint ./",
     "build": "webpack",
     "dev": "webpack-dev-server"
   },
-  "author": "Douglas von Kohorn",
+  "author": "Douglas von Kohor",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.22.2",
