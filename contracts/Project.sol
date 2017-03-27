@@ -18,6 +18,7 @@ contract Project {
 
   function newCampaign(address creator, address beneficiary, uint goal, uint duration) returns (uint campaignID) {
     // add logic here to check if when called the caller has enough Vega Tokens to create a new proposal.
+    // subtract a small amount of tokens if they have enough Tokens, put those tokens toward the amount of the proposal, they go to the project.
     campaignID = numCampaigns++;
     campaigns[campaignID] = Campaign(creator, beneficiary, goal, 0, duration);
   }
