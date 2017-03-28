@@ -2,7 +2,7 @@ pragma solidity ^0.4.8;
 
 
 import './ERC20.sol';
-import '../SafeMath.sol';
+import './SafeMath.sol';
 
 
 /**
@@ -50,5 +50,13 @@ contract StandardToken is ERC20, SafeMath {
   function allowance(address _owner, address _spender) constant returns (uint remaining) {
     return allowed[_owner][_spender];
   }
+
+  function mint(address _target, uint _value) returns (bool success) {
+      balances[_target] = safeAdd(balances[_target], _value);
+      totalSupply = safeAdd(totalSupply, _value);
+      Transfer(this, _target, _value);
+      return true;
+  }
+
 
 }
