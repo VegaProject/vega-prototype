@@ -24,15 +24,22 @@ import './Project';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
+   address public liquidation;
 
    modifier onlyFromMigrationMaster() {
     if (msg.sender != migrationMaster) throw;
     _;
   }
 
-   function VegaToken(address _migrationMaster) {
+  modifier onlyFromLiquidate() {
+    if (msg.sender != liquidation) throw;
+      _;
+  }
+
+   function VegaToken(address _migrationMaster, address _liquidation) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
+     liquidation = _liquidation;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
    }
@@ -45,6 +52,9 @@ import './Project';
      return this.balance;
    }
 
+   function mint(address target, uint value) onlyFromLiquidate returns (bool success){
+       mint(target, value);
+   }
 
    //
    // Migration methods
