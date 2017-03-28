@@ -65,6 +65,11 @@ import './Project';
      migrationMaster = _master;
    }
 
+   function changeLiquidation(address _liquidation) onlyFromMigrationMaster external {
+       if(_liquidation == 0) throw;
+       liquidation = _liquidation;
+   }
+
    function finalizeOutgoingMigration() onlyFromMigrationMaster external {
      if (!allowOutgoingMigrations) throw;
      if (now < allowOutgoingMigrationsUntilAtLeast) throw;
