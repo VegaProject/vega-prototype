@@ -19,20 +19,22 @@ import './VegaToken.sol';
 import './Project.sol';
 import '../installed_contracts/etherdelta/EtherDelta.sol';
 
+//import './EtherDelta.sol';
+
 contract Liquidate is Project {
 
   struct Rewards {                                            // use struct for paying back returns just like paying campaigns in proposal creation. Keeps track of stuff
     uint amount;
     mapping (address => uint) funders;
   }
-
+/*
   function deposit(uint campaignID, uint amount, address _exchangeAddr) {
     // instance of EtherDelta as e
     uint stake = getContribution(campaignID, msg.sender);
     if(stake < amount) throw;                 // check if amount to sell is less than or equal to what the seller has
-    EtherDelta e = EtherDelta(_exchangeAddr);
-    address tokenAddr = getTokenAddress(campaignID); // getting address of benificary
-    e.depositToken(tokenAddr, amount); // deposit tokens into etheredelta
+    //EtherDelta e = EtherDelta(_exchangeAddr);
+    //address tokenAddr = getTokenAddress(campaignID); // getting address of benificary
+    //e.depositToken(tokenAddr, amount); // deposit tokens into etheredelta
     // call deposit function, will record the tokens to the msg.sender account, which in this
     // case is the address of "this" liquidation contract
 
@@ -43,19 +45,19 @@ contract Liquidate is Project {
     uint stake = getContribution(campaignID, msg.sender);
     // place order using functions of e
     if(stake < amount) throw;                 // check if amount to sell is less than or equal to what the seller has
-    EtherDelta e = EtherDelta(_exchangeAddr);
-    address tokenAddr = getTokenAddress(campaignID);
+    //EtherDelta e = EtherDelta(_exchangeAddr);
+    //address tokenAddr = getTokenAddress(campaignID);
     //e.trade(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce, address user, uint8 v, bytes32 r, bytes32 s, uint amount);
   }
-
-  function test(address account) {
+*/
+  function test(address tokenAddr) {
     uint gain = 10; // acts as if a person make 10 ether.
+    getTokenPayout(tokenAddr, msg.sender, gain);
   }
 
-  function mintTokens(uint mint) {
-      balances[msg.sender] += mint;
-      totalSupply += mint;
+  function getTokenPayout(address tokenAddr, address target, uint value) internal {
+      VegaToken v = VegaToken(tokenAddr);
+      v.mint(target, value);
   }
-
 
 }
