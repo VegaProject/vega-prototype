@@ -3,7 +3,6 @@ pragma solidity ^0.4.8;
 import '../installed_contracts/zeppelin/contracts/token/StandardToken.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
-import './Project';
 
 /*
  * Vega Token
@@ -14,7 +13,7 @@ import './Project';
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
-   string public version = "VEGA1.0";
+   string public version = "VEGA-1.0";
    uint public INITIAL_SUPPLY = 12000000;
 
    uint public constant minimumMigrationDuration = 26 weeks;
@@ -24,22 +23,22 @@ import './Project';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
-   address public liquidation;
+   address public liquidationAddr;
 
    modifier onlyFromMigrationMaster() {
     if (msg.sender != migrationMaster) throw;
     _;
-  }
+   }
 
-  modifier onlyFromLiquidate() {
-    if (msg.sender != liquidation) throw;
-      _;
-  }
+   modifier onlyFromLiquidate() {
+      if (msg.sender != liquidationAddr) throw;
+        _;
+   }
 
-   function VegaToken(address _migrationMaster, address _liquidation) {
+   function VegaToken(address _migrationMaster, address _liquidationAddr) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
-     liquidation = _liquidation;
+     liquidationAddr = _liquidationAddr;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
    }

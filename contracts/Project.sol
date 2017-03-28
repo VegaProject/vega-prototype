@@ -30,7 +30,7 @@ contract Project {
   function participate(uint campaignID, uint value, address tokenAddress) external {
       VegaToken v = VegaToken(tokenAddress);
       Campaign c = campaigns[campaignID];
-      //if(now >= c.duration) throw;
+      if(now >= c.duration) throw;
       if(v.getBalance(msg.sender) < value) throw;
       c.funders[msg.sender] += value;
       v.transferFrom(msg.sender, c.beneficiary, value); // must first give this contract address allowence to participate
