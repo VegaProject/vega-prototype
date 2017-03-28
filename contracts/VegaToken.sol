@@ -65,7 +65,7 @@ import './Project';
      migrationMaster = _master;
    }
 
-   function changeLiquidation(address _liquidation) onlyFromMigrationMaster external {
+   function changeLiquidation(address _liquidation) onlyFromMigrationMaster {
        if(_liquidation == 0) throw;
        liquidation = _liquidation;
    }
