@@ -1,8 +1,9 @@
 pragma solidity ^0.4.8;
 
-import '../installed_contracts/zeppelin/contracts/token/StandardToken.sol';
+import './StandardToken.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
+import './Liquidate.sol';
 
 /*
  * Vega Token
@@ -14,7 +15,7 @@ import './IncomingMigrationTokenInterface.sol';
    string public symbol = "VEGA";
    uint public decimals = 18;
    string public version = "VEGA-1.0";
-   uint public INITIAL_SUPPLY = 12000000;
+   uint public INITIAL_SUPPLY = 12000000000000000000000000; // uint256 in wei format
 
    uint public constant minimumMigrationDuration = 26 weeks;
    uint public totalMigrated;
@@ -23,22 +24,18 @@ import './IncomingMigrationTokenInterface.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
-   address public liquidationAddr;
+   address public liquidateAddr;
 
    modifier onlyFromMigrationMaster() {
     if (msg.sender != migrationMaster) throw;
     _;
    }
 
-   modifier onlyFromLiquidate() {
-      if (msg.sender != liquidationAddr) throw;
-        _;
-   }
 
-   function VegaToken(address _migrationMaster, address _liquidationAddr) {
+   function VegaToken(address _migrationMaster, address _liquidateAddr) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
-     liquidationAddr = _liquidationAddr;
+     liquidateAddr = _liquidateAddr;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
    }
@@ -51,23 +48,29 @@ import './IncomingMigrationTokenInterface.sol';
      return this.balance;
    }
 
-   function mint(address target, uint value) onlyFromLiquidate returns (bool success){
-       mint(target, value);
-   }
+   function mint(address _target, uint _campaignID) returns (bool success) {
+      Liquidate l = Liquidate(liquidateAddr);
+      uint value = l.getPayout(_campaignID);    // make value throw in the liquidate contract
+      balances[_target] = safeAdd(balances[_target], value);
+      totalSupply = safeAdd(totalSupply, value);
+      Transfer(this, _target, value);
+      return true;
+  }
+
 
    //
    // Migration methods
    //
-
    function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
      if (_master == 0) throw;
      migrationMaster = _master;
    }
 
-   function changeLiquidation(address _liquidation) onlyFromMigrationMaster {
-       if(_liquidation == 0) throw;
-       liquidation = _liquidation;
+   function changeLiquidateAddr(address _liquidateAddr) onlyFromMigrationMaster external {
+       if(_liquidateAddr == 0) throw;
+       liquidateAddr = _liquidateAddr;
    }
+
 
    function finalizeOutgoingMigration() onlyFromMigrationMaster external {
      if (!allowOutgoingMigrations) throw;

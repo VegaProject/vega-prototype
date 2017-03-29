@@ -1,6 +1,7 @@
 pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
+import './Liquidate.sol';
 
 contract Project {
 
@@ -18,19 +19,22 @@ contract Project {
 
   function newCampaign(address beneficiary, uint goal, uint duration, address tokenAddress) external returns (uint campaignID) {
     VegaToken v = VegaToken(tokenAddress);
-    if(v.getBalance(msg.sender <= 0)) throw;          // add logic here to check if when called the caller has enough Vega Tokens to create a new proposal.
+    uint balance = v.getBalance(msg.sender);
+    //if(balance <= 0) throw;          // add logic here to check if when called the caller has enough Vega Tokens to create a new proposal.
     uint cost = 1;
-    if(v.getBalance(msg.sender < cost)) throw;
-    c.funders[msg.sender] += cost;
-    v.transferFrom(msg.sender, c.beneficiary, cost);        // subtract a small amount of tokens if they have enough Tokens, put those tokens toward the amount of the proposal, they go to the project.
+    //if(balance < cost) throw;
+            // subtract a small amount of tokens if they have enough Tokens, put those tokens toward the amount of the proposal, they go to the project.
     campaignID = numCampaigns++;
     campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration);
+    Campaign c = campaigns[campaignID];
+    v.transferFrom(msg.sender, c.beneficiary, cost); // must give enough allowance to this contract so it can transferFrom.
+    c.funders[msg.sender] += cost;
   }
 
   function participate(uint campaignID, uint value, address tokenAddress) external {
       VegaToken v = VegaToken(tokenAddress);
       Campaign c = campaigns[campaignID];
-      if(now >= c.duration) throw;
+      //if(now >= c.duration) throw;
       if(v.getBalance(msg.sender) < value) throw;
       c.funders[msg.sender] += value;
       v.transferFrom(msg.sender, c.beneficiary, value); // must first give this contract address allowence to participate
@@ -38,13 +42,13 @@ contract Project {
   }
 
   // check goal if tokens are the amount
-  function checkGoalReached(uint campaignID, uint tokenAddress) external returns (bool reached) {
-    VegaToken v = VegaToken(tokenAddress);
+  function checkGoalReached(uint campaignID, uint liquidateAddr) external returns (bool reached) {
+    //VegaToken v = Liquidate(liquidateAddr);
     Campaign c = campaigns[campaignID];
     if(c.amount < c.fundingGoal) return false;
     uint amount = c.amount;
     c.amount = 0;
-    v.mintTokens(10, c.creator);               // New feature, reward those who create proposals that reach their goal.
+    //v.mint(c.creator, 10);               // New feature, reward those who create proposals that reach their goal.
     if(!c.beneficiary.send(amount)) throw;
       return true;
   }

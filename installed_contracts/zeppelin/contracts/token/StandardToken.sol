@@ -51,12 +51,5 @@ contract StandardToken is ERC20, SafeMath {
     return allowed[_owner][_spender];
   }
 
-  function mint(address _target, uint _value) returns (bool success) {
-      balances[_target] = safeAdd(balances[_target], _value);
-      totalSupply = safeAdd(totalSupply, _value);
-      Transfer(this, _target, _value);
-      return true;
-  }
-
 
 }

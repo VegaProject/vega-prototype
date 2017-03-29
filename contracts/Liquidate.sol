@@ -17,8 +17,6 @@ is to only reward people based on their performance.
 
 import './VegaToken.sol';
 import './Project.sol';
-import '../installed_contracts/etherdelta/EtherDelta.sol';
-
 //import './EtherDelta.sol';
 
 contract Liquidate is Project {
@@ -27,37 +25,21 @@ contract Liquidate is Project {
     uint amount;
     mapping (address => uint) funders;
   }
-/*
-  function deposit(uint campaignID, uint amount, address _exchangeAddr) {
-    // instance of EtherDelta as e
-    uint stake = getContribution(campaignID, msg.sender);
-    if(stake < amount) throw;                 // check if amount to sell is less than or equal to what the seller has
-    //EtherDelta e = EtherDelta(_exchangeAddr);
-    //address tokenAddr = getTokenAddress(campaignID); // getting address of benificary
-    //e.depositToken(tokenAddr, amount); // deposit tokens into etheredelta
-    // call deposit function, will record the tokens to the msg.sender account, which in this
-    // case is the address of "this" liquidation contract
 
-  }
+  /// STEPS
+  /// 1. Deposit the users tokens of c.beneficiary in etherdelta
+  /// 2. Allow the users to make orders and trade in etherdelta
+  /// 3. Withdrawl from etherdelta
+  /// 4. Check how much loss or return the user made on the investment
+  /// 5. Set the payout value (Vega Tokens) relitive to what they made or lost
+  /// 6. The Vega Token contract mint function will look at what the payout value is.
 
-  function sell(uint campaignID, uint price, uint amount) external returns (bool success){
-    // instance of EtherDelta as e
-    uint stake = getContribution(campaignID, msg.sender);
-    // place order using functions of e
-    if(stake < amount) throw;                 // check if amount to sell is less than or equal to what the seller has
-    //EtherDelta e = EtherDelta(_exchangeAddr);
-    //address tokenAddr = getTokenAddress(campaignID);
-    //e.trade(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce, address user, uint8 v, bytes32 r, bytes32 s, uint amount);
-  }
-*/
-  function test(address tokenAddr) {
-    uint gain = 10; // acts as if a person make 10 ether.
-    getTokenPayout(tokenAddr, msg.sender, gain);
-  }
-
-  function getTokenPayout(address tokenAddr, address target, uint value) internal {
-      VegaToken v = VegaToken(tokenAddr);
-      v.mint(target, value);
+  // just for testing
+  //
+  function getPayout(uint _campaignID) returns (uint) {
+      uint stake = getContribution(_campaignID, msg.sender);
+      if(stake < 0) throw;
+      return stake;
   }
 
 }
