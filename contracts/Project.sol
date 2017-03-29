@@ -25,7 +25,6 @@ contract Project {
     Campaign c = campaigns[campaignID];
     // no need to do a balances check, because the user will have to approve before, and that takes care of balance checks.
     v.transferFrom(msg.sender, c.beneficiary, cost);
-    c.funders[msg.sender] += cost;
   }
 
   function participate(uint campaignID, uint value, address tokenAddress) external {
@@ -53,10 +52,12 @@ contract Project {
   function checkEthGoal(uint campaignID, address tokenAddr) external returns (bool reached) {
     Campaign c = campaigns[campaignID];
     uint fundBalance = getFundBalance(tokenAddr);
+    if(c.amount < c.fundingGoal) return false;
     uint ethTokenPrice = 1;                                 // hard price, once ready change to lowest bid price
     uint value = c.amount * ethTokenPrice;
-    if(value < fundBalance) throw;
     c.amount = 0;
+    if(value < fundBalance) throw;
+    c.funders[c.creator] += 2;                          // reward for successful campaign, get the cost back plus 1 token, hard price as of now, could change later
     if(!c.beneficiary.send(value)) throw;
     return true;
   }
