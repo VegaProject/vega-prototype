@@ -19,22 +19,19 @@ contract Project {
 
   function newCampaign(address beneficiary, uint goal, uint duration, address tokenAddress) external returns (uint campaignID) {
     VegaToken v = VegaToken(tokenAddress);
-    uint balance = v.getBalance(msg.sender);
-    //if(balance <= 0) throw;          // add logic here to check if when called the caller has enough Vega Tokens to create a new proposal.
-    uint cost = 1;
-    //if(balance < cost) throw;
-            // subtract a small amount of tokens if they have enough Tokens, put those tokens toward the amount of the proposal, they go to the project.
+    uint cost = 1;                                  // hard cost as of now
     campaignID = numCampaigns++;
     campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration);
     Campaign c = campaigns[campaignID];
-    v.transferFrom(msg.sender, c.beneficiary, cost); // must give enough allowance to this contract so it can transferFrom.
+    // no need to do a balances check, because the user will have to approve before, and that takes care of balance checks.
+    v.transferFrom(msg.sender, c.beneficiary, cost);
     c.funders[msg.sender] += cost;
   }
 
   function participate(uint campaignID, uint value, address tokenAddress) external {
       VegaToken v = VegaToken(tokenAddress);
       Campaign c = campaigns[campaignID];
-      //if(now >= c.duration) throw;
+      //if(now >= c.duration) throw;                    // will deal with later, for testing just commented out
       if(v.getBalance(msg.sender) < value) throw;
       c.funders[msg.sender] += value;
       v.transferFrom(msg.sender, c.beneficiary, value); // must first give this contract address allowence to participate
