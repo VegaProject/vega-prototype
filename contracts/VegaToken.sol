@@ -90,4 +90,8 @@ import './Liquidate.sol';
      OutgoingMigration(msg.sender, _value);
    }
 
+   // just for testing
+   function () payable {
+   }
+
  }
