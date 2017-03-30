@@ -2,6 +2,7 @@ pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
 import './Liquidate.sol';
+import './EquityTokenInterface.sol'
 
 contract Project {
 
@@ -71,6 +72,11 @@ contract Project {
   function getFundBalance(address tokenAddr) constant returns (uint) {
     VegaToken v = VegaToken(tokenAddr);
     return v.balance;
+  }
+
+  function getTokenBalance(uint campaignID) constant returns (uint) {
+    Campaign c = campaigns[campaignID];
+    EquityTokenInterface Eti = EquityTokenInterface(c.beneficiary);
   }
 
 }
