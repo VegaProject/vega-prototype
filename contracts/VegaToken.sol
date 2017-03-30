@@ -27,10 +27,9 @@ import './Liquidate.sol';
    address public liquidateAddr;
 
    modifier onlyFromMigrationMaster() {
-    if (msg.sender != migrationMaster) throw;
-    _;
+     if (msg.sender != migrationMaster) throw;
+     _;
    }
-
 
    function VegaToken(address _migrationMaster, address _liquidateAddr) {
      if (_migrationMaster == 0) throw;
@@ -40,22 +39,14 @@ import './Liquidate.sol';
      balances[msg.sender] = INITIAL_SUPPLY;
    }
 
-   function getBalance(address _account) returns (uint) {
-       return balances[_account];
-   }
-
-   function getFundWeiBalance() returns (uint) {
-     return this.balance;
-   }
-
    function mint(address _target, uint _campaignID) returns (bool success) {
-      Liquidate l = Liquidate(liquidateAddr);
-      uint value = l.getPayout(_campaignID);    // make value throw in the liquidate contract
-      balances[_target] = safeAdd(balances[_target], value);
-      totalSupply = safeAdd(totalSupply, value);
-      Transfer(this, _target, value);
-      return true;
-  }
+     Liquidate l = Liquidate(liquidateAddr);
+     uint value = l.getPayout(_campaignID);    // make value throw in the liquidate contract
+     balances[_target] = safeAdd(balances[_target], value);
+     totalSupply = safeAdd(totalSupply, value);
+     Transfer(this, _target, value);
+     return true;
+   }
 
 
    //
@@ -67,8 +58,8 @@ import './Liquidate.sol';
    }
 
    function changeLiquidateAddr(address _liquidateAddr) onlyFromMigrationMaster external {
-       if(_liquidateAddr == 0) throw;
-       liquidateAddr = _liquidateAddr;
+     if(_liquidateAddr == 0) throw;
+     liquidateAddr = _liquidateAddr;
    }
 
 
