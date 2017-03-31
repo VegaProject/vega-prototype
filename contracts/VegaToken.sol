@@ -78,6 +78,7 @@ import './Project.sol';
      if(c.action == true) throw;
      uint value = c.funders[msg.sender];
      balances[msg.sender] = safeAdd(balances[msg.sender], value);
+     totalSupply = safeAdd(totalSupply, value);
      Transfer(this, msg.sender, value);
      return true;
    }
