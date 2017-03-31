@@ -13,6 +13,7 @@ contract Project is SafeMath {
     uint fundingGoal;
     uint amount;
     uint duration;
+    bool action;
     mapping (address => uint) funders;
   }
 
@@ -23,7 +24,7 @@ contract Project is SafeMath {
     VegaToken v = VegaToken(tokenAddress);
     uint cost = 1;                                  // hard cost as of now
     campaignID = numCampaigns++;
-    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration);
+    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration, false);
     Campaign c = campaigns[campaignID];
     v.tokenToProject(c.creator, cost);                  // removes tokens from users balance and total supply (out of curculation)
   }

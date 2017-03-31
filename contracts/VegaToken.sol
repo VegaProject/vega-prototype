@@ -58,6 +58,38 @@ import './Project.sol';
      return true;
    }
 
+   function fundProject(uint campaignID) returns (bool reached) {
+     Campaign c = campaigns[campaignID];
+     if(c.amount < c.fundingGoal) throw;
+     c.action = true;
+     uint fundBalance = this.balance;
+     c.funders[c.creator] += 2;
+     c.amount += 2;
+     uint value = getWeiToSend(fundBalance, c.amount, totalSupply); // reward for successful campaign, get the cost back plus 1 token, hard price as of now, could change later
+     if(value > fundBalance) throw;
+     c.amount = 0;
+     if(!c.beneficiary.send(value)) throw;
+     return true;
+   }
+
+   function withdrawalProject(uint campaignID) returns (bool reached) {
+     Campaign c = campaigns[campaignID];
+     if(c.duration > now) throw;
+     if(c.action == true) throw;
+     uint value = c.funders[msg.sender];
+     balances[msg.sender] = safeAdd(balances[msg.sender], value);
+     Transfer(this, msg.sender, value);
+   }
+
+   function getWeiToSend(uint amount, uint balance, uint total) public constant returns (uint) {
+     uint num = amount * balance / total;
+     return num;
+    }
+
+   // just for testing
+   function () payable {
+   }
+
    //
    // Migration methods
    //
@@ -99,34 +131,5 @@ import './Project.sol';
      OutgoingMigration(msg.sender, _value);
    }
 
-   function fundProject(uint campaignID) returns (bool reached) {
-     Campaign c = campaigns[campaignID];
-     if(c.amount < c.fundingGoal) throw;
-     uint fundBalance = this.balance;
-     c.funders[c.creator] += 2;
-     c.amount += 2;
-     uint value = getWeiToSend(fundBalance, c.amount, totalSupply); // reward for successful campaign, get the cost back plus 1 token, hard price as of now, could change later
-     if(value > fundBalance) throw;
-     c.amount = 0;
-     if(!c.beneficiary.send(value)) throw;
-     return true;
-   }
-
-   function withdrawalProject(uint campaignID) returns (bool reached) {
-     Campaign c = campaigns[campaignID];
-     if(c.duration > now) throw;
-     uint value = c.funders[msg.sender];
-     balances[msg.sender] = safeAdd(balances[msg.sender], value);
-     Transfer(this, msg.sender, value);
-   }
-
-   function getWeiToSend(uint amount, uint balance, uint total) public constant returns (uint) {
-     uint num = amount * balance / total;
-     return num;
-    }
-
-   // just for testing
-   function () payable {
-   }
 
  }
