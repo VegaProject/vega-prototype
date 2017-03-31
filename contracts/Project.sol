@@ -2,7 +2,7 @@ pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
 import './Liquidate.sol';
-import './structures/interfaces/structureInterface.sol';
+import './StructureInterfaces.sol';
 
 contract Project {
 
@@ -28,8 +28,8 @@ contract Project {
     v.transferFrom(msg.sender, c.beneficiary, cost);
   }
 
-  function participate(uint campaignID, uint value, address tokenAddress) external {
-    VegaToken v = VegaToken(tokenAddress);
+  function participate(uint campaignID, uint value, address tokenAddr) external {
+    VegaToken v = VegaToken(tokenAddr);
     Campaign c = campaigns[campaignID];
     //if(now >= c.duration) throw;                    // will deal with later, for testing just commented out
     if(v.balanceOf(msg.sender) < value) throw;
@@ -74,9 +74,11 @@ contract Project {
     return v.balance;
   }
 
-  function getTokenBalance(uint campaignID) constant returns (uint) {
+  function getTokenBalance(uint campaignID, address tokenAddr) constant returns (uint) {
+    VegaToken v = VegaToken(tokenAddr);
     Campaign c = campaigns[campaignID];
     EquityTokenInterface Eti = EquityTokenInterface(c.beneficiary);
+    return Eti.balanceOf(v);
   }
 
 }
