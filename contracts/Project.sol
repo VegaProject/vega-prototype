@@ -2,7 +2,7 @@ pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
 import './Liquidate.sol';
-import './StructureInterfaces.sol';
+import './structures/interfaces/StructureInterfaces.sol';
 
 contract Project {
 
@@ -49,7 +49,7 @@ contract Project {
       return true;
   }
   */
-
+  /* remove after one more close look
   function checkEthGoal(uint campaignID, address tokenAddr) external returns (bool reached) {
     VegaToken v = VegaToken(tokenAddr);
     Project p = Project(this);
@@ -64,6 +64,7 @@ contract Project {
     if(!c.beneficiary.send(value)) throw;
     return true;
   }
+  */
 
   function getContribution(uint campaignID, address _address) constant returns (uint) {
     Campaign c = campaigns[campaignID];
@@ -85,7 +86,7 @@ contract Project {
   function getTokenBalance(uint campaignID, address tokenAddr) constant returns (uint) {
     VegaToken v = VegaToken(tokenAddr);
     Campaign c = campaigns[campaignID];
-    EquityTokenInterface Eti = EquityTokenInterface(c.beneficiary);
+    EquityTokenInterface Eti = EquityTokenInterface(c.beneficiary);                       // just focus on Equity Token contract for now, add more structures later
     return Eti.balanceOf(v);
   }
 

@@ -8,6 +8,7 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 ----
 #### Status
 - Pre-alpha
+- Note: Import files may not be correct in this version because of testing using browser solidity.
 
 #### Contracts Overview
 - VegaToken: token functions, ownership
@@ -41,4 +42,3 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 ---
 #### License
 MIT
-
