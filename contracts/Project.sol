@@ -5,6 +5,12 @@ import './Liquidate.sol';
 import './StructureInterfaces.sol';
 import './SafeMath.sol';
 
+/*
+ * Project Campaigns
+ * Description: TODO
+ */
+
+
 contract Project is SafeMath {
 
   struct Campaign {
@@ -38,34 +44,6 @@ contract Project is SafeMath {
     c.amount += value;
     v.tokenToProject(msg.sender, value);                // removes tokens from users balance and total supply (out of curculation)
   }
-
-  /* check goal in terms of tokens not fund balance
-   * working, just commented for reference:
-  function checkGoalReached(uint campaignID) returns (bool reached) {
-    Campaign c = campaigns[campaignID];
-    if(c.amount < c.fundingGoal) return false;
-    uint amount = c.amount;
-    c.amount = 0;
-    if(!c.beneficiary.send(amount)) throw;
-      return true;
-  }
-
-
-  function checkEthGoal(uint campaignID, address tokenAddr) external returns (bool reached) {
-    VegaToken v = VegaToken(tokenAddr);
-    Project p = Project(this);
-    Campaign c = campaigns[campaignID];
-    uint fundBalance = getFundBalance(tokenAddr);
-    if(c.amount < c.fundingGoal) return false;
-    uint ethTokenPrice = 1;                                 // hard price, once ready change to lowest bid price
-    uint value = c.amount * ethTokenPrice;
-    c.amount = 0;
-    if(value < fundBalance) throw;
-    c.funders[c.creator] += 2;                          // reward for successful campaign, get the cost back plus 1 token, hard price as of now, could change later
-    if(!c.beneficiary.send(value)) throw;
-    return true;
-  }
-  */
 
   function getContribution(uint campaignID, address _address) constant returns (uint) {
     Campaign c = campaigns[campaignID];

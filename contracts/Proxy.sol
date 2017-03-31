@@ -2,6 +2,11 @@ pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
 
+/*
+ * Proxy Managers
+ * Description: TODO
+ */
+
 contract Proxy {
     struct Manager {
         address account;

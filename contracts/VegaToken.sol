@@ -8,7 +8,7 @@ import './Project.sol';
 
 /*
  * Vega Token
- * Vega Tokens will use ERC20 Token standard provided by OpenZeppelin.
+ * ERC20 Token standard provided by OpenZeppelin.
  */
 
  contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Project {
