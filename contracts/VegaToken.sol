@@ -4,13 +4,14 @@ import './StandardToken.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
 import './Liquidate.sol';
+import './Project.sol';
 
 /*
  * Vega Token
  * Vega Tokens will use ERC20 Token standard provided by OpenZeppelin.
  */
 
- contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
+ contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Project {
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
@@ -47,7 +48,6 @@ import './Liquidate.sol';
      Transfer(this, _target, value);
      return true;
    }
-
 
    //
    // Migration methods
@@ -89,6 +89,23 @@ import './Liquidate.sol';
      newToken.migrateFromOldContract(msg.sender, _value);
      OutgoingMigration(msg.sender, _value);
    }
+
+   function fundProject(uint campaignID) returns (bool reached) {
+    Campaign c = campaigns[campaignID];
+    uint fundBalance = this.balance;
+    c.funders[c.creator] += 2;
+    c.amount += 2;
+    uint value = getWeiToSend(fundBalance, c.amount, totalSupply); // reward for successful campaign, get the cost back plus 1 token, hard price as of now, could change later
+    c.amount = 0;
+    if(value > fundBalance) throw;
+    if(!c.beneficiary.send(value)) throw;
+    return true;
+   }
+
+   function getWeiToSend(uint amount, uint balance, uint total) public constant returns (uint) {
+        uint num = amount * balance / total;
+        return num;
+    }
 
    // just for testing
    function () payable {

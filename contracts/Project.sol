@@ -51,6 +51,8 @@ contract Project {
   */
 
   function checkEthGoal(uint campaignID, address tokenAddr) external returns (bool reached) {
+    VegaToken v = VegaToken(tokenAddr);
+    Project p = Project(this);
     Campaign c = campaigns[campaignID];
     uint fundBalance = getFundBalance(tokenAddr);
     if(c.amount < c.fundingGoal) return false;
@@ -67,6 +69,12 @@ contract Project {
     Campaign c = campaigns[campaignID];
     uint amount = c.funders[_address];
     return amount;
+  }
+
+  function getBenificiary(uint campaignID) constant returns (address) {
+      Campaign c = campaigns[campaignID];
+      address who = c.beneficiary;
+      return who;
   }
 
   function getFundBalance(address tokenAddr) constant returns (uint) {
