@@ -1,10 +1,12 @@
 pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
+import './Project.sol';
 
 /*
  * Proxy Managers
- * Description: TODO
+ * Description: Contract for managers, while giving some one your tokens or allowing them to spend your tokens is already allowed
+ * this contract provides a way for those people to charge a fee and keep a track record for their performance.
  */
 
 contract Proxy {
@@ -30,8 +32,16 @@ contract Proxy {
         Manager m = managers[managerID];
         if(m.funding == false) throw;
         if(v.balanceOf(msg.sender) < _value) throw;
-        v.approve(m.account, _value);                           // approve the manager, do not send tokens
+        v.transfer(m.account, _value);                           // transfer tokens to a manager
         m.subscribers[msg.sender] += _value;                    // add caller to list of subscribers of the manager
         return true;
     }
+
+    function participateAsManager(uint campaignID, uint value, uint managerID, address projectAddr, address tokenAddr) external {
+        Manager m = managers[managerID];
+        if(m.account != msg.sender) throw;                      // only the manager can participateAsManger
+        Project p = Project(projectAddr);
+        p.participate(campaignID, value, tokenAddr);
+    }
+
 }
