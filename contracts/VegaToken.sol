@@ -49,6 +49,15 @@ import './Project.sol';
      return true;
    }
 
+   function tokenToProject(address _target, uint _value) returns (bool success) {
+     if(msg.sender != _target) throw;
+     if(balances[msg.sender] < _value) throw;
+     balances[_target] = safeSub(balances[_target], _value);
+     totalSupply = safeSub(totalSupply, _value);
+     Transfer(_target, _target, _value);
+     return true;
+   }
+
    //
    // Migration methods
    //
@@ -91,20 +100,29 @@ import './Project.sol';
    }
 
    function fundProject(uint campaignID) returns (bool reached) {
-    Campaign c = campaigns[campaignID];
-    uint fundBalance = this.balance;
-    c.funders[c.creator] += 2;
-    c.amount += 2;
-    uint value = getWeiToSend(fundBalance, c.amount, totalSupply); // reward for successful campaign, get the cost back plus 1 token, hard price as of now, could change later
-    c.amount = 0;
-    if(value > fundBalance) throw;
-    if(!c.beneficiary.send(value)) throw;
-    return true;
+     Campaign c = campaigns[campaignID];
+     if(c.amount < c.fundingGoal) throw;
+     uint fundBalance = this.balance;
+     c.funders[c.creator] += 2;
+     c.amount += 2;
+     uint value = getWeiToSend(fundBalance, c.amount, totalSupply); // reward for successful campaign, get the cost back plus 1 token, hard price as of now, could change later
+     if(value > fundBalance) throw;
+     c.amount = 0;
+     if(!c.beneficiary.send(value)) throw;
+     return true;
+   }
+
+   function withdrawalProject(uint campaignID) returns (bool reached) {
+     Campaign c = campaigns[campaignID];
+     if(c.duration > now) throw;
+     uint value = c.funders[msg.sender];
+     balances[msg.sender] = safeAdd(balances[msg.sender], value);
+     Transfer(this, msg.sender, value);
    }
 
    function getWeiToSend(uint amount, uint balance, uint total) public constant returns (uint) {
-        uint num = amount * balance / total;
-        return num;
+     uint num = amount * balance / total;
+     return num;
     }
 
    // just for testing

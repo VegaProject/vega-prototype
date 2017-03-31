@@ -2,9 +2,10 @@ pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
 import './Liquidate.sol';
-import './structures/interfaces/StructureInterfaces.sol';
+import './StructureInterfaces.sol';
+import './SafeMath.sol';
 
-contract Project {
+contract Project is SafeMath {
 
   struct Campaign {
     address creator;
@@ -24,8 +25,7 @@ contract Project {
     campaignID = numCampaigns++;
     campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration);
     Campaign c = campaigns[campaignID];
-    // no need to do a balances check, because the user will have to approve before, and that takes care of balance checks.
-    v.transferFrom(msg.sender, c.beneficiary, cost);
+    v.tokenToProject(c.creator, cost);                  // removes tokens from users balance and total supply (out of curculation)
   }
 
   function participate(uint campaignID, uint value, address tokenAddr) external {
@@ -34,8 +34,8 @@ contract Project {
     //if(now >= c.duration) throw;                    // will deal with later, for testing just commented out
     if(v.balanceOf(msg.sender) < value) throw;
     c.funders[msg.sender] += value;
-    v.transferFrom(msg.sender, c.beneficiary, value); // must first give this contract address allowence to participate
     c.amount += value;
+    v.tokenToProject(msg.sender, value);                // removes tokens from users balance and total supply (out of curculation)
   }
 
   /* check goal in terms of tokens not fund balance
@@ -48,8 +48,8 @@ contract Project {
     if(!c.beneficiary.send(amount)) throw;
       return true;
   }
-  */
-  /* remove after one more close look
+
+
   function checkEthGoal(uint campaignID, address tokenAddr) external returns (bool reached) {
     VegaToken v = VegaToken(tokenAddr);
     Project p = Project(this);
@@ -86,7 +86,7 @@ contract Project {
   function getTokenBalance(uint campaignID, address tokenAddr) constant returns (uint) {
     VegaToken v = VegaToken(tokenAddr);
     Campaign c = campaigns[campaignID];
-    EquityTokenInterface Eti = EquityTokenInterface(c.beneficiary);                       // just focus on Equity Token contract for now, add more structures later
+    EquityTokenInterface Eti = EquityTokenInterface(c.beneficiary);
     return Eti.balanceOf(v);
   }
 
