@@ -2,7 +2,7 @@ pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
 import './Liquidate.sol';
-import './structures/interfaces/EquityTokenInterface.sol'
+import './structures/interfaces/structureInterface.sol';
 
 contract Project {
 
