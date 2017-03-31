@@ -72,13 +72,14 @@ import './Project.sol';
      return true;
    }
 
-   function withdrawalProject(uint campaignID) returns (bool reached) {
+   function withdrawalProject(uint campaignID) returns (bool success) {
      Campaign c = campaigns[campaignID];
      if(c.duration > now) throw;
      if(c.action == true) throw;
      uint value = c.funders[msg.sender];
      balances[msg.sender] = safeAdd(balances[msg.sender], value);
      Transfer(this, msg.sender, value);
+     return true;
    }
 
    function getWeiToSend(uint amount, uint balance, uint total) public constant returns (uint) {
