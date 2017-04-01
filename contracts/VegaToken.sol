@@ -6,6 +6,7 @@ import './IncomingMigrationTokenInterface.sol';
 import './Liquidate.sol';
 import './Project.sol';
 import './Proxy.sol';
+import './FundOffering.sol';
 
 /*
  * Vega Token
@@ -62,7 +63,7 @@ import './Proxy.sol';
       Transfer(m.account, msg.sender, value);
    }
 
-/*    Delete soon, take one more look before removing
+/*
    // tokenToProject & tokenToManager should be abstracted later, they are the same just for naming clarity rn.
    function tokenToProject(address _target, uint _value) returns (bool success) {
      if(msg.sender != _target) throw;
