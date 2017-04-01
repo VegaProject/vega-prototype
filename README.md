@@ -1,6 +1,7 @@
 ## Vega
 ##### A Decentralized Venture Capital Funding Platform
 ----
+[![Website](https://cdn-images-1.medium.com/max/119/1*S5uPPLkh3B-03lV482Ddrg@2x.png)](http://www.vega.fund)
 Overview
 ----
 A decentralized, crowd-managed, venture capital and crowdfunding platform built on Ethereum, designed to leverage the impact of individual investors in the Ethereum-Based Token market. Investment decisions directed by a community of token holders taking advantage of the wisdom of the crowd effect. Focused on the investment of tokenized assets, without the need to charge a fee. A platform that provides the ICO market with deal structure standards that add value to both investors and startups.
