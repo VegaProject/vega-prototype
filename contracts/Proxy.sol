@@ -43,18 +43,18 @@ contract Proxy is VegaToken {
         Campaign c = campaigns[campaignID];
         //if(now >= c.duration) throw;                    // will deal with later, for testing just commented out
         if(balanceOf(msg.sender) < value) throw;
-        c.funders[msg.sender] += value;
+        c.funders[m.account] += value;
         c.amount += value;
-        tokenToProject(msg.sender, value);
+        tokenToProject(m.account, value);
     }
 
-     function mintPositionsFromManager(uint managerID) returns (bool success) {
-        Manager m = managers[managerID];
-        Liquidate l = Liquidate(liquidateAddr);
-        uint value = getPayoutFromManager(managerID);                 // include fee subtraction in the project contract
-        balance[msg.sender] = safeAdd(balances[msg.sender], value);
-        totalSupply = safeAdd(totalSupply, value);
-        Transfer(m.account, msg.sender, value);
-     }
+   function mintPositionsFromManager(uint managerID) returns (bool success) {
+      Manager m = managers[managerID];
+      Liquidate l = Liquidate(liquidateAddr);
+      uint value = getPayoutFromManager(managerID);                 // include fee subtraction in the project contract
+      balance[msg.sender] = safeAdd(balances[msg.sender], value);
+      totalSupply = safeAdd(totalSupply, value);
+      Transfer(m.account, msg.sender, value);
+   }
 
 }
