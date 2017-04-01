@@ -17,7 +17,7 @@ Idea:
 
 import './VegaToken.sol';
 import './Project.sol';
-import './EtherDelta.sol';
+//import './EtherDelta.sol';
 
 contract Liquidate is Project {
 
@@ -35,7 +35,6 @@ contract Liquidate is Project {
   /// 6. The Vega Token contract mint function will look at what the payout value is.
 
   /// just for testing
-  /// asdfgerge van hoomissen
   function getPayout(uint _campaignID) returns (uint) {
       uint stake = getContribution(_campaignID, msg.sender);
       if(stake < 0) throw;

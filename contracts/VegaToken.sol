@@ -5,13 +5,16 @@ import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
 import './Liquidate.sol';
 import './Project.sol';
+import './Proxy.sol';
 
 /*
  * Vega Token
  * ERC20 Token standard provided by OpenZeppelin.
+ Note: When tokens are send to the investedAddr, that amount has been invested, and now the fund has
+ the ability to sell those tokens to raise additional capital
  */
 
- contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Project {
+ contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Project, Proxy {
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
@@ -26,6 +29,7 @@ import './Project.sol';
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
    address public liquidateAddr;
+   address public investedAddr;
 
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
@@ -40,15 +44,25 @@ import './Project.sol';
      balances[msg.sender] = INITIAL_SUPPLY;
    }
 
-   function mint(address _target, uint _campaignID) returns (bool success) {
+   function mintPostionsFromIndividual(uint _campaignID) returns (bool success) {
      Liquidate l = Liquidate(liquidateAddr);
      uint value = l.getPayout(_campaignID);    // make value throw in the liquidate contract
-     balances[_target] = safeAdd(balances[_target], value);
+     balances[msg.sender] = safeAdd(balances[msg.sender], value);
      totalSupply = safeAdd(totalSupply, value);
-     Transfer(this, _target, value);
+     Transfer(this, msg.sender, value);
      return true;
    }
 
+   function mintPositionsFromManager(uint managerID) returns (bool success) {
+      Manager m = managers[managerID];
+      Liquidate l = Liquidate(liquidateAddr);
+      uint value = l.getPayoutFromManager(managerID);                 // include fee subtraction in the project contract
+      balances[msg.sender] = safeAdd(balances[msg.sender], value);
+      totalSupply = safeAdd(totalSupply, value);
+      Transfer(m.account, msg.sender, value);
+   }
+
+/*    Delete soon, take one more look before removing
    // tokenToProject & tokenToManager should be abstracted later, they are the same just for naming clarity rn.
    function tokenToProject(address _target, uint _value) returns (bool success) {
      if(msg.sender != _target) throw;
@@ -66,6 +80,12 @@ import './Project.sol';
      totalSupply = safeSub(totalSupply, _value);
      Transfer(_target, _target, _value);
      return true;
+   }
+*/
+   function investTokens(address _target, uint _value) returns (bool success) {
+     if(msg.sender != _target) throw;
+     transfer(investedAddr, _value);
+     Transfer(msg.sender, _target, _value);
    }
 
    function fundProject(uint campaignID) returns (bool reached) {
@@ -115,6 +135,10 @@ import './Project.sol';
      liquidateAddr = _liquidateAddr;
    }
 
+   function changeInvestedAddr(address _investedAddr) onlyFromMigrationMaster external {
+     if(_investedAddr == 0) throw;
+     investedAddr = _investedAddr;
+   }
 
    function finalizeOutgoingMigration() onlyFromMigrationMaster external {
      if (!allowOutgoingMigrations) throw;

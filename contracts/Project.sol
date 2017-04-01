@@ -1,7 +1,7 @@
 pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
-import './Liquidate.sol';
+//import './Liquidate.sol';
 import './StructureInterfaces.sol';
 import './SafeMath.sol';
 
@@ -32,7 +32,7 @@ contract Project is SafeMath {
     campaignID = numCampaigns++;
     campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration, false);
     Campaign c = campaigns[campaignID];
-    v.tokenToProject(c.creator, cost);                  // removes tokens from users balance and total supply (out of curculation)
+    v.investTokens(c.creator, cost);                  // removes tokens from users balance and total supply (out of curculation)
   }
 
   function participate(uint campaignID, uint value, address tokenAddr) external {
@@ -42,7 +42,7 @@ contract Project is SafeMath {
     if(v.balanceOf(msg.sender) < value) throw;
     c.funders[msg.sender] += value;
     c.amount += value;
-    v.tokenToProject(msg.sender, value);                // removes tokens from users balance and total supply (out of curculation)
+    v.investTokens(msg.sender, value);                // removes tokens from users balance and total supply (out of curculation)
   }
 
   function getContribution(uint campaignID, address _address) constant returns (uint) {
