@@ -8,7 +8,9 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 
 ----
 #### Resources
-- 
+- [Slack](https://vega-fund.slack.com/shared_invite/MTUxOTE1MDQ2OTk5LTE0ODg5NDQ4MzItMWFhNGE1YjhhMA)
+- [White Paper](https://docs.google.com/document/d/1rgMqqoE7NNTPCLEGyCSBfYW39hqAPEi0U6tS105-U3g/edit)
+
 #### Status
 - Pre-alpha
 - Note: Import files may not be correct in this version because of testing using browser solidity.
