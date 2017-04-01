@@ -9,3 +9,4 @@ Add approved contract addresses to the VegaToken contract
 - Option to solve the issue of funders having assets liquidated by non funders:
 - could have a liquidatiion preference period where the funders[] are the only ones able to liquidate, after that period all token holders can liquidate
 - within that liquidation preference period, we could have a lock up period where the tokens are held for a bit to avoid people just having pererennce and than selling their interest.
+Adding github
