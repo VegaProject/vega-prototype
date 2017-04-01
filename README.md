@@ -29,6 +29,14 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 - Flexibility of active to passive participation
 - Multiple funding contracts available
 - Access and exposure to a new asset class
+- Price discovery
+- Exchangable and divisible Interest
+
+#### Managers / Proxy Voters / Syndicates
+- Access to deal flow
+- Performance based rewards
+- Immutible track record
+- Low start up costs, eliminating the need to charge a management fee
 
 #### Developers
 - Bounties and reward programs
