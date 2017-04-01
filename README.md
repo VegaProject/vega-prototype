@@ -1,8 +1,6 @@
-## Vega
+# Vega
 ##### A Decentralized Venture Capital Funding Platform
-----
 [![Website](https://cdn-images-1.medium.com/max/119/1*S5uPPLkh3B-03lV482Ddrg@2x.png)](http://www.vega.fund)
-[![Slack](https://platform.slack-edge.com/img/sign_in_with_slack.png)](https://vega-fund.slack.com/shared_invite/MTUxOTE1MDQ2OTk5LTE0ODg5NDQ4MzItMWFhNGE1YjhhMA)
 
 Overview
 ----
