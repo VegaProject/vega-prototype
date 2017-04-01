@@ -2,14 +2,14 @@ pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
 import './Project.sol';
+import './Liquidate.sol';
 
 /*
  * Proxy Managers
- * Description: Contract for managers, while giving some one your tokens or allowing them to spend your tokens is already allowed
- * this contract provides a way for those people to charge a fee and keep a track record for their performance.
+ * Description: TODO
  */
 
-contract Proxy {
+contract Proxy is VegaToken {
     struct Manager {
         address account;
         bytes32 name;
@@ -32,16 +32,29 @@ contract Proxy {
         Manager m = managers[managerID];
         if(m.funding == false) throw;
         if(v.balanceOf(msg.sender) < _value) throw;
-        v.transfer(m.account, _value);                           // transfer tokens to a manager
+        v.tokenToManager(msg.sender, _value);                   // remove tokens from sender and curculation
         m.subscribers[msg.sender] += _value;                    // add caller to list of subscribers of the manager
         return true;
     }
 
     function participateAsManager(uint campaignID, uint value, uint managerID, address projectAddr, address tokenAddr) external {
         Manager m = managers[managerID];
-        if(m.account != msg.sender) throw;                      // only the manager can participateAsManger
-        Project p = Project(projectAddr);
-        p.participate(campaignID, value, tokenAddr);
+        if(m.account != msg.sender) throw;
+        Campaign c = campaigns[campaignID];
+        //if(now >= c.duration) throw;                    // will deal with later, for testing just commented out
+        if(balanceOf(msg.sender) < value) throw;
+        c.funders[msg.sender] += value;
+        c.amount += value;
+        tokenToProject(msg.sender, value);
     }
+
+     function mintPositionsFromManager(uint managerID) returns (bool success) {
+        Manager m = managers[managerID];
+        Liquidate l = Liquidate(liquidateAddr);
+        uint value = getPayoutFromManager(managerID);                 // include fee subtraction in the project contract
+        balance[msg.sender] = safeAdd(balances[msg.sender], value);
+        totalSupply = safeAdd(totalSupply, value);
+        Transfer(m.account, msg.sender, value);
+     }
 
 }

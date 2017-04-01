@@ -49,7 +49,17 @@ import './Project.sol';
      return true;
    }
 
+   // tokenToProject & tokenToManager should be abstracted later, they are the same just for naming clarity rn.
    function tokenToProject(address _target, uint _value) returns (bool success) {
+     if(msg.sender != _target) throw;
+     if(balances[msg.sender] < _value) throw;
+     balances[_target] = safeSub(balances[_target], _value);
+     totalSupply = safeSub(totalSupply, _value);
+     Transfer(_target, _target, _value);
+     return true;
+   }
+
+   function tokenToManager(address _target, uint _value) returns (bool success) {
      if(msg.sender != _target) throw;
      if(balances[msg.sender] < _value) throw;
      balances[_target] = safeSub(balances[_target], _value);
