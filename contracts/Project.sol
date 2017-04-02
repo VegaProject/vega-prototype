@@ -2,8 +2,8 @@ pragma solidity ^0.4.6;
 
 import './VegaToken.sol';
 //import './Liquidate.sol';
-import './StructureInterfaces.sol';
-import './SafeMath.sol';
+//import './StructureInterfaces.sol';
+import '../installed_contracts/zeppelin/contracts/SafeMath.sol';
 
 /*
  * Project Campaigns

@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 
-import './StandardToken.sol';
+import '../installed_contracts/zeppelin/contracts/token/StandardToken.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
 import './Liquidate.sol';
