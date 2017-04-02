@@ -20,18 +20,24 @@ contract Project is SafeMath {
     uint amount;
     uint duration;
     uint liquidationPreference;             // IDEA: those that become funders have a preference to liquidate within a time period
+    uint minDuration;
+    uint maxDuration;
     mapping (address => uint) funders;
     mapping (address => bool) tokensBack;    // checks if wallet has already got their token back
   }
+  uint public minDuration = 1 days;
+  uint public maxDuration = 4 weeks;
 
   uint numCampaigns;
   mapping (uint => Campaign) campaigns;
 
-  function newCampaign(address beneficiary, uint goal, uint duration, uint _liqPref, address tokenAddr) external returns (uint campaignID) {
+  function newCampaign(address beneficiary, uint goal, uint duration, uint _liqPref, uint _minDuration, _maxDuration, address tokenAddr) external returns (uint campaignID) {
+    if(minDuration > _minDuration) throw;       // checks if duration fits within allowed amount of time
+    if(maxDuration < _maxDuration) throw;       // checks if duration fits within allowed amount of time
     VegaToken v = VegaToken(tokenAddr);
     uint cost = 1;                                  // hard cost as of now
     campaignID = numCampaigns++;
-    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration, _liqPref);
+    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration, _liqPref, _minDuration, _maxDuration);
     Campaign c = campaigns[campaignID];
     v.investTokens(c.creator, cost);                  // transfers tokens to invested wallet
   }
