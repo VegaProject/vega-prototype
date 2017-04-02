@@ -19,7 +19,6 @@ contract Project is SafeMath {
     uint fundingGoal;
     uint amount;
     uint duration;
-    bool action;
     uint liquidationPreference;             // IDEA: those that become funders have a preference to liquidate within a time period
     mapping (address => uint) funders;
     mapping (address => bool) tokensBack    // checks if wallet has already got their token back

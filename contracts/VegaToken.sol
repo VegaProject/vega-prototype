@@ -104,7 +104,10 @@ import './FundOffering.sol';
    function () payable {
    }
 
-   //
+
+
+
+   // ---------------------------------------------------------------------------------------------------------------------------------------
    // Migration methods
    //
    function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
