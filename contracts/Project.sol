@@ -3,7 +3,7 @@ pragma solidity ^0.4.6;
 import './VegaToken.sol';
 //import './Liquidate.sol';
 //import './StructureInterfaces.sol';
-import '../installed_contracts/zeppelin/contracts/SafeMath.sol';
+import './deps/SafeMath.sol';
 
 /*
  * Project Campaigns
@@ -65,8 +65,8 @@ contract Project is SafeMath {
   function getTokenBalance(uint campaignID, address tokenAddr) constant returns (uint) {
     VegaToken v = VegaToken(tokenAddr);
     Campaign c = campaigns[campaignID];
-    EquityTokenInterface Eti = EquityTokenInterface(c.beneficiary);
-    return Eti.balanceOf(v);
+    //EquityTokenInterface Eti = EquityTokenInterface(c.beneficiary);
+    //return Eti.balanceOf(v);
   }
 
 }

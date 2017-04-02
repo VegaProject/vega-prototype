@@ -1,3 +1,4 @@
+/*
 pragma solidity ^0.4.6;
 
 import '../../installed_contracts/zeppelin/contracts/token/StandardToken';
@@ -57,3 +58,4 @@ contract Safe {
 
   }
 }
+*/

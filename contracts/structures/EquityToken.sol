@@ -1,11 +1,10 @@
-pragma solidity ^0.4.6;
+/*pragma solidity ^0.4.6;
 
 import "../../installed_contracts/zeppelin/contracts/token/StandardToken.sol";
 /*
  * CrowdsaleToken
  *
  * Simple ERC20 Token example, with crowdsale token creation
- */
 contract EquityToken is StandardToken {
 
   string public name;
@@ -43,3 +42,4 @@ contract EquityToken is StandardToken {
     return price;
   }
 }
+ */
