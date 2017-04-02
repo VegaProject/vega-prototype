@@ -25,16 +25,15 @@ contract Project is SafeMath {
     mapping (address => uint) funders;
     mapping (address => bool) tokensBack;    // checks if wallet has already got their token back
   }
-  uint public tokenAddr;
+  address public tokenAddr;
   uint public minDuration = 1 days;
   uint public maxDuration = 4 weeks;
 
   uint numCampaigns;
   mapping (uint => Campaign) campaigns;
   
-  function Project(address _tokenAddr)* returns (address) {
+  function Project(address _tokenAddr) {
     tokenAddr = _tokenAddr;
-    return tokenAddr;
   }
 
   function newCampaign(address beneficiary, uint goal, uint duration, uint _liqPref, uint _minDuration, uint _maxDuration) external returns (uint campaignID) {

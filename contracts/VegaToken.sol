@@ -38,7 +38,7 @@ import './FundOffering.sol';
      _;
    }
 
-   function VegaToken(address _migrationMaster, address _projectAddr,  _liquidateAddr, address _investedAddr) {
+   function VegaToken(address _migrationMaster, address _projectAddr, address _liquidateAddr, address _investedAddr) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
      projectAddr = _projectAddr;
