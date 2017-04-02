@@ -31,7 +31,7 @@ contract Project is SafeMath {
   uint numCampaigns;
   mapping (uint => Campaign) campaigns;
 
-  function newCampaign(address beneficiary, uint goal, uint duration, uint _liqPref, uint _minDuration, _maxDuration, address tokenAddr) external returns (uint campaignID) {
+  function newCampaign(address beneficiary, uint goal, uint duration, uint _liqPref, uint _minDuration, uint _maxDuration, address tokenAddr) external returns (uint campaignID) {
     if(minDuration > _minDuration) throw;       // checks if duration fits within allowed amount of time
     if(maxDuration < _maxDuration) throw;       // checks if duration fits within allowed amount of time
     VegaToken v = VegaToken(tokenAddr);
