@@ -8,7 +8,7 @@ import './deps/SafeMath.sol';
 /*
  * Project Campaigns
  * Description: TODO
- */
+ */ 
 
 
 contract Project is SafeMath {
@@ -20,19 +20,21 @@ contract Project is SafeMath {
     uint amount;
     uint duration;
     bool action;
+    uint liquidationPreference;             // IDEA: those that become funders have a preference to liquidate within a time period
     mapping (address => uint) funders;
+    mapping (address => bool) tokensBack    // checks if wallet has already got their token back
   }
 
   uint numCampaigns;
   mapping (uint => Campaign) campaigns;
 
-  function newCampaign(address beneficiary, uint goal, uint duration, address tokenAddress) external returns (uint campaignID) {
-    VegaToken v = VegaToken(tokenAddress);
+  function newCampaign(address beneficiary, uint goal, uint duration, uint _liqPref, address tokenAddr) external returns (uint campaignID) {
+    VegaToken v = VegaToken(tokenAddr);
     uint cost = 1;                                  // hard cost as of now
     campaignID = numCampaigns++;
-    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration, false);
+    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration, false, _liqPref);
     Campaign c = campaigns[campaignID];
-    v.investTokens(c.creator, cost);                  // removes tokens from users balance and total supply (out of curculation)
+    v.investTokens(c.creator, cost);                  // transfers tokens to invested wallet
   }
 
   function participate(uint campaignID, uint value, address tokenAddr) external {
@@ -42,9 +44,9 @@ contract Project is SafeMath {
     if(v.balanceOf(msg.sender) < value) throw;
     c.funders[msg.sender] += value;
     c.amount += value;
-    v.investTokens(msg.sender, value);                // removes tokens from users balance and total supply (out of curculation)
+    v.investTokens(msg.sender, value);                // transfers tokens to invested wallet
   }
-
+  
   function getContribution(uint campaignID, address _address) constant returns (uint) {
     Campaign c = campaigns[campaignID];
     uint amount = c.funders[_address];

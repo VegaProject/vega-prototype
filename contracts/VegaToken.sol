@@ -37,10 +37,11 @@ import './FundOffering.sol';
      _;
    }
 
-   function VegaToken(address _migrationMaster, address _liquidateAddr) {
+   function VegaToken(address _migrationMaster, address _liquidateAddr, address _investedAddr) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
      liquidateAddr = _liquidateAddr;
+     investedAddr = _investedAddr;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
    }
@@ -63,30 +64,21 @@ import './FundOffering.sol';
       Transfer(m.account, msg.sender, value);
    }
 
-/*
-   // tokenToProject & tokenToManager should be abstracted later, they are the same just for naming clarity rn.
-   function tokenToProject(address _target, uint _value) returns (bool success) {
-     if(msg.sender != _target) throw;
-     if(balances[msg.sender] < _value) throw;
-     balances[_target] = safeSub(balances[_target], _value);
-     totalSupply = safeSub(totalSupply, _value);
-     Transfer(_target, _target, _value);
-     return true;
-   }
-
-   function tokenToManager(address _target, uint _value) returns (bool success) {
-     if(msg.sender != _target) throw;
-     if(balances[msg.sender] < _value) throw;
-     balances[_target] = safeSub(balances[_target], _value);
-     totalSupply = safeSub(totalSupply, _value);
-     Transfer(_target, _target, _value);
-     return true;
-   }
-*/
    function investTokens(address _target, uint _value) returns (bool success) {
      if(msg.sender != _target) throw;
      transfer(investedAddr, _value);
      Transfer(msg.sender, _target, _value);
+   }
+   *
+   function getTokensBack(uint _campaignID) returns (bool success) {
+     Campaign c = campaigns[campaignID];
+     if(now < c.duration) throw;                        // checks if the project campaign is over
+     if(c.tokensBack[msg.sender] != false) throw;       // checks if true, than throw an error
+     balances[msg.sender] = safeAdd(balances[msg.sender], c.funders[msg.sender]);
+     totalSupply = safeAdd(totalSupply, value);
+     Transfer(this, msg.sender, value);
+     c.tokensBack[msg.sender] = true;                   // true that tokens have now been returned
+     return true;
    }
 
    function fundProject(uint campaignID) returns (bool reached) {
