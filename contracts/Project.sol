@@ -25,13 +25,19 @@ contract Project is SafeMath {
     mapping (address => uint) funders;
     mapping (address => bool) tokensBack;    // checks if wallet has already got their token back
   }
+  uint public tokenAddr;
   uint public minDuration = 1 days;
   uint public maxDuration = 4 weeks;
 
   uint numCampaigns;
   mapping (uint => Campaign) campaigns;
+  
+  function Project(address _tokenAddr)* returns (address) {
+    tokenAddr = _tokenAddr;
+    return tokenAddr;
+  }
 
-  function newCampaign(address beneficiary, uint goal, uint duration, uint _liqPref, uint _minDuration, uint _maxDuration, address tokenAddr) external returns (uint campaignID) {
+  function newCampaign(address beneficiary, uint goal, uint duration, uint _liqPref, uint _minDuration, uint _maxDuration) external returns (uint campaignID) {
     if(minDuration > _minDuration) throw;       // checks if duration fits within allowed amount of time
     if(maxDuration < _maxDuration) throw;       // checks if duration fits within allowed amount of time
     VegaToken v = VegaToken(tokenAddr);
