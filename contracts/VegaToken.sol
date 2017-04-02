@@ -29,6 +29,7 @@ import './FundOffering.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
+   address public projectAddr;
    address public liquidateAddr;
    address public investedAddr;
 
@@ -37,9 +38,10 @@ import './FundOffering.sol';
      _;
    }
 
-   function VegaToken(address _migrationMaster, address _liquidateAddr, address _investedAddr) {
+   function VegaToken(address _migrationMaster, address _projectAddr,  _liquidateAddr, address _investedAddr) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
+     projectAddr = _projectAddr;
      liquidateAddr = _liquidateAddr;
      investedAddr = _investedAddr;
      totalSupply = INITIAL_SUPPLY;
