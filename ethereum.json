@@ -1,7 +1,7 @@
 {
   "contracts": "contracts",
 
-  "deploy": ["test"],
+  "deploy": ["VegaToken"],
 
   "env": {
     "block": {
