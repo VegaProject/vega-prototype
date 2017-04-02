@@ -69,14 +69,14 @@ import './FundOffering.sol';
      transfer(investedAddr, _value);
      Transfer(msg.sender, _target, _value);
    }
-   *
+   
    function getTokensBack(uint _campaignID) returns (bool success) {
-     Campaign c = campaigns[campaignID];
+     Campaign c = campaigns[_campaignID];
      if(now < c.duration) throw;                        // checks if the project campaign is over
      if(c.tokensBack[msg.sender] != false) throw;       // checks if true, than throw an error
      balances[msg.sender] = safeAdd(balances[msg.sender], c.funders[msg.sender]);
-     totalSupply = safeAdd(totalSupply, value);
-     Transfer(this, msg.sender, value);
+     totalSupply = safeAdd(totalSupply, c.funders[msg.sender]);
+     Transfer(this, msg.sender, c.funders[msg.sender]);
      c.tokensBack[msg.sender] = true;                   // true that tokens have now been returned
      return true;
    }
@@ -84,7 +84,6 @@ import './FundOffering.sol';
    function fundProject(uint campaignID) returns (bool reached) {
      Campaign c = campaigns[campaignID];
      if(c.amount < c.fundingGoal) throw;
-     c.action = true;
      uint fundBalance = this.balance;
      c.funders[c.creator] += 2;
      c.amount += 2;

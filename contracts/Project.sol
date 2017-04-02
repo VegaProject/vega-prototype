@@ -21,7 +21,7 @@ contract Project is SafeMath {
     uint duration;
     uint liquidationPreference;             // IDEA: those that become funders have a preference to liquidate within a time period
     mapping (address => uint) funders;
-    mapping (address => bool) tokensBack    // checks if wallet has already got their token back
+    mapping (address => bool) tokensBack;    // checks if wallet has already got their token back
   }
 
   uint numCampaigns;
@@ -31,7 +31,7 @@ contract Project is SafeMath {
     VegaToken v = VegaToken(tokenAddr);
     uint cost = 1;                                  // hard cost as of now
     campaignID = numCampaigns++;
-    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration, false, _liqPref);
+    campaigns[campaignID] = Campaign(msg.sender, beneficiary, goal, 0, duration, _liqPref);
     Campaign c = campaigns[campaignID];
     v.investTokens(c.creator, cost);                  // transfers tokens to invested wallet
   }
