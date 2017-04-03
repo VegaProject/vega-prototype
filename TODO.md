@@ -1,5 +1,4 @@
 Add approved contract addresses to the VegaToken contract
-Make a maximum and minimum duration for campaigns
 - Thinking as of tonight:
 - They still have incetive to do well because they are still tracked in funders[msg.sender]
 - They can now trade the tokens
