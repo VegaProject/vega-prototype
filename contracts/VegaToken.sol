@@ -3,10 +3,6 @@ pragma solidity ^0.4.8;
 import './deps/StandardToken.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
-import './Liquidate.sol';
-import './Project.sol';
-import './Proxy.sol';
-import './FundOffering.sol';
 
 /*
  * Vega Token
@@ -15,7 +11,7 @@ import './FundOffering.sol';
  the ability to sell those tokens to raise additional capital
  */
 
- contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Project, Proxy {
+ contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
@@ -38,75 +34,16 @@ import './FundOffering.sol';
      _;
    }
 
-   function VegaToken(address _migrationMaster, address _projectAddr, address _liquidateAddr, address _investedAddr) {
+   function VegaToken(address _migrationMaster) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
-     projectAddr = _projectAddr;
-     liquidateAddr = _liquidateAddr;
-     investedAddr = _investedAddr;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
    }
 
-   function mintPostionsFromIndividual(uint _campaignID) returns (bool success) {
-     Liquidate l = Liquidate(liquidateAddr);
-     uint value = l.getPayout(_campaignID);    // make value throw in the liquidate contract
-     balances[msg.sender] = safeAdd(balances[msg.sender], value);
-     totalSupply = safeAdd(totalSupply, value);
-     Transfer(this, msg.sender, value);
-     return true;
-   }
-
-   function mintPositionsFromManager(uint managerID) returns (bool success) {
-      Manager m = managers[managerID];
-      Liquidate l = Liquidate(liquidateAddr);
-      uint value = l.getPayoutFromManager(managerID);                 // include fee subtraction in the project contract
-      balances[msg.sender] = safeAdd(balances[msg.sender], value);
-      totalSupply = safeAdd(totalSupply, value);
-      Transfer(m.account, msg.sender, value);
-   }
-
-   function investTokens(address _target, uint _value) returns (bool success) {
-     if(msg.sender != _target) throw;
-     transfer(investedAddr, _value);
-     Transfer(msg.sender, _target, _value);
-   }
-   
-   function getTokensBack(uint _campaignID) returns (bool success) {
-     Campaign c = campaigns[_campaignID];
-     if(now < c.duration) throw;                        // checks if the project campaign is over
-     if(c.tokensBack[msg.sender] != false) throw;       // checks if true, than throw an error
-     balances[msg.sender] = safeAdd(balances[msg.sender], c.funders[msg.sender]);
-     totalSupply = safeAdd(totalSupply, c.funders[msg.sender]);
-     Transfer(this, msg.sender, c.funders[msg.sender]);
-     c.tokensBack[msg.sender] = true;                   // true that tokens have now been returned
-     return true;
-   }
-
-   function fundProject(uint campaignID) returns (bool reached) {
-     Campaign c = campaigns[campaignID];
-     if(c.amount < c.fundingGoal) throw;
-     uint fundBalance = this.balance;
-     c.funders[c.creator] += 2;
-     c.amount += 2;
-     uint value = getWeiToSend(fundBalance, c.amount, totalSupply); // reward for successful campaign, get the cost back plus 1 token, hard price as of now, could change later
-     if(value > fundBalance) throw;
-     c.amount = 0;
-     if(!c.beneficiary.send(value)) throw;
-     return true;
-   }
-
-   function getWeiToSend(uint amount, uint balance, uint total) public constant returns (uint) {
-     uint num = amount * balance / total;
-     return num;
-    }
-
    // just for testing
    function () payable {
    }
-
-
-
 
    // ---------------------------------------------------------------------------------------------------------------------------------------
    // Migration methods
