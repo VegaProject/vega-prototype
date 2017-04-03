@@ -1,15 +1,18 @@
 pragma solidity ^0.4.8;
 
 import './deps/Ownable.sol';
+import './VegaToken.sol';
 
-contract token { mapping (address => uint256) public balanceOf;  }
+// I do not think the replacement to VegaToken as a whole changes anything, but keeping in comments just in case.
+//contract token { mapping (address => uint256) public balanceOf;  }
 
 contract tokenRecipient { 
     event receivedEther(address sender, uint amount);
     event receivedTokens(address _from, uint256 _value, address _token, bytes _extraData);
 
     function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData){
-        Token t = Token(_token);
+        // Token t = Token(_token);         commented just to see if changing to VegaToken does cause issues
+        VegaToken t = VegaToken(_token);
         if (!t.transferFrom(_from, this, _value)) throw;
         receivedTokens(_from, _value, _token, _extraData);
     }
@@ -18,10 +21,11 @@ contract tokenRecipient {
         receivedEther(msg.sender, msg.value);
     }
 }
-
+/*
 contract Token {
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
 }
+*/
 
 /*
  * The Club allows members to
@@ -41,7 +45,8 @@ contract Club is Ownable, tokenRecipient {
     Liquidation[] public liquidations;
     uint public numProposals;
     uint public numLiquidations;
-    token public sharesTokenAddress;
+    //token public sharesTokenAddress;
+    VegaToken public sharesTokenAddress;
 
     event ProposalAdded(uint proposalID, address recipient, uint amount, string description);
     event LiquidationAdded(uint liquidationID, uint proposalID, uint amount, uint tokens);
@@ -88,13 +93,13 @@ contract Club is Ownable, tokenRecipient {
     }
 
     /* First time setup */
-    function Club(token sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate, address trader) payable {
+    function Club(VegaToken sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate, address trader) payable {
         changeVotingRules(sharesAddress, minimumSharesToPassAVote, minutesForDebate, trader);
     }
 
     /*change rules*/
-    function changeVotingRules(token sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate, address trader) onlyOwner {
-        sharesTokenAddress = token(sharesAddress);
+    function changeVotingRules(VegaToken sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate, address trader) onlyOwner {
+        sharesTokenAddress = VegaToken(sharesAddress);
         if (minimumSharesToPassAVote == 0 ) minimumSharesToPassAVote = 1;
         minimumQuorum = minimumSharesToPassAVote;
         debatingPeriodInMinutes = minutesForDebate;
