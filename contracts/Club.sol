@@ -215,14 +215,14 @@ contract Club is owned, tokenRecipient {
         onlyShareholders
         returns (uint voteID)
     {
-        Liquidation l = liquidations[liquidationNumber];
+        Liquidation l = liquidations[liquidatationNumber];
         if(l.voted[msg.sender] == true) throw;
         
         voteID = l.votes.length++;
-        l.votes[voteID] = Vote({inSupport: supportsProposal, voter: msg.sender});
+        l.votes[voteID] = Vote({inSupport: supportsLiquidation, voter: msg.sender});
         l.voted[msg.sender] = true;
         l.numberOfVotes = voteID +1;
-        Voted(liquidationNumber, supportsLiquidation, msg.sender);
+        Voted(liquidatationNumber, supportsLiquidation, msg.sender);
         return voteID;
     }
     
@@ -269,8 +269,8 @@ contract Club is owned, tokenRecipient {
         ProposalTallied(proposalNumber, 1, quorum, p.proposalPassed);
     }
     
-    function executeLiquidation(uint liquidationNumber) {
-        Liquidation l = liquidatations[liquidationNumber];
+    function executeLiquidation(uint liquidationNumber, bytes transactionBytecode) {
+        Liquidation l = liquidations[liquidationNumber];
         /* Check if the liquidation can be executed */
         if (now < l.votingDeadline  /* has the voting deadline arrived? */
             || l.executed           /* has it been already executed? */
@@ -282,7 +282,7 @@ contract Club is owned, tokenRecipient {
         uint yea = 0;
         uint nay = 0;
         
-        for (uint = 0; i < l.votes.length;; ++i) {
+        for (uint i = 0; i < l.votes.length; ++i) {
             Vote v = l.votes[i];
             uint voteWeight = sharesTokenAddress.balanceOf(v.voter);
             quorum += voteWeight;
@@ -300,6 +300,16 @@ contract Club is owned, tokenRecipient {
         } else if (yea > nay ) {
             /* has quorum and was approved */
             l.executed = true;
+            
+            /* At this point the liquidation has been approved,
+                now we need to change the following from sending
+                tokens and ether to a recipent, but rather 
+                deposit tokens to a decentralized exchange
+                and then make a trade offer for the
+                deposited amount which is l.tokens (volume),
+                and at a price of l.etherAmount (price)
+            */
+
             if (!l.recipient.call.value(l.tokens)(transactionBytecode)) {
                 throw;
             }
@@ -309,5 +319,17 @@ contract Club is owned, tokenRecipient {
         }
         // Fire Events
         ProposalTallied(liquidationNumber, 1, quorum, l.liquidationPassed);
+    }
+    
+    function getTokenAmount(uint liquidationID) returns (uint) {
+        Liquidation l = liquidations[liquidationID];
+        if(l.executed != true) throw;
+        return l.tokens;
+    }
+    
+    function getEtherAmount(uint liquidationID) returns (uint) {
+        Liquidation l = liquidations[liquidationID];
+        if(l.executed != true) throw;
+        return l.etherAmount;
     }
 }

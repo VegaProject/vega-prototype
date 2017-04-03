@@ -3,6 +3,7 @@ pragma solidity ^0.4.8;
 import './deps/StandardToken.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
+import './Club.sol';
 
 /*
  * Vega Token
@@ -25,21 +26,30 @@ import './IncomingMigrationTokenInterface.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
-   address public projectAddr;
-   address public liquidateAddr;
-   address public investedAddr;
-
+   address public clubAddress;
+   Club public sharesClubTokenAddress;
+   
+   uint id = Club.liquidations[0];
+   
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
      _;
    }
 
-   function VegaToken(address _migrationMaster) {
+   function VegaToken(address _migrationMaster, address _clubAddress) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
+     sharesClubTokenAddress = Club(clubAddress);
    }
+   
+   function SellProjectTokens(uint liquidationID) {
+      uint volume = Club.getTokenAmount(liquidationID);
+      uint etherAmount = Club.getEtherAmount(liquidationID);
+      /* use the volume and etherAmount above to deposit, make trade offer, and withdrawl from ether delta
+   }
+   
 
    // just for testing
    function () payable {
@@ -53,16 +63,11 @@ import './IncomingMigrationTokenInterface.sol';
      migrationMaster = _master;
    }
 
-   function changeLiquidateAddr(address _liquidateAddr) onlyFromMigrationMaster external {
-     if(_liquidateAddr == 0) throw;
-     liquidateAddr = _liquidateAddr;
+   function changeClubAddr(address _clubAddress) onlyFromMigrationMaster external {
+     if(_clubAddress == 0) throw;
+     clubAddress = _clubAddress;
    }
-
-   function changeInvestedAddr(address _investedAddr) onlyFromMigrationMaster external {
-     if(_investedAddr == 0) throw;
-     investedAddr = _investedAddr;
-   }
-
+   
    function finalizeOutgoingMigration() onlyFromMigrationMaster external {
      if (!allowOutgoingMigrations) throw;
      if (now < allowOutgoingMigrationsUntilAtLeast) throw;
