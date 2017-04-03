@@ -13,48 +13,11 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 #### Resources
 - [Slack](https://vega-fund.slack.com/shared_invite/MTUxOTE1MDQ2OTk5LTE0ODg5NDQ4MzItMWFhNGE1YjhhMA)
 - [White Paper](https://docs.google.com/document/d/1rgMqqoE7NNTPCLEGyCSBfYW39hqAPEi0U6tS105-U3g/edit)
+- [Wiki](https://github.com/VegaProject/wiki/wiki)
 
 #### Status
 - Pre-alpha
 - Note: Import files may not be correct in this version because of testing using browser solidity.
 
-#### Contracts Overview
-- VegaToken: token functions, ownership
-- Project: create proposals, to Vega platform contracts
-- Liquidate: options to liquidate project positions via decentralized exchange EtherDelta
-
-#### Projects
-- Access to capital
-- Funding options
-- Click and create a funding contract
-- Security
-- Backing of the Vega community
-- Multiple rounds of funding
-
-#### Investors
-- Project diversification
-- Milestone based
-- Flexibility of active to passive participation
-- Multiple funding contracts available
-- Access and exposure to a new asset class
-- Price discovery
-- Exchangable and divisible Interest
-
-#### Managers / Proxy Voters / Syndicates
-- Access to deal flow
-- Performance based rewards
-- Immutible track record
-- Low start up costs, eliminating the need to charge a management fee
-
-#### Developers
-- Bounties and reward programs
-- Value creation
-- Involved development
-
-#### Regulators
-- Safer investment in the Token Launch space
-- Transparency
-- Security
----
 #### License
 - [MIT](https://github.com/VegaProject/vega/blob/master/LICENSE)
