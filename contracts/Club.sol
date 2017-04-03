@@ -43,7 +43,6 @@ contract Token {
 contract Club is owned, tokenRecipient {
 
     /* Contract Variables and events */
-    address public trader;
     uint public minimumQuorum;
     uint public debatingPeriodInMinutes;
     Proposal[] public proposals;
@@ -161,8 +160,7 @@ contract Club is owned, tokenRecipient {
         l.numberOfVotes = 0;
         LiquidationAdded(liquidationID, proposalID, etherAmount, tokens);       // create event at the top
         numLiquidations = liquidationID+1;
-        l.recipient = trader;
-        
+
         return liquidationID;
     }
 
@@ -309,10 +307,10 @@ contract Club is owned, tokenRecipient {
                 deposited amount which is l.tokens (volume),
                 and at a price of l.etherAmount (price)
             */
-
+/*
             if (!l.recipient.call.value(l.tokens)(transactionBytecode)) {
                 throw;
-            }
+            }*/
             l.liquidationPassed = true;
         } else {
             l.liquidationPassed = false;

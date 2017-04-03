@@ -29,8 +29,7 @@ import './Club.sol';
    address public clubAddress;
    Club public sharesClubTokenAddress;
    
-   uint id = Club.liquidations[0];
-   
+
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
      _;
@@ -45,9 +44,9 @@ import './Club.sol';
    }
    
    function SellProjectTokens(uint liquidationID) {
-      uint volume = Club.getTokenAmount(liquidationID);
-      uint etherAmount = Club.getEtherAmount(liquidationID);
-      /* use the volume and etherAmount above to deposit, make trade offer, and withdrawl from ether delta
+      uint volume = sharesClubTokenAddress.getTokenAmount(liquidationID);
+      uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);
+      /* use the volume and etherAmount above to deposit, make trade offer, and withdrawl from ether delta */
    }
    
 
