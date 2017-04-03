@@ -1,4 +1,4 @@
-pragma solidity ^0.4.2;
+pragma solidity ^0.4.8;
 /* The token is used as a voting shares */
 contract token { mapping (address => uint256) public balanceOf;  }
 
@@ -38,6 +38,14 @@ contract tokenRecipient {
 contract Token {
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
 }
+
+/*
+ * The Club allows members to
+ * create proposals, vote on
+ * proposals, create liquidations,
+ * and vote on liquidations.
+ */
+
 
 /* The democracy contract itself */
 contract Club is owned, tokenRecipient {
@@ -117,10 +125,7 @@ contract Club is owned, tokenRecipient {
         uint liquidateDate,
         string JobDescription,
         bytes transactionBytecode
-    )
-        onlyShareholders
-        returns (uint proposalID)
-    {
+    ) onlyShareholders returns (uint proposalID) {
         proposalID = proposals.length++;
         Proposal p = proposals[proposalID];
         p.recipient = beneficiary;
@@ -143,10 +148,7 @@ contract Club is owned, tokenRecipient {
         uint etherAmount,
         uint tokens,
         bytes transactionBytecode
-    )
-        onlyShareholders
-        returns (uint liquidationID)
-    {
+    ) onlyShareholders returns (uint liquidationID) {
         
         liquidationID = liquidations.length++;
         Liquidation l = liquidations[liquidationID];
@@ -171,10 +173,7 @@ contract Club is owned, tokenRecipient {
         uint etherAmount,
         uint liquidateDate,
         bytes transactionBytecode
-    )
-        constant
-        returns (bool codeChecksOut)
-    {
+    ) constant returns (bool codeChecksOut) {
         Proposal p = proposals[proposalNumber];
         return p.proposalHash == sha3(beneficiary, etherAmount, liquidateDate, transactionBytecode);
     }
@@ -185,19 +184,13 @@ contract Club is owned, tokenRecipient {
         uint etherAmount,
         uint tokens,
         bytes transactionBytecode
-    )
-        constant
-        returns (bool codeChecksOut)
-    {
+    ) constant returns (bool codeChecksOut) {
         Liquidation l = liquidations[liquidationNumber];
         return l.liquidationHash == sha3(proposalID, etherAmount, tokens, transactionBytecode);
     }
 
     /* */
-    function vote(uint proposalNumber, bool supportsProposal)
-        onlyShareholders
-        returns (uint voteID)
-    {
+    function vote(uint proposalNumber, bool supportsProposal) onlyShareholders returns (uint voteID) {
         Proposal p = proposals[proposalNumber];
         if (p.voted[msg.sender] == true) throw;
 
@@ -209,10 +202,7 @@ contract Club is owned, tokenRecipient {
         return voteID;
     }
     
-    function liquidateVote(uint liquidatationNumber, bool supportsLiquidation)
-        onlyShareholders
-        returns (uint voteID)
-    {
+    function liquidateVote(uint liquidatationNumber, bool supportsLiquidation) onlyShareholders returns (uint voteID) {
         Liquidation l = liquidations[liquidatationNumber];
         if(l.voted[msg.sender] == true) throw;
         
@@ -224,7 +214,6 @@ contract Club is owned, tokenRecipient {
         return voteID;
     }
     
-
     function executeProposal(uint proposalNumber, bytes transactionBytecode) {
         Proposal p = proposals[proposalNumber];
         /* Check if the proposal can be executed */
@@ -298,19 +287,6 @@ contract Club is owned, tokenRecipient {
         } else if (yea > nay ) {
             /* has quorum and was approved */
             l.executed = true;
-            
-            /* At this point the liquidation has been approved,
-                now we need to change the following from sending
-                tokens and ether to a recipent, but rather 
-                deposit tokens to a decentralized exchange
-                and then make a trade offer for the
-                deposited amount which is l.tokens (volume),
-                and at a price of l.etherAmount (price)
-            */
-/*
-            if (!l.recipient.call.value(l.tokens)(transactionBytecode)) {
-                throw;
-            }*/
             l.liquidationPassed = true;
         } else {
             l.liquidationPassed = false;
@@ -318,6 +294,8 @@ contract Club is owned, tokenRecipient {
         // Fire Events
         ProposalTallied(liquidationNumber, 1, quorum, l.liquidationPassed);
     }
+
+    /* Change to one function later, not nessary rn */
     
     function getTokenAmount(uint liquidationID) returns (uint) {
         Liquidation l = liquidations[liquidationID];

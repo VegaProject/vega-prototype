@@ -8,8 +8,8 @@ import './Club.sol';
 /*
  * Vega Token
  * ERC20 Token standard provided by OpenZeppelin.
- Note: When tokens are send to the investedAddr, that amount has been invested, and now the fund has
- the ability to sell those tokens to raise additional capital
+ * Note: When tokens are send to the investedAddr, that amount has been invested, and now the fund has
+ * the ability to sell those tokens to raise additional capital
  */
 
  contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
@@ -48,7 +48,6 @@ import './Club.sol';
       uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);
       /* use the volume and etherAmount above to deposit, make trade offer, and withdrawl from ether delta */
    }
-   
 
    // just for testing
    function () payable {
