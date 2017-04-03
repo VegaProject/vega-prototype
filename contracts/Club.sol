@@ -5,7 +5,6 @@ import './VegaToken.sol';
 
 // I do not think the replacement to VegaToken as a whole changes anything, but keeping in comments just in case.
 //contract token { mapping (address => uint256) public balanceOf;  }
-
 /*contract tokenRecipient { 
     event receivedEther(address sender, uint amount);
     event receivedTokens(address _from, uint256 _value, address _token, bytes _extraData);
@@ -36,6 +35,7 @@ contract Token {
 
 
 /* The democracy contract itself */
+
 contract Club is Ownable {
 
     /* Contract Variables and events */

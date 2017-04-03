@@ -1,0 +1,5 @@
+1. When funds are send to a receipient, tokens are created and sent to the Vega Token contract.
+2. When a liquidation proposal is executed, anyone can call a sell function on the Vega Token contract to make a trade offer on EtherDelta.
+
+
+Code API calls to EtherDelta to execute a trade offer. (Vega Token contract)
