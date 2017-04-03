@@ -2,7 +2,6 @@ pragma solidity ^0.4.8;
 /* The token is used as a voting shares */
 contract token { mapping (address => uint256) public balanceOf;  }
 
-/* define 'owned' */
 contract owned {
     address public owner;
 

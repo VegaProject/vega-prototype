@@ -8,8 +8,15 @@ import './Club.sol';
 /*
  * Vega Token
  * ERC20 Token standard provided by OpenZeppelin.
- * Note: When tokens are send to the investedAddr, that amount has been invested, and now the fund has
- * the ability to sell those tokens to raise additional capital
+ * Note: When creating this contract, it needs to know
+ * the address of the Club contract. The Club contract
+ * when it is created needs to know the VegaToken contract
+ * address. Just simply create the VegaToken contract
+ * first with a incorect Club contract address, create
+ * the Club contract with the VegaToken address, then go
+ * back to the VegaToken contract and perform a change
+ * to add the real address of the Club to the VegaToken
+ * contract.
  */
 
  contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
