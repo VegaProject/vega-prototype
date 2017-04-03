@@ -1,8 +1,8 @@
 pragma solidity ^0.4.8;
-/* The token is used as a voting shares */
-contract token { mapping (address => uint256) public balanceOf;  }
 
 import './deps/Ownable.sol';
+
+contract token { mapping (address => uint256) public balanceOf;  }
 
 contract tokenRecipient { 
     event receivedEther(address sender, uint amount);
