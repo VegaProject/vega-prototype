@@ -8,7 +8,7 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 
 ----
 #### Documentation
-[- README.IO](https://vega.readme.io/docs)
+- [README.IO](https://vega.readme.io/docs)
 ---
 #### Resources
 - [Slack](https://vega-fund.slack.com/shared_invite/MTUxOTE1MDQ2OTk5LTE0ODg5NDQ4MzItMWFhNGE1YjhhMA)
