@@ -5,3 +5,8 @@
 Code API calls to EtherDelta to execute a trade offer. (Vega Token contract)
 
 remove trader form Club
+
+Make method to check when a transfer or transfer from happens, check if the msg.sender has voted, fire event to update
+
+
+Update
