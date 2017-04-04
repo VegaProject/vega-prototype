@@ -121,7 +121,7 @@ contract Club is Ownable {
         p.amount = etherAmount;
         p.maturity = liquidateDate;
         p.description = JobDescription;
-        p.proposalHash = sha3(beneficiary, etherAmount, transactionBytecode);
+        p.proposalHash = sha3(beneficiary, etherAmount, liquidateDate, transactionBytecode);
         p.votingDeadline = now + debatingPeriodInMinutes * 1 minutes;
         p.executed = false;
         p.proposalPassed = false;
@@ -296,5 +296,12 @@ contract Club is Ownable {
         Liquidation l = liquidations[liquidationID];
         if(l.executed != true) throw;
         return l.etherAmount;
+    }
+    
+    function getTokenAddress(uint liquidationID) constant returns (address) {
+        Liquidation l = liquidations[liquidationID];
+        if(l.executed != true) throw;
+        Proposal p = proposals[l.proposalID];
+        return p.recipient;
     }
 }

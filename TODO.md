@@ -3,3 +3,5 @@
 
 
 Code API calls to EtherDelta to execute a trade offer. (Vega Token contract)
+
+remove trader form Club

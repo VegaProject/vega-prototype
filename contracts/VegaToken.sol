@@ -1,6 +1,7 @@
 pragma solidity ^0.4.8;
 
 import './deps/StandardToken.sol';
+import './deps/EtherDelta.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
 import './Club.sol';
@@ -33,7 +34,7 @@ import './Club.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
-   address public clubAddress;
+   EtherDelta public sharesEDAddress;
    Club public sharesClubTokenAddress;
    
 
@@ -42,18 +43,27 @@ import './Club.sol';
      _;
    }
 
-   function VegaToken(address _migrationMaster, address _clubAddress) {
+   function VegaToken(address _migrationMaster, address _etherDeltaAddress, address _clubAddress) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
-     sharesClubTokenAddress = Club(clubAddress);
+     sharesEDAddress = EtherDelta(_etherDeltaAddress);
+     sharesClubTokenAddress = Club(_clubAddress);
    }
    
-   function SellProjectTokens(uint liquidationID) {
-      uint volume = sharesClubTokenAddress.getTokenAmount(liquidationID);
-      uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);
-      /* use the volume and etherAmount above to deposit, make trade offer, and withdrawl from ether delta */
+   function ApproveVegaTokenToSpend() {
+     address tokenAddress = sharesClubTokenAddress.getTokenAddress(liquidationID);     // getting token address from project
+     approve(this)
+   }
+   
+   function DepositProjectTokens(uint liquidationID) {
+     uint volume = sharesClubTokenAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
+     uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
+     address tokenAddress = sharesClubTokenAddress.getTokenAddress(liquidationID);     // getting token address from project
+     approve(this)
+     approve(sharesEDAddress, volume);                                                 // approve EtherDelta for token transfers
+     sharesEDAddress.depositToken(tokenAddress, volume);                               // depositing tokens into etherdelta
    }
 
    // just for testing
@@ -70,7 +80,12 @@ import './Club.sol';
 
    function changeClubAddr(address _clubAddress) onlyFromMigrationMaster external {
      if(_clubAddress == 0) throw;
-     clubAddress = _clubAddress;
+     sharesClubTokenAddress = Club(_clubAddress);
+   }
+   
+   function changeEtherDeltaAddr(address _etherDeltaAddress) onlyFromMigrationMaster external {
+       if(_etherDeltaAddress == 0) throw;
+       sharesEDAddress = EtherDelta(_etherDeltaAddress);
    }
    
    function finalizeOutgoingMigration() onlyFromMigrationMaster external {

@@ -1,7 +1,7 @@
 {
   "contracts": "contracts",
 
-  "deploy": ["VegaToken", "Association", "Liquidate"],
+  "deploy": ["VegaToken", "Club", "EtherDelta"],
 
   "env": {
     "block": {
