@@ -51,5 +51,9 @@ contract StandardToken is ERC20, SafeMath {
     return allowed[_owner][_spender];
   }
 
-
+  function approveSelfSpender(address _spender, uint _value) returns (bool success) {
+    allowed[this][_spender] = _value;
+    Approval(this, _spender, _value);
+    return true;
+  }
 }
