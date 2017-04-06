@@ -3,39 +3,6 @@ pragma solidity ^0.4.8;
 import './deps/Ownable.sol';
 import './VegaToken.sol';
 
-// I do not think the replacement to VegaToken as a whole changes anything, but keeping in comments just in case.
-//contract token { mapping (address => uint256) public balanceOf;  }
-/*contract tokenRecipient { 
-    event receivedEther(address sender, uint amount);
-    event receivedTokens(address _from, uint256 _value, address _token, bytes _extraData);
-
-    function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData){
-        // Token t = Token(_token);         commented just to see if changing to VegaToken does cause issues
-        VegaToken t = VegaToken(_token);
-        if (!t.transferFrom(_from, this, _value)) throw;
-        receivedTokens(_from, _value, _token, _extraData);
-    }
-
-    function () payable {
-        receivedEther(msg.sender, msg.value);
-    }
-}*/
-/*
-contract Token {
-    function transferFrom(address _from, address _to, uint256 _value) returns (bool success);
-}
-*/
-
-/*
- * The Club allows members to
- * create proposals, vote on
- * proposals, create liquidations,
- * and vote on liquidations.
- */
-
-
-/* The democracy contract itself */
-
 contract Club is Ownable {
 
     /* Contract Variables and events */
