@@ -57,7 +57,7 @@ import './Club.sol';
      uint volume = sharesClubTokenAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
      uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
      address tokenAddress = sharesClubTokenAddress.getTokenAddress(liquidationID);     // getting token address from project
-     //approveSelfSpender(sharesClubTokenAddress, volue);                                // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
+     approveSelfSpender(sharesClubTokenAddress, volume);                                // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
      sharesEDAddress.depositToken(tokenAddress, volume);                               // depositing tokens into etherdelta
    }
 
