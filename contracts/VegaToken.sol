@@ -53,13 +53,18 @@ import './Club.sol';
    }
    
 
-   function DepositProjectTokens(uint liquidationID) {
+   function DepositAndCreateOrderProjectTokens(uint liquidationID) {
      uint volume = sharesClubTokenAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
      uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
      address tokenAddress = sharesClubTokenAddress.getTokenAddress(liquidationID);     // getting token address from project
      approveSelfSpender(sharesEDAddress, volume);                                      // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
      sharesEDAddress.depositToken(tokenAddress, volume);                               // depositing tokens into etherdelta, needed the approval from the line above
+    // order();
    }
+     //function order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce) {}
+
+   
+   
 
    // just for testing
    function () payable {
