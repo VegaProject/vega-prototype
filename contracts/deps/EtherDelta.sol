@@ -1,11 +1,11 @@
-pragma solidity ^0.4.9;
+pragma solidity ^0.4.8;
 
 /*
  * EtherDelta interface
  */
 
 contract EtherDelta {
-  
+
   function deposit() payable {}
 
   function withdraw(uint amount) {}

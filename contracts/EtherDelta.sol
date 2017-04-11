@@ -1,4 +1,4 @@
-pragma solidity ^0.4.9;
+pragma solidity ^0.4.8;
 
 contract SafeMath {
   function safeMul(uint a, uint b) internal returns (uint) {
