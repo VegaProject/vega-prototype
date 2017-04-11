@@ -3,6 +3,7 @@ pragma solidity ^0.4.8;
 
 import './ERC20.sol';
 import './SafeMath.sol';
+import './ds-auth';
 
 
 /**
@@ -12,19 +13,33 @@ import './SafeMath.sol';
  * Based on code by FirstBlood:
  * https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
  */
-contract StandardToken is ERC20, SafeMath {
+contract StandardToken is DSAuth, ERC20, SafeMath {
 
   mapping(address => uint) balances;
   mapping (address => mapping (address => uint)) allowed;
+  bool public  stopped;
 
-  function transfer(address _to, uint _value) returns (bool success) {
+  modifier stoppable {
+    assert (!stopped);
+    _;
+  }
+
+  function stop() auth {
+    stopped = true;
+  }
+
+  function start() auth {
+    stopped = false;
+  }
+
+  function transfer(address _to, uint _value) stoppable returns (bool success) {
     balances[msg.sender] = safeSub(balances[msg.sender], _value);
     balances[_to] = safeAdd(balances[_to], _value);
     Transfer(msg.sender, _to, _value);
     return true;
   }
 
-  function transferFrom(address _from, address _to, uint _value) returns (bool success) {
+  function transferFrom(address _from, address _to, uint _value) stoppable returns (bool success) {
     var _allowance = allowed[_from][msg.sender];
 
     // Check is not needed because safeSub(_allowance, _value) will already throw if this condition is not met

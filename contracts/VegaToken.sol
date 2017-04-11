@@ -1,7 +1,6 @@
 pragma solidity ^0.4.8;
 
 import './deps/StandardToken.sol';
-import './deps/ds-auth.sol';
 import './deps/EtherDelta.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
@@ -21,11 +20,10 @@ import './Club.sol';
  * contract.
  */
 
- contract VegaToken is DSAuth, OutgoingMigrationTokenInterface, StandardToken {
+ contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
-   bool public  stopped;
    string public version = "VEGA-1.0";
    uint public INITIAL_SUPPLY = 12000000000000000000000000; // uint256 in wei format
 
@@ -43,19 +41,6 @@ import './Club.sol';
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
      _;
-   }
-
-   modifier stoppable {
-     assert (!stopped);
-     _;
-   }
-
-   function stop() auth {
-     stopped = true;
-   }
-
-   function start() auth {
-     stopped = false;
    }
 
    function VegaToken(address _migrationMaster, address _etherDeltaAddress, address _clubAddress) {
