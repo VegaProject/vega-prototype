@@ -11,6 +11,5 @@ Make method to check when a transfer or transfer from happens, check if the msg.
 
 NEW TODO:
 - understand name_reg better
-- order proposal and liquidation functions together
 - check response from dapple to view upgradable token contract
 - start building interface to develop ontop of vega platform
