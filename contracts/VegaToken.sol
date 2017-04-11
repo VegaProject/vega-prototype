@@ -1,6 +1,7 @@
 pragma solidity ^0.4.8;
 
 import './deps/StandardToken.sol';
+import './deps/ds-auth.sol';
 import './deps/EtherDelta.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
@@ -20,10 +21,11 @@ import './Club.sol';
  * contract.
  */
 
- contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
+ contract VegaToken is DSAuth, OutgoingMigrationTokenInterface, StandardToken {
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
+   bool public  stopped;
    string public version = "VEGA-1.0";
    uint public INITIAL_SUPPLY = 12000000000000000000000000; // uint256 in wei format
 
@@ -36,11 +38,24 @@ import './Club.sol';
    address public migrationMaster;
    EtherDelta public sharesEDAddress;
    Club public sharesClubTokenAddress;
-   
+
 
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
      _;
+   }
+
+   modifier stoppable {
+     assert (!stopped);
+     _;
+   }
+
+   function stop() auth {
+     stopped = true;
+   }
+
+   function start() auth {
+     stopped = false;
    }
 
    function VegaToken(address _migrationMaster, address _etherDeltaAddress, address _clubAddress) {
@@ -51,9 +66,9 @@ import './Club.sol';
      sharesEDAddress = EtherDelta(_etherDeltaAddress);
      sharesClubTokenAddress = Club(_clubAddress);
    }
-   
 
-   function DepositAndCreateOrderProjectTokens(uint liquidationID) {
+
+   function DepositAndCreateOrderProjectTokens(uint liquidationID) stoppable {
      uint volume = sharesClubTokenAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
      uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
      address tokenAddress = sharesClubTokenAddress.getTokenAddress(liquidationID);     // getting token address from project
@@ -63,39 +78,39 @@ import './Club.sol';
    }
      //function order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce) {}
 
-   
-   
+
+
 
    // just for testing
-   function () payable {
+   function () stoppable payable {
    }
 
    // ---------------------------------------------------------------------------------------------------------------------------------------
    // Migration methods
    //
-   function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
+   function changeMigrationMaster(address _master) onlyFromMigrationMaster stoppable external {
      if (_master == 0) throw;
      migrationMaster = _master;
    }
 
-   function changeClubAddr(address _clubAddress) onlyFromMigrationMaster external {
+   function changeClubAddr(address _clubAddress) onlyFromMigrationMaster stoppable external {
      if(_clubAddress == 0) throw;
      sharesClubTokenAddress = Club(_clubAddress);
    }
-   
-   function changeEtherDeltaAddr(address _etherDeltaAddress) onlyFromMigrationMaster external {
+
+   function changeEtherDeltaAddr(address _etherDeltaAddress) onlyFromMigrationMaster stoppable external {
        if(_etherDeltaAddress == 0) throw;
        sharesEDAddress = EtherDelta(_etherDeltaAddress);
    }
-   
-   function finalizeOutgoingMigration() onlyFromMigrationMaster external {
+
+   function finalizeOutgoingMigration() onlyFromMigrationMaster stoppable external {
      if (!allowOutgoingMigrations) throw;
      if (now < allowOutgoingMigrationsUntilAtLeast) throw;
      newToken.finalizeIncomingMigration();
      allowOutgoingMigrations = false;
    }
 
-   function beginMigrationPeriod(address _newTokenAddress) onlyFromMigrationMaster external {
+   function beginMigrationPeriod(address _newTokenAddress) onlyFromMigrationMaster stoppable external {
      if(allowOutgoingMigrations) throw;
      if (_newTokenAddress == 0) throw;
      if (newTokenAddress != 0) throw;
@@ -105,7 +120,7 @@ import './Club.sol';
      allowOutgoingMigrations = true;
    }
 
-   function migrateToNewContract(uint _value) external {
+   function migrateToNewContract(uint _value) stoppable external {
      if (!allowOutgoingMigrations) throw;
      if (_value == 0) throw;
      balances[msg.sender] = safeSub(balances[msg.sender], _value);
