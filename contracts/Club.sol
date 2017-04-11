@@ -99,29 +99,6 @@ contract Club is Ownable {
         return proposalID;
     }
     
-    function newLiquidation(
-        uint proposalID,
-        uint etherAmount,
-        uint tokens,
-        bytes transactionBytecode
-    ) onlyShareholders returns (uint liquidationID) {
-        
-        liquidationID = liquidations.length++;
-        Liquidation l = liquidations[liquidationID];
-        l.proposalID = proposalID;
-        l.etherAmount = etherAmount;
-        l.tokens = tokens;
-        l.liquidationHash = sha3(proposalID, etherAmount, tokens, transactionBytecode);
-        l.votingDeadline = now + debatingPeriodInMinutes * 1 minutes;
-        l.executed = false;
-        l.liquidationPassed = false;
-        l.numberOfVotes = 0;
-        LiquidationAdded(liquidationID, proposalID, etherAmount, tokens);       // create event at the top
-        numLiquidations = liquidationID+1;
-
-        return liquidationID;
-    }
-
     /* function to check if a proposal code matches */
     function checkProposalCode(
         uint proposalNumber,
@@ -134,17 +111,6 @@ contract Club is Ownable {
         return p.proposalHash == sha3(beneficiary, etherAmount, liquidateDate, transactionBytecode);
     }
     
-    function checkLiquidationCode(
-        uint liquidationNumber,
-        uint proposalID,
-        uint etherAmount,
-        uint tokens,
-        bytes transactionBytecode
-    ) constant returns (bool codeChecksOut) {
-        Liquidation l = liquidations[liquidationNumber];
-        return l.liquidationHash == sha3(proposalID, etherAmount, tokens, transactionBytecode);
-    }
-
     /* */
     function vote(uint proposalNumber, bool supportsProposal) onlyShareholders returns (uint voteID) {
         Proposal p = proposals[proposalNumber];
@@ -155,18 +121,6 @@ contract Club is Ownable {
         p.voted[msg.sender] = true;
         p.numberOfVotes = voteID +1;
         Voted(proposalNumber,  supportsProposal, msg.sender);
-        return voteID;
-    }
-    
-    function liquidateVote(uint liquidatationNumber, bool supportsLiquidation) onlyShareholders returns (uint voteID) {
-        Liquidation l = liquidations[liquidatationNumber];
-        if(l.voted[msg.sender] == true) throw;
-        
-        voteID = l.votes.length++;
-        l.votes[voteID] = Vote({inSupport: supportsLiquidation, voter: msg.sender});
-        l.voted[msg.sender] = true;
-        l.numberOfVotes = voteID +1;
-        Voted(liquidatationNumber, supportsLiquidation, msg.sender);
         return voteID;
     }
     
@@ -210,6 +164,52 @@ contract Club is Ownable {
         }
         // Fire Events
         ProposalTallied(proposalNumber, 1, quorum, p.proposalPassed);
+    }
+    
+    function newLiquidation(
+        uint proposalID,
+        uint etherAmount,
+        uint tokens,
+        bytes transactionBytecode
+    ) onlyShareholders returns (uint liquidationID) {
+        
+        liquidationID = liquidations.length++;
+        Liquidation l = liquidations[liquidationID];
+        l.proposalID = proposalID;
+        l.etherAmount = etherAmount;
+        l.tokens = tokens;
+        l.liquidationHash = sha3(proposalID, etherAmount, tokens, transactionBytecode);
+        l.votingDeadline = now + debatingPeriodInMinutes * 1 minutes;
+        l.executed = false;
+        l.liquidationPassed = false;
+        l.numberOfVotes = 0;
+        LiquidationAdded(liquidationID, proposalID, etherAmount, tokens);       // create event at the top
+        numLiquidations = liquidationID+1;
+
+        return liquidationID;
+    }
+
+    function checkLiquidationCode(
+        uint liquidationNumber,
+        uint proposalID,
+        uint etherAmount,
+        uint tokens,
+        bytes transactionBytecode
+    ) constant returns (bool codeChecksOut) {
+        Liquidation l = liquidations[liquidationNumber];
+        return l.liquidationHash == sha3(proposalID, etherAmount, tokens, transactionBytecode);
+    }
+    
+    function liquidateVote(uint liquidatationNumber, bool supportsLiquidation) onlyShareholders returns (uint voteID) {
+        Liquidation l = liquidations[liquidatationNumber];
+        if(l.voted[msg.sender] == true) throw;
+        
+        voteID = l.votes.length++;
+        l.votes[voteID] = Vote({inSupport: supportsLiquidation, voter: msg.sender});
+        l.voted[msg.sender] = true;
+        l.numberOfVotes = voteID +1;
+        Voted(liquidatationNumber, supportsLiquidation, msg.sender);
+        return voteID;
     }
     
     function executeLiquidation(uint liquidationNumber, bytes transactionBytecode) {
