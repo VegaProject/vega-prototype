@@ -1,0 +1,25 @@
+{
+  "authors": [
+    "Nikolai Mushegian <nikolai@nexusdev.us>",
+    "Daniel Brockman <daniel@brockman.se>"
+  ],
+  "license": "Apache-2.0",
+  "description": "Basic Dappsys authorization components",
+  "keywords": [
+    "dappsys",
+    "auth",
+    "authorization",
+    "authentication",
+    "access control"
+  ],
+  "links": {},
+  "sources": [
+    "./contracts/DSAuth.sol",
+    "./contracts/DSAuthEvents.sol",
+    "./contracts/DSAuthority.sol"
+  ],
+  "dependencies": {},
+  "manifest_version": 1,
+  "package_name": "ds-auth",
+  "version": "0.6.0"
+}
