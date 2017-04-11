@@ -3,7 +3,7 @@ pragma solidity ^0.4.8;
 
 import './ERC20.sol';
 import './SafeMath.sol';
-import './ds-auth';
+import './ds-auth.sol';
 
 
 /**

@@ -18,6 +18,11 @@ import './Club.sol';
  * back to the VegaToken contract and perform a change
  * to add the real address of the Club to the VegaToken
  * contract.
+ *
+ * Idea behind stopable and migrations:
+ * When state is stoped, transfer, transferFrom, payable and trade functions no longer work.
+ * However migration functions still will work during a stoped state, therefore, tokens
+ * could transfered to a new contract provided by the migration master.
  */
 
  contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
@@ -73,29 +78,29 @@ import './Club.sol';
    // ---------------------------------------------------------------------------------------------------------------------------------------
    // Migration methods
    //
-   function changeMigrationMaster(address _master) onlyFromMigrationMaster stoppable external {
+   function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
      if (_master == 0) throw;
      migrationMaster = _master;
    }
 
-   function changeClubAddr(address _clubAddress) onlyFromMigrationMaster stoppable external {
+   function changeClubAddr(address _clubAddress) onlyFromMigrationMaster external {
      if(_clubAddress == 0) throw;
      sharesClubTokenAddress = Club(_clubAddress);
    }
 
-   function changeEtherDeltaAddr(address _etherDeltaAddress) onlyFromMigrationMaster stoppable external {
+   function changeEtherDeltaAddr(address _etherDeltaAddress) onlyFromMigrationMaster external {
        if(_etherDeltaAddress == 0) throw;
        sharesEDAddress = EtherDelta(_etherDeltaAddress);
    }
 
-   function finalizeOutgoingMigration() onlyFromMigrationMaster stoppable external {
+   function finalizeOutgoingMigration() onlyFromMigrationMaster external {
      if (!allowOutgoingMigrations) throw;
      if (now < allowOutgoingMigrationsUntilAtLeast) throw;
      newToken.finalizeIncomingMigration();
      allowOutgoingMigrations = false;
    }
 
-   function beginMigrationPeriod(address _newTokenAddress) onlyFromMigrationMaster stoppable external {
+   function beginMigrationPeriod(address _newTokenAddress) onlyFromMigrationMaster external {
      if(allowOutgoingMigrations) throw;
      if (_newTokenAddress == 0) throw;
      if (newTokenAddress != 0) throw;
@@ -105,7 +110,7 @@ import './Club.sol';
      allowOutgoingMigrations = true;
    }
 
-   function migrateToNewContract(uint _value) stoppable external {
+   function migrateToNewContract(uint _value) external {
      if (!allowOutgoingMigrations) throw;
      if (_value == 0) throw;
      balances[msg.sender] = safeSub(balances[msg.sender], _value);
