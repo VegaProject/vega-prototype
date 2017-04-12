@@ -17,6 +17,7 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 #### Getting started
 	git clone git@github.com:VegaProject/vega.git
 	npm install
+	cd vega
 	testrpc 						// do this in new terminal
 	truffle compile
 	npm run dev
