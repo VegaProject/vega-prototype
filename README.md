@@ -29,4 +29,4 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 - [Wiki](https://github.com/VegaProject/wiki/wiki)
 
 #### License
-- [MIT](https://github.com/VegaProject/vega/blob/master/LICENSE)
+[MIT](https://github.com/VegaProject/vega/blob/master/LICENSE)
