@@ -33,3 +33,5 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 
 
 [![Slack Status](http://chat.melonport.com/badge.svg)](http://chat.melonport.com)
+
+[![Slack Status](https://slack.vega-fund.com/badge.svg)](https://vega-fund.slack.com/shared_invite/MTY4MDA5MTAwOTYyLTE0OTE5NTkzNzAtMjlkMWRjM2FjMQ)
