@@ -21,7 +21,7 @@ contract EquityToken is StandardToken {
     symbol = _symbol;
     decimals = _decimals;
     price = _price;
-    max_supply = _max_supply;
+    max_supply = _max_issue;
   }
 
   function () payable {

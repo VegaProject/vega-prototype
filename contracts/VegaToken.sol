@@ -64,7 +64,7 @@ import './Club.sol';
      address tokenAddress = clubAddress.getTokenAddress(liquidationID);     // getting token address from project
      approveSelfSpender(EtherDeltaAddress, volume);                         // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
      EtherDeltaAddress.depositToken(tokenAddress, volume);                  // depositing tokens into etherdelta, needed the approval from the line above
-     EtherDeltaAddress.order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce);  // place order on ether delta
+     //EtherDeltaAddress.order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce);  // place order on ether delta
    }
    
    function WithdrawEther(uint liquidationID) onlyFromMigrationMaster stoppable {          // for now leave just for the migration master, untill better checks are in place, to authorize a withdrawl.
