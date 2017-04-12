@@ -67,11 +67,10 @@ import './Club.sol';
      EtherDeltaAddress.order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce);  // place order on ether delta
    }
    
-   function WithdrawEther(uint liquidationID) stoppable {
-     EtherDeltaAddress.withdraw(uint amount);
+   function WithdrawEther(uint liquidationID) onlyFromMigrationMaster stoppable {          // for now leave just for the migration master, untill better checks are in place, to authorize a withdrawl.
+     uint amount = EtherDeltaAddress.balanceOf(EtherDeltaAddress, this);                   // getting balanceOf Vega in EtherDelta token, my thought is in Ether, but not sure.
+     EtherDeltaAddress.withdraw(amount);                                                   // withdrawl that balance and send it back to this Vega contract
    }
-
-
 
 
    // just for testing
