@@ -2,7 +2,7 @@
 pragma solidity ^0.4.8;
 
 
-import "../deps/StandardToken.sol";
+import "./deps/StandardToken.sol";
 import "./LimitedTransferToken.sol";
 
 contract VestedToken is StandardToken, LimitedTransferToken {

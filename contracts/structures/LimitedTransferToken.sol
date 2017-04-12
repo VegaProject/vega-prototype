@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 
-import "../deps/ERC20.sol";
+import "./deps/ERC20.sol";
 
 /*
 
