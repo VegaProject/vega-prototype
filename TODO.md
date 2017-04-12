@@ -13,3 +13,4 @@ NEW TODO:
 - understand name_reg better
 - check response from dapple to view upgradable token contract
 - start building interface to develop ontop of vega platform
+- change name of edr shares, and ether delta address

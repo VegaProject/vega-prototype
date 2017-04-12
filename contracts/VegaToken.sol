@@ -39,7 +39,7 @@ import './Club.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
-   EtherDelta public sharesEDAddress;
+   EtherDelta public EtherDeltaAddress;
    Club public sharesClubTokenAddress;
 
 
@@ -53,7 +53,7 @@ import './Club.sol';
      migrationMaster = _migrationMaster;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
-     sharesEDAddress = EtherDelta(_etherDeltaAddress);
+     EtherDeltaAddress = EtherDelta(_etherDeltaAddress);
      sharesClubTokenAddress = Club(_clubAddress);
    }
 
@@ -62,8 +62,8 @@ import './Club.sol';
      uint volume = sharesClubTokenAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
      uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
      address tokenAddress = sharesClubTokenAddress.getTokenAddress(liquidationID);     // getting token address from project
-     approveSelfSpender(sharesEDAddress, volume);                                      // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
-     sharesEDAddress.depositToken(tokenAddress, volume);                               // depositing tokens into etherdelta, needed the approval from the line above
+     approveSelfSpender(EtherDeltaAddress, volume);                                    // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
+     EtherDeltaAddress.depositToken(tokenAddress, volume);                               // depositing tokens into etherdelta, needed the approval from the line above
     // order();
    }
      //function order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce) {}
@@ -90,7 +90,7 @@ import './Club.sol';
 
    function changeEtherDeltaAddr(address _etherDeltaAddress) onlyFromMigrationMaster external {
        if(_etherDeltaAddress == 0) throw;
-       sharesEDAddress = EtherDelta(_etherDeltaAddress);
+       EtherDeltaAddress = EtherDelta(_etherDeltaAddress);
    }
 
    function finalizeOutgoingMigration() onlyFromMigrationMaster external {
