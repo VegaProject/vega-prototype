@@ -40,7 +40,7 @@ import './Club.sol';
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
    EtherDelta public EtherDeltaAddress;
-   Club public sharesClubTokenAddress;
+   Club public clubAddress;
 
 
    modifier onlyFromMigrationMaster() {
@@ -54,14 +54,14 @@ import './Club.sol';
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
      EtherDeltaAddress = EtherDelta(_etherDeltaAddress);
-     sharesClubTokenAddress = Club(_clubAddress);
+     clubAddress = Club(_clubAddress);
    }
 
 
    function DepositAndCreateOrderProjectTokens(uint liquidationID) stoppable {
-     uint volume = sharesClubTokenAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
-     uint etherAmount = sharesClubTokenAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
-     address tokenAddress = sharesClubTokenAddress.getTokenAddress(liquidationID);     // getting token address from project
+     uint volume = clubAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
+     uint etherAmount = clubAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
+     address tokenAddress = clubAddress.getTokenAddress(liquidationID);     // getting token address from project
      approveSelfSpender(EtherDeltaAddress, volume);                                    // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
      EtherDeltaAddress.depositToken(tokenAddress, volume);                               // depositing tokens into etherdelta, needed the approval from the line above
     // order();
@@ -85,7 +85,7 @@ import './Club.sol';
 
    function changeClubAddr(address _clubAddress) onlyFromMigrationMaster external {
      if(_clubAddress == 0) throw;
-     sharesClubTokenAddress = Club(_clubAddress);
+     clubAddress = Club(_clubAddress);
    }
 
    function changeEtherDeltaAddr(address _etherDeltaAddress) onlyFromMigrationMaster external {
