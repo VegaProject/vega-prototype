@@ -7,6 +7,8 @@ Overview
 A decentralized, crowd-managed, venture capital and crowdfunding platform built on Ethereum, designed to leverage the impact of individual investors in the Ethereum-Based Token market. Investment decisions directed by a community of token holders taking advantage of the wisdom of the crowd effect. Focused on the investment of tokenized assets, without the need to charge a fee. A platform that provides the ICO market with deal structure standards that add value to both investors and startups.
 
 ----
+[![Build Status](https://travis-ci.org/VegaProject/wiki.svg?branch=master)](https://travis-ci.org/VegaProject/wiki)
+
 #### Status
 - Pre-alpha
 - Note: Import files may not be correct in this version because of testing using browser solidity.
@@ -30,10 +32,3 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 
 #### License
 [MIT](https://github.com/VegaProject/vega/blob/master/LICENSE)
-
-
-[![Slack Status](http://chat.melonport.com/badge.svg)](http://chat.melonport.com)
-
-[![Slack Status](https://slack.vega-fund.com/badge.svg)](https://vega-fund.slack.com/shared_invite/MTY4MDA5MTAwOTYyLTE0OTE5NTkzNzAtMjlkMWRjM2FjMQ)
-
-[![Build Status](https://travis-ci.org/VegaProject/wiki.svg?branch=master)](https://travis-ci.org/VegaProject/wiki)
