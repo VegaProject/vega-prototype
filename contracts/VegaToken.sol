@@ -19,7 +19,7 @@ import './Club.sol';
  * to add the real address of the Club to the VegaToken
  * contract.
  *
- * Idea behind stopable and migrations:
+ * Idea behind stoppable and migrations:
  * When state is stoped, transfer, transferFrom, payable and trade functions no longer work.
  * However migration functions still will work during a stoped state, therefore, tokens
  * could transfered to a new contract provided by the migration master.
@@ -62,11 +62,14 @@ import './Club.sol';
      uint volume = clubAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
      uint etherAmount = clubAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
      address tokenAddress = clubAddress.getTokenAddress(liquidationID);     // getting token address from project
-     approveSelfSpender(EtherDeltaAddress, volume);                                    // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
-     EtherDeltaAddress.depositToken(tokenAddress, volume);                               // depositing tokens into etherdelta, needed the approval from the line above
-    // order();
+     approveSelfSpender(EtherDeltaAddress, volume);                         // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
+     EtherDeltaAddress.depositToken(tokenAddress, volume);                  // depositing tokens into etherdelta, needed the approval from the line above
+     EtherDeltaAddress.order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce);  // place order on ether delta
    }
-     //function order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce) {}
+   
+   function WithdrawEther(uint liquidationID) stoppable {
+     EtherDeltaAddress.withdraw(uint amount);
+   }
 
 
 
