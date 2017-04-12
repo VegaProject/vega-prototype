@@ -5,6 +5,7 @@ import './deps/EtherDelta.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
 import './Club.sol';
+import './Mint.sol';
 
 /*
  * Vega Token
@@ -25,7 +26,7 @@ import './Club.sol';
  * could transfered to a new contract provided by the migration master.
  */
 
- contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
+ contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Mint {
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
@@ -56,8 +57,9 @@ import './Club.sol';
      EtherDeltaAddress = EtherDelta(_etherDeltaAddress);
      clubAddress = Club(_clubAddress);
    }
-
-
+   
+   /// EtherDelta exchange methods
+   ///---------------------------------------------------------------------------------------------------------------------------------------
    function DepositAndCreateOrderProjectTokens(uint liquidationID) stoppable {
      uint volume = clubAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
      uint etherAmount = clubAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
@@ -72,12 +74,7 @@ import './Club.sol';
      EtherDeltaAddress.withdraw(amount);                                                   // withdrawl that balance and send it back to this Vega contract
    }
 
-
-   // just for testing
-   function () stoppable payable {
-   }
-
-   // ---------------------------------------------------------------------------------------------------------------------------------------
+   ///---------------------------------------------------------------------------------------------------------------------------------------
    // Migration methods
    //
    function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
@@ -120,6 +117,17 @@ import './Club.sol';
      totalMigrated = safeAdd(totalMigrated, _value);
      newToken.migrateFromOldContract(msg.sender, _value);
      OutgoingMigration(msg.sender, _value);
+   }
+   
+   ///---------------------------------------------------------------------------------------------------------------------------------------
+   
+   
+   
+   
+   
+   
+   // just for testing
+   function () stoppable payable {
    }
 
 

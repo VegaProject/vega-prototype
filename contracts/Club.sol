@@ -22,6 +22,7 @@ contract Club is Ownable {
     event ChangeOfRules(uint minimumQuorum, uint debatingPeriodInMinutes, address sharesTokenAddress);
     
     struct Proposal {
+        address finder;
         address recipient;
         uint amount;
         uint maturity;          // time at which liquidation is an option
@@ -83,6 +84,7 @@ contract Club is Ownable {
     ) onlyShareholders returns (uint proposalID) {
         proposalID = proposals.length++;
         Proposal p = proposals[proposalID];
+        p.finder = msg.sender;
         p.recipient = beneficiary;
         p.amount = etherAmount;
         p.maturity = liquidateDate;
