@@ -19,7 +19,7 @@ contract Club is Ownable {
     event LiquidationAdded(uint liquidationID, uint proposalID, uint amount, uint tokens);
     event Voted(uint proposalID, bool position, address voter);
     event ProposalTallied(uint proposalID, int result, uint quorum, bool active);
-    event ChangeOfRules(uint minimumQuorum, uint debatingPeriodInMinutes, address sharesTokenAddress, address trader);
+    event ChangeOfRules(uint minimumQuorum, uint debatingPeriodInMinutes, address sharesTokenAddress);
     
     struct Proposal {
         address recipient;
@@ -60,18 +60,17 @@ contract Club is Ownable {
     }
 
     /* First time setup */
-    function Club(VegaToken sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate, address trader) payable {
-        changeVotingRules(sharesAddress, minimumSharesToPassAVote, minutesForDebate, trader);
+    function Club(VegaToken sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate) payable {
+        changeVotingRules(sharesAddress, minimumSharesToPassAVote, minutesForDebate);
     }
 
     /*change rules*/
-    function changeVotingRules(VegaToken sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate, address trader) onlyOwner {
+    function changeVotingRules(VegaToken sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate) onlyOwner {
         sharesTokenAddress = VegaToken(sharesAddress);
         if (minimumSharesToPassAVote == 0 ) minimumSharesToPassAVote = 1;
         minimumQuorum = minimumSharesToPassAVote;
         debatingPeriodInMinutes = minutesForDebate;
-        trader = trader;
-        ChangeOfRules(minimumQuorum, debatingPeriodInMinutes, sharesTokenAddress, trader);
+        ChangeOfRules(minimumQuorum, debatingPeriodInMinutes, sharesTokenAddress);
     }
 
     /* Function to create a new proposal */
