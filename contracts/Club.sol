@@ -339,6 +339,7 @@ contract Club is Ownable {
         ProposalTallied(findersNumber, 1, quorum, fP.findersPassed);
     }
 
+    
     /* Change to single functions later, not nessary rn */
     
     function getTokenAmount(uint liquidationID) returns (uint) {
