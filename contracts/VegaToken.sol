@@ -5,7 +5,6 @@ import './deps/EtherDelta.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
 import './Club.sol';
-import './Mint.sol';
 
 /*
  * Vega Token
@@ -26,7 +25,7 @@ import './Mint.sol';
  * could transfered to a new contract provided by the migration master.
  */
 
- contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Mint {
+ contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
@@ -74,9 +73,8 @@ import './Mint.sol';
      EtherDeltaAddress.withdraw(amount);                                                   // withdrawl that balance and send it back to this Vega contract
    }
 
-   ///---------------------------------------------------------------------------------------------------------------------------------------
    // Migration methods
-   //
+   ///---------------------------------------------------------------------------------------------------------------------------------------
    function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
      if (_master == 0) throw;
      migrationMaster = _master;
@@ -119,14 +117,20 @@ import './Mint.sol';
      OutgoingMigration(msg.sender, _value);
    }
    
+   /// Finder reward methods
    ///---------------------------------------------------------------------------------------------------------------------------------------
+   function rewardFinder(uint proposalID) {
+     address finder = clubAddress.getFinder(proposalID);
+     uint amount = clubAddress.findersFee();
+     balances[finder] = safeAdd(balances[finder], amount);
+     totalSupply = safeAdd(totalSupply, amount);
+   }
    
    
    
-   
-   
-   
-   // just for testing
+   /// ()
+   ///---------------------------------------------------------------------------------------------------------------------------------------
+   // just for testing as of now
    function () stoppable payable {
    }
 
