@@ -20,7 +20,7 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 	cd vega
 	testrpc 						// do this in new terminal
 	truffle compile
-	npm run dev
+	npm start
 	
 
 #### Resources
