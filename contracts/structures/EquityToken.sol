@@ -1,12 +1,12 @@
 pragma solidity ^0.4.8;
 
-import "../deps/StandardToken.sol";
+import "./VestedToken.sol";
 /*
  * CrowdsaleToken
  *
  * Simple ERC20 Token example, with crowdsale token creation
  */
-contract EquityToken is StandardToken {
+contract EquityToken is VestedToken {
 
   string public name;
   string public symbol;

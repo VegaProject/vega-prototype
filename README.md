@@ -9,9 +9,7 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 ----
 
 #### Status
-[![Build Status](https://travis-ci.org/VegaProject/wiki.svg?branch=master)](https://travis-ci.org/VegaProject/wiki)
 - Pre-alpha
-- Note: Import files may not be correct in this version because of testing using browser solidity.
 
 #### Documentation
 - [README.IO](https://vega.readme.io/docs)
