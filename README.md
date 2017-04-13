@@ -12,16 +12,19 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 - Pre-alpha
 
 #### Documentation
-- [README.IO](https://vega.readme.io/docs)
+- [Build from source](https://github.com/VegaProject/wiki/wiki/Install-and-Build)
+- [Ubuntu]()
+- [NPM]()
 
-#### Getting started
+----
+#### Quick start
 	git clone git@github.com:VegaProject/vega.git
-	npm install
 	cd vega
+	npm install
 	testrpc 						// do this in new terminal
 	truffle compile
 	npm start
-	
+---	
 
 #### Resources
 - [Slack](https://vega-fund.slack.com/shared_invite/MTUxOTE1MDQ2OTk5LTE0ODg5NDQ4MzItMWFhNGE1YjhhMA)
