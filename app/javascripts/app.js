@@ -17,6 +17,7 @@ var accounts;
 var account;
 
 window.App = {
+
   start: function() {
     var self = this;
 
@@ -138,9 +139,25 @@ window.App = {
       console.log(e);
       self.setStatus("Error approving spender; see log.");
     });
+  },
+
+  changeMigrationMaster: function(master) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.changeMigrationMaster(master, {from: account});
+    }).then(function() {
+      self.setStatus("approved self spender complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error approving spender; see log.");
+    });
   }
-
-
 
 }
 
