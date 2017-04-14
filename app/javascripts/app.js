@@ -5,7 +5,7 @@ import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
-import vega_artifacts from '../../build/contracts/VegaToken.json'
+import vega_artifacts from '../../build/contracts/VegaToken.json';
 
 // MetaCoin is our usable abstraction, which we'll use through the code below.
 var VegaToken = contract(vega_artifacts);
@@ -104,4 +104,3 @@ window.addEventListener('load', function() {
 
   App.start();
 });
-
