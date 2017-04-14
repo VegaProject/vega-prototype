@@ -88,6 +88,8 @@ window.App = {
   transferFrom: function(from, to, value) {
     var self = this;
 
+    this.setStatus("Initiating transaction... (moving tokenes through the net..)");
+
     var vega;
     VegaToken.deployed().then(function(instance) {
       vega = instance;
@@ -105,12 +107,32 @@ window.App = {
   approve: function(spender, value) {
     var self = this;
 
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
     var vega;
     VegaToken.deployed().then(function(instance) {
       vega = instance;
       return vega.approve(spender, value, {from: account});
     }).then(function() {
       self.setStatus("approved spender complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error approving spender; see log.");
+    });
+  },
+
+  approveSelfSpender: function(spender, value) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.approveSelfSpender(spender, value, {from: account});
+    }).then(function() {
+      self.setStatus("approved self spender complete!");
       self.refreshBalance();
     }).catch(function(e) {
       console.log(e);
