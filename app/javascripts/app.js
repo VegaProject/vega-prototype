@@ -151,14 +151,31 @@ window.App = {
       vega = instance;
       return vega.changeMigrationMaster(master, {from: account});
     }).then(function() {
-      self.setStatus("approved self spender complete!");
+      self.setStatus("Migration master change complete!");
       self.refreshBalance();
     }).catch(function(e) {
       console.log(e);
-      self.setStatus("Error approving spender; see log.");
+      self.setStatus("Error changing migration master; see log.");
     });
-  }
+  },
 
+  changeClubAddr: function(addr) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.changeMigrationMaster(master, {from: account});
+    }).then(function() {
+      self.setStatus("Club address change complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error changing club address; see log.");
+    })
+  }
 }
 
 
