@@ -5,7 +5,7 @@ var IncomingMigrationTokenInterface = artifacts.require("./IncomingMigrationToke
 var OutgoingMigrationTokenInterface = artifacts.require("./OutgoingMigrationTokenInterface.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(VegaToken);
+  deployer.deploy(VegaToken, web3.eth.accounts[0], web3.eth.accounts[0], web3.eth.accounts[0]);
   deployer.deploy(Club);
   deployer.deploy(EtherDelta);
   deployer.deploy(IncomingMigrationTokenInterface);
