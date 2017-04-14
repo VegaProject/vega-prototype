@@ -176,7 +176,15 @@ window.App = {
       self.setStatus("Error changing club address; see log.");
     })
   }
-}
+},
+// functions to add:
+DepositAndCreateOrderProjectTokens(uint liquidationID)
+WithdrawEther(uint liquidationID)
+changeEtherDeltaAddr(address _etherDeltaAddress)
+finalizeOutgoingMigration()
+beginMigrationPeriod(address _newTokenAddress)
+migrateToNewContract(uint _value)
+rewardFinder(uint proposalID)
 
 
 window.addEventListener('load', function() {
