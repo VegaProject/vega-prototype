@@ -4,7 +4,7 @@
   "license": "MIT",
   "description": "A decentralized VC funding platform, built on Ethereum.",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
     "start": "serve",
     "build": "webpack",
     "dev": "webpack-dev-server"
