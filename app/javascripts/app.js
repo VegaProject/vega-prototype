@@ -83,6 +83,39 @@ window.App = {
       console.log(e);
       self.setStatus("Error sending tokens; see log.");
     });
+  },
+
+  transferFrom: function(from, to, value) {
+    var self = this;
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.transferFrom(from, to, value, {from: account});
+    }).then(function() {
+      self.setStatus("transferFrom complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error sending tokens from; see log.");
+    });
+
+  },
+
+  approve: function(spender, value) {
+    var self = this;
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.approve(spender, value, {from: account});
+    }).then(function() {
+      self.setStatus("approved spender complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error approving spender; see log.");
+    });
   }
 
 
