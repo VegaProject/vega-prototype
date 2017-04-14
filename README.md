@@ -19,12 +19,13 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 
 ---
 #### Quick start
-	git clone git@github.com:VegaProject/vega.git
-	cd vega
-	npm install
-	testrpc 						// do this in new terminal
-	truffle compile
-	npm start
+	git clone git@github.com:VegaProject/vega.git		// get a local copy
+	cd vega											// move to vega directory
+	npm install										// gets deps
+	testrpc 											// do this in new terminal
+	truffle compile									// compile contracts
+	truffle build										// build out the frontend
+	npm run dev										// open localhost:8080
 
 ---	
 #### Resources
