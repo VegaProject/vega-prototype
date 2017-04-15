@@ -167,22 +167,93 @@ window.App = {
     var vega;
     VegaToken.deployed().then(function(instance) {
       vega = instance;
-      return vega.changeMigrationMaster(master, {from: account});
+      return vega.changeClubAddr(addr, {from: account});
     }).then(function() {
       self.setStatus("Club address change complete!");
       self.refreshBalance();
     }).catch(function(e) {
       console.log(e);
       self.setStatus("Error changing club address; see log.");
-    })
+    });
+  },
+  
+  changeEtherDeltaAddr: function(addr) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.changeEtherDeltaAddr(addr, {from: account});
+    }).then(function() {
+      self.setStatus("Ether delta address change complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error changing ether delta address; see log.");
+    });
+  },
+  
+  beginMigrationPeriod: function(newTokenAddr) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.beginMigrationPeriod(newTokenAddr, {from: account});
+    }).then(function() {
+      self.setStatus("Begin migration period complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error begining migration period; see log.");
+    });
+  },
+  
+  finalizeOutgoingMigration: function() {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.finalizeOutgoingMigration({from: account});
+    }).then(function() {
+      self.setStatus("Finalize outgoing migration complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error migrating tokens to new contract; see log.");
+    });
+  },
+  
+  migrateToNewContract: function(value) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.migrateToNewContract(value, {from: account});
+    }).then(function() {
+      self.setStatus("Migration to new contract complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error migrating tokens to new contract; see log.");
+    });
   }
-},
+}
 // functions to add:
 DepositAndCreateOrderProjectTokens(uint liquidationID)
 WithdrawEther(uint liquidationID)
-changeEtherDeltaAddr(address _etherDeltaAddress)
+
 finalizeOutgoingMigration()
-beginMigrationPeriod(address _newTokenAddress)
 migrateToNewContract(uint _value)
 rewardFinder(uint proposalID)
 
