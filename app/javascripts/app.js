@@ -247,16 +247,62 @@ window.App = {
       console.log(e);
       self.setStatus("Error migrating tokens to new contract; see log.");
     });
+  },
+  
+  DepositAndCreateOrderProjectTokens: function(liquidationID) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.DepositAndCreateOrderProjectTokens(liquidationID, {from: account});
+    }).then(function() {
+      self.setStatus("DepositAndCreateOrderProjectTokens complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error DepositAndCreateOrderProjectTokens; see log.");
+    });
+  },
+  
+  WithdrawEther: function(liquidationID) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.WithdrawEther(liquidationID, {from: account});
+    }).then(function() {
+      self.setStatus("WithdrawEther complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error WithdrawEther; see log.");
+    });
+  },
+  
+  rewardFinder: function(proposalID) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.rewardFinder(proposalID, {from: account});
+    }).then(function() {
+      self.setStatus("Rewarding finder complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error rewarding finder; see log.");
+    });
   }
 }
-// functions to add:
-DepositAndCreateOrderProjectTokens(uint liquidationID)
-WithdrawEther(uint liquidationID)
-
-finalizeOutgoingMigration()
-migrateToNewContract(uint _value)
-rewardFinder(uint proposalID)
-
 
 window.addEventListener('load', function() {
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
