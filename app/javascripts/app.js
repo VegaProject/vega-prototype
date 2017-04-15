@@ -16,7 +16,7 @@ var VegaToken = contract(vega_artifacts);
 var accounts;
 var account;
 
-window.App = {
+window.App = {}
 
   start: function() {
     var self = this;
@@ -65,6 +65,7 @@ window.App = {
     });
   },
 
+  // Vega Token
   transfer: function() {
     var self = this;
 
@@ -176,7 +177,7 @@ window.App = {
       self.setStatus("Error changing club address; see log.");
     });
   },
-  
+
   changeEtherDeltaAddr: function(addr) {
     var self = this;
 
@@ -194,7 +195,7 @@ window.App = {
       self.setStatus("Error changing ether delta address; see log.");
     });
   },
-  
+
   beginMigrationPeriod: function(newTokenAddr) {
     var self = this;
 
@@ -212,7 +213,7 @@ window.App = {
       self.setStatus("Error begining migration period; see log.");
     });
   },
-  
+
   finalizeOutgoingMigration: function() {
     var self = this;
 
@@ -230,7 +231,7 @@ window.App = {
       self.setStatus("Error migrating tokens to new contract; see log.");
     });
   },
-  
+
   migrateToNewContract: function(value) {
     var self = this;
 
@@ -248,7 +249,7 @@ window.App = {
       self.setStatus("Error migrating tokens to new contract; see log.");
     });
   },
-  
+
   DepositAndCreateOrderProjectTokens: function(liquidationID) {
     var self = this;
 
@@ -266,7 +267,7 @@ window.App = {
       self.setStatus("Error DepositAndCreateOrderProjectTokens; see log.");
     });
   },
-  
+
   WithdrawEther: function(liquidationID) {
     var self = this;
 
@@ -284,7 +285,7 @@ window.App = {
       self.setStatus("Error WithdrawEther; see log.");
     });
   },
-  
+
   rewardFinder: function(proposalID) {
     var self = this;
 
@@ -301,7 +302,29 @@ window.App = {
       console.log(e);
       self.setStatus("Error rewarding finder; see log.");
     });
+  },
+
+  // Club
+  newProposal: function(beneficiary, etherAmount, liquidateDate, JobDescription, transactionBytecode) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var vega;
+    VegaToken.deployed().then(function(instance) {
+      vega = instance;
+      return vega.newProposal(beneficiary, etherAmount, liquidateDate, JobDescription, transactionBytecode, {from: account});
+    }).then(function() {
+      self.setStatus("New project proposal complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error creating project proposal; see log.");
+    });
   }
+
+
+
 }
 
 window.addEventListener('load', function() {
