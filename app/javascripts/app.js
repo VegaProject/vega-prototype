@@ -111,12 +111,15 @@ window.App = {
   approve: function(spender, value) {
     var self = this;
 
+    var amount = parseInt(document.getElementById("amount").value);
+    var spender = document.getElementById("spender").value;
+
     this.setStatus("Initiating transaction... (moving your request through the net..)");
 
     var vega;
     VegaToken.deployed().then(function(instance) {
       vega = instance;
-      return vega.approve(spender, value, {from: account});
+      return vega.approve(spender, amount, {from: account});
     }).then(function() {
       self.setStatus("approved spender complete!");
       self.refreshBalance();
