@@ -14,8 +14,6 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 ---
 #### Documentation
 - [Build from source](https://github.com/VegaProject/wiki/wiki/Install-and-Build)
-- [Ubuntu]()
-- [NPM]()
 
 ---
 #### Quick start
