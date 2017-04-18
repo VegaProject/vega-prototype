@@ -323,9 +323,79 @@ window.App = {
       console.log(e);
       self.setStatus("Error creating project proposal; see log.");
     });
+  },
+
+  checkProposalCode: function(proposalNumber, beneficiary, etherAmount, liquidateDate, transactionBytecode) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var club;
+    Club.deployed().then(function(instance) {
+      vega = instance;
+      return club.checkProposalCode(proposalNumber, beneficiary, etherAmount, liquidateDate, transactionBytecode, {from: account});
+    }).then(function() {
+      self.setStatus("New project proposal complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error creating project proposal; see log.");
+    });
+  },
+
+  vote: function(proposalNumber, supportsProposal) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var club;
+    Club.deployed().then(function(instance) {
+      vega = instance;
+      return club.vote(proposalNumber, supportsProposal, {from: account});
+    }).then(function() {
+      self.setStatus("New project proposal complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error creating project proposal; see log.");
+    });
+  },
+
+  executeProposal: function(proposalNumber, transactionBytecode) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var club;
+    Club.deployed().then(function(instance) {
+      vega = instance;
+      return club.executeProposal(proposalNumber, transactionBytecode, {from: account});
+    }).then(function() {
+      self.setStatus("New project proposal complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error creating project proposal; see log.");
+    });
+  },
+
+  newLiquidation: function(proposalID, etherAmount, tokens, transactionBytecode) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var club;
+    Club.deployed().then(function(instance) {
+      vega = instance;
+      return club.newLiquidation(proposalID, etherAmount, tokens, transactionBytecode, {from: account});
+    }).then(function() {
+      self.setStatus("New project proposal complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error creating project proposal; see log.");
+    });
   }
-
-
 
 }
 
