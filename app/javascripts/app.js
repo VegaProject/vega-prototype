@@ -6,9 +6,9 @@ import { default as contract } from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import vega_artifacts from '../../build/contracts/VegaToken.json';
-import club_artifacts from '../../build/contracts/Club.json';
+//import club_artifacts from '../../build/contracts/Club.json';
 
-// MetaCoin is our usable abstraction, which we'll use through the code below.
+// usable abstraction, which we'll use through the code below.
 var VegaToken = contract(vega_artifacts);
 var Club = contract(club_artifacts);
 
@@ -17,6 +17,7 @@ var Club = contract(club_artifacts);
 // For application bootstrapping, check out window.addEventListener below.
 var accounts;
 var account;
+
 
 window.App = {
 
@@ -68,6 +69,7 @@ window.App = {
   },
 
   // Vega Token
+  //----------------------------------------------------------------------------
   transfer: function() {
     var self = this;
 
@@ -310,6 +312,7 @@ window.App = {
   },
 
   // Club
+  //----------------------------------------------------------------------------
   newProposal: function(beneficiary, etherAmount, liquidateDate, JobDescription, transactionBytecode) {
     var self = this;
 
@@ -399,6 +402,8 @@ window.App = {
       self.setStatus("Error creating project proposal; see log.");
     });
   }
+
+
 
 }
 
