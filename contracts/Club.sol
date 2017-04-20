@@ -24,7 +24,7 @@ contract Club is Ownable {
     event Voted(uint proposalID, bool position, address voter);
     event ProposalTallied(uint proposalID, int result, uint quorum, bool active);
     event ChangeOfRules(uint minimumQuorum, uint debatingPeriodInMinutes, address sharesTokenAddress);
-    
+
     struct Proposal {
         address finder;
         address recipient;
@@ -39,7 +39,7 @@ contract Club is Ownable {
         Vote[] votes;
         mapping (address => bool) voted;
     }
-    
+
     struct Liquidation {
         uint proposalID;
         uint etherAmount;
@@ -52,7 +52,7 @@ contract Club is Ownable {
         Vote[] votes;
         mapping (address => bool) voted;
     }
-    
+
     struct FindersProposal {
         uint findersId;
         uint fee;
@@ -89,7 +89,7 @@ contract Club is Ownable {
         debatingPeriodInMinutes = minutesForDebate;
         ChangeOfRules(minimumQuorum, debatingPeriodInMinutes, sharesTokenAddress);
     }
-    
+
     /// Project Proposals
     ///------------------------------------------------------------------------------------------------------------------------------
     /* Function to create a new proposal */
@@ -117,7 +117,7 @@ contract Club is Ownable {
 
         return proposalID;
     }
-    
+
     /* function to check if a proposal code matches */
     function checkProposalCode(
         uint proposalNumber,
@@ -129,7 +129,7 @@ contract Club is Ownable {
         Proposal p = proposals[proposalNumber];
         return p.proposalHash == sha3(beneficiary, etherAmount, liquidateDate, transactionBytecode);
     }
-    
+
     /* */
     function vote(uint proposalNumber, bool supportsProposal) onlyShareholders returns (uint voteID) {
         Proposal p = proposals[proposalNumber];
@@ -142,7 +142,7 @@ contract Club is Ownable {
         Voted(proposalNumber,  supportsProposal, msg.sender);
         return voteID;
     }
-    
+
     function executeProposal(uint proposalNumber, bytes transactionBytecode) {
         Proposal p = proposals[proposalNumber];
         /* Check if the proposal can be executed */
@@ -184,7 +184,7 @@ contract Club is Ownable {
         // Fire Events
         ProposalTallied(proposalNumber, 1, quorum, p.proposalPassed);
     }
-    
+
     /// Liquidation Proposals
     ///------------------------------------------------------------------------------------------------------------------------------
     function newLiquidation(
@@ -193,7 +193,7 @@ contract Club is Ownable {
         uint tokens,
         bytes transactionBytecode
     ) onlyShareholders returns (uint liquidationID) {
-        
+
         liquidationID = liquidations.length++;
         Liquidation l = liquidations[liquidationID];
         l.proposalID = proposalID;
@@ -220,11 +220,11 @@ contract Club is Ownable {
         Liquidation l = liquidations[liquidationNumber];
         return l.liquidationHash == sha3(proposalID, etherAmount, tokens, transactionBytecode);
     }
-    
+
     function liquidateVote(uint liquidatationNumber, bool supportsLiquidation) onlyShareholders returns (uint voteID) {
         Liquidation l = liquidations[liquidatationNumber];
         if(l.voted[msg.sender] == true) throw;
-        
+
         voteID = l.votes.length++;
         l.votes[voteID] = Vote({inSupport: supportsLiquidation, voter: msg.sender});
         l.voted[msg.sender] = true;
@@ -232,7 +232,7 @@ contract Club is Ownable {
         Voted(liquidatationNumber, supportsLiquidation, msg.sender);
         return voteID;
     }
-    
+
     function executeLiquidation(uint liquidationNumber, bytes transactionBytecode) {
         Liquidation l = liquidations[liquidationNumber];
         /* Check if the liquidation can be executed */
@@ -240,12 +240,12 @@ contract Club is Ownable {
             || l.executed           /* has it been already executed? */
             || l.liquidationHash != sha3(l.proposalID, l.etherAmount, l.tokens, transactionBytecode)) /* Does the transaction code match the liquidation */
             throw;
-        
+
         /* tally the votes */
         uint quorum = 0;
         uint yea = 0;
         uint nay = 0;
-        
+
         for (uint i = 0; i < l.votes.length; ++i) {
             Vote v = l.votes[i];
             uint voteWeight = sharesTokenAddress.balanceOf(v.voter);
@@ -256,7 +256,7 @@ contract Club is Ownable {
                 nay += voteWeight;
             }
         }
-        
+
         /* execute result */
         if (quorum <= minimumQuorum) {
             /* Not enough significant voters */
@@ -271,7 +271,7 @@ contract Club is Ownable {
         // Fire Events
         ProposalTallied(liquidationNumber, 1, quorum, l.liquidationPassed);
     }
-    
+
     /// Finder fee rate Proposals
     ///------------------------------------------------------------------------------------------------------------------------------
     function newFinderProposal(
@@ -286,14 +286,14 @@ contract Club is Ownable {
         fP.numberOfVotes = 0;
         FindersProposalAdded(findersId, fee);
         numFindersProposals = findersId+1;
-        
+
         return findersId;
     }
-    
+
     function findersProposalVote(uint findersNumber, bool supportsFindersProposal) onlyShareholders returns (uint voteID) {
         FindersProposal fP = findersProposals[findersNumber];
         if(fP.voted[msg.sender] == true) throw;
-        
+
         voteID = fP.votes.length++;
         fP.votes[voteID] = Vote({inSupport: supportsFindersProposal, voter: msg.sender});
         fP.voted[msg.sender] = true;
@@ -301,17 +301,17 @@ contract Club is Ownable {
         Voted(findersNumber, supportsFindersProposal, msg.sender);
         return voteID;
     }
-    
+
     function executeFindersProposal(uint findersNumber) {
         FindersProposal fP = findersProposals[findersNumber];
         /* Check if the finders proposal can be executed */
         if (now < fP.votingDeadline || fP.executed) throw;
-        
+
         /* tally the votes */
         uint quorum = 0;
         uint yea = 0;
         uint nay = 0;
-        
+
         for (uint i = 0; i < fP.votes.length; ++i) {
             Vote v = fP.votes[i];
             uint voteWeight = sharesTokenAddress.balanceOf(v.voter);
@@ -322,7 +322,7 @@ contract Club is Ownable {
                 nay += voteWeight;
             }
         }
-        
+
         /* execute result */
         if (quorum <= minimumQuorum) {
             /* Not enough significant voters */
@@ -339,28 +339,28 @@ contract Club is Ownable {
         ProposalTallied(findersNumber, 1, quorum, fP.findersPassed);
     }
 
-    
+
     /* Change to single functions later, not nessary rn */
-    
+
     function getTokenAmount(uint liquidationID) returns (uint) {
         Liquidation l = liquidations[liquidationID];
         if(l.liquidationPassed != true) throw;
         return l.tokens;
     }
-    
+
     function getEtherAmount(uint liquidationID) returns (uint) {
         Liquidation l = liquidations[liquidationID];
         if(l.liquidationPassed != true) throw;
         return l.etherAmount;
     }
-    
+
     function getTokenAddress(uint liquidationID) constant returns (address) {
         Liquidation l = liquidations[liquidationID];
         if(l.liquidationPassed != true) throw;
         Proposal p = proposals[l.proposalID];
         return p.recipient;
     }
-    
+
     function getFinder(uint proposalID) constant returns (address) {
         Proposal p = proposals[proposalID];
         if(p.proposalPassed == false) throw;
