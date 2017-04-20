@@ -6,7 +6,7 @@ import { default as contract } from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import vega_artifacts from '../../build/contracts/VegaToken.json';
-//import club_artifacts from '../../build/contracts/Club.json';
+import club_artifacts from '../../build/contracts/Club.json';
 
 // usable abstraction, which we'll use through the code below.
 var VegaToken = contract(vega_artifacts);
