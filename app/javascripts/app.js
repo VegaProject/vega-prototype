@@ -26,6 +26,7 @@ window.App = {
 
     // Get VegaToken abstraction
     VegaToken.setProvider(web3.currentProvider);
+    Club.setProvider(web3.currentProvider);
 
     // Get initial account balance on display
     web3.eth.getAccounts(function(err, accs) {
@@ -320,7 +321,7 @@ window.App = {
 
     var club;
     Club.deployed().then(function(instance) {
-      vega = instance;
+      club = instance;
       return club.newProposal(beneficiary, etherAmount, liquidateDate, JobDescription, transactionBytecode, {from: account});
     }).then(function() {
       self.setStatus("New project proposal complete!");
@@ -338,7 +339,7 @@ window.App = {
 
     var club;
     Club.deployed().then(function(instance) {
-      vega = instance;
+      club = instance;
       return club.checkProposalCode(proposalNumber, beneficiary, etherAmount, liquidateDate, transactionBytecode, {from: account});
     }).then(function() {
       self.setStatus("New project proposal complete!");
@@ -356,7 +357,7 @@ window.App = {
 
     var club;
     Club.deployed().then(function(instance) {
-      vega = instance;
+      club = instance;
       return club.vote(proposalNumber, supportsProposal, {from: account});
     }).then(function() {
       self.setStatus("New project proposal complete!");
@@ -374,7 +375,7 @@ window.App = {
 
     var club;
     Club.deployed().then(function(instance) {
-      vega = instance;
+      club = instance;
       return club.executeProposal(proposalNumber, transactionBytecode, {from: account});
     }).then(function() {
       self.setStatus("New project proposal complete!");
@@ -392,7 +393,7 @@ window.App = {
 
     var club;
     Club.deployed().then(function(instance) {
-      vega = instance;
+      club = instance;
       return club.newLiquidation(proposalID, etherAmount, tokens, transactionBytecode, {from: account});
     }).then(function() {
       self.setStatus("New project proposal complete!");
