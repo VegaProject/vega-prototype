@@ -7,11 +7,12 @@ var EtherDelta = artifacts.require("./EtherDelta.sol");
 module.exports = function(deployer) {
   deployer.deploy(
     VegaToken,
-    EtherDelta,
-    Club,
+    web3.eth.accounts[0],
+    web3.eth.accounts[0],
+    web3.eth.accounts[0]
   );
   deployer.deploy(
-    Club, VegaToken, 500, 2
+    Club
   );
   deployer.deploy(
     EtherDelta

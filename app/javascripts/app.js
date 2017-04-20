@@ -323,7 +323,7 @@ window.App = {
     var club;
     Club.deployed().then(function(instance) {
       club = instance;
-      return club.changeVotingRules(sharesAddress, minimumSharesToPassAVote, minutesForDebate {from: account});
+      return club.changeVotingRules(sharesAddress, minimumSharesToPassAVote, minutesForDebate, {from: account});
     }).then(function() {
       self.setStatus("New project proposal complete!");
       self.refreshBalance();
@@ -331,7 +331,7 @@ window.App = {
       console.log(e);
       self.setStatus("Error creating project proposal; see log.");
     });
-  }
+  },
 
   newProposal: function(beneficiary, etherAmount, liquidateDate, JobDescription, transactionBytecode) {
     var self = this;
