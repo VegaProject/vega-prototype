@@ -314,6 +314,25 @@ window.App = {
 
   // Club
   //----------------------------------------------------------------------------
+
+  changeVotingRules: function(sharesAddress, minimumSharesToPassAVote, minutesForDebate) {
+    var self = this;
+
+    this.setStatus("Initiating transaction... (moving your request through the net..)");
+
+    var club;
+    Club.deployed().then(function(instance) {
+      club = instance;
+      return club.changeVotingRules(sharesAddress, minimumSharesToPassAVote, minutesForDebate {from: account});
+    }).then(function() {
+      self.setStatus("New project proposal complete!");
+      self.refreshBalance();
+    }).catch(function(e) {
+      console.log(e);
+      self.setStatus("Error creating project proposal; see log.");
+    });
+  }
+
   newProposal: function(beneficiary, etherAmount, liquidateDate, JobDescription, transactionBytecode) {
     var self = this;
 
