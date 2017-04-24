@@ -392,7 +392,6 @@ contract Club is Ownable {
         return p.recipient;
     }
 
-
     // only call this function indirectly from the token contract, or else you could lose tokens
     function getFinder(uint proposalID) constant returns (address) {
         ProjectProposal p = projectsProposals[proposalID];
