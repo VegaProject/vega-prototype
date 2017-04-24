@@ -394,18 +394,26 @@ contract Club is Ownable {
     }
 
     function eligibleForRewardFromProjectProposal(uint proposalID, address addr) constant returns (bool) {
-      ProjectProposal p = projectsProposals[proposalID];
-      if(p.proposalPassed == false) return false;  // check if the project proposal passed
-      if(p.voted[addr] == false) return false;     // check if the address voted
-      return true;
+        ProjectProposal p = projectsProposals[proposalID];
+        if(p.proposalPassed == false) return false;  // check if the project proposal passed
+        if(p.voted[addr] == false) return false;     // check if the address voted
+        return true;
     }
 
     function eligibleForRewardFromLiquidationProposal(uint liquidationID, address addr) constant returns (bool) {
-      LiquidationProposal l = LiquidationsProposals[liquidationID];
-      if(p.liquidationPassed == false) return false;  // check if the liquidation proposal passed
-      if(p.voted[addr] == false) return false;        // check if the address voted
-      return true;
+        LiquidationProposal l = LiquidationsProposals[liquidationID];
+        if(p.liquidationPassed == false) return false;  // check if the liquidation proposal passed
+        if(p.voted[addr] == false) return false;        // check if the address voted
+        return true;
     }
+
+    function eligibleForRewardFromFinderProposal(uint findersId, address addr) constant returns (bool) {
+        FinderProposal fP = findersProposals[findersId];
+        if(fP.findersPassed == false) return false;     // check if the proposal passed
+        if(fP.voted[addr] == false) return false;       // check if the address voted
+    }
+
+    // MUST FIX THE REWARD TO ONLY BE ABLE TO CALLED ONCE, PERHAPS A METHOD OF CHECKING WHETHER A USER HAS ALREADY CLAIMED THEIR REWARD, MUCH LIKE THE VOTING IS SET UP NOW.
 
 
 }

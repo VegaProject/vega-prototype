@@ -132,6 +132,8 @@ import './Club.sol';
        status = false;
      } else if(clubAddress.eligibleForRewardFromLiquidationProposal(proposalID, msg.sender) == false) {
        status = false;
+     } else if(clubAddress.eligibleForRewardFromFinderProposal(proposalID, msg.sender) == false) {
+       status = false;
      } else {
        status = true;
      }
