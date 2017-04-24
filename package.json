@@ -36,6 +36,8 @@
     "webpack-dev-server": "^2.3.0"
   },
   "dependencies": {
-    "dapple": "^0.8.48"
+    "dapple": "^0.8.48",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
   }
 }

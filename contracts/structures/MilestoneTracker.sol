@@ -30,7 +30,7 @@ pragma solidity ^0.4.6;
 /// @dev We use the RLP library to decode RLP so that the donor can approve one
 ///  set of milestone changes at a time.
 ///  https://github.com/androlo/standard-contracts/blob/master/contracts/src/codec/RLP.sol
-import "RLP.sol";
+import "./RLP.sol";
 
 
 
