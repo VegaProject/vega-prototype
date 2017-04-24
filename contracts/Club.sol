@@ -33,6 +33,7 @@ contract Club is Ownable {
 
     struct ProjectProposal {
         address finder;
+        bool findersCollected;
         address recipient;
         uint amount;
         uint maturity;          // time at which liquidation is an option
@@ -44,6 +45,7 @@ contract Club is Ownable {
         bytes32 proposalHash;
         Vote[] votes;
         mapping (address => bool) voted;
+        mapping (address => bool) collected;
     }
 
     struct LiquidationProposal {
@@ -57,6 +59,7 @@ contract Club is Ownable {
         bytes32 liquidationHash;
         Vote[] votes;
         mapping (address => bool) voted;
+        mapping (address => bool) collected;
     }
 
     struct FinderProposal {
@@ -69,6 +72,7 @@ contract Club is Ownable {
         bytes32 findersHash;
         Vote[] votes;
         mapping (address => bool) voted;
+        mapping (address => bool) collected;
     }
 
     struct RewardProposal {
@@ -81,6 +85,7 @@ contract Club is Ownable {
        bytes32 rewardHash;
        Vote[] votes;
        mapping (address => bool) voted;
+       mapping (address => bool) collected;
     }
 
     struct Vote {
@@ -387,33 +392,49 @@ contract Club is Ownable {
         return p.recipient;
     }
 
+
+    // only call this function indirectly from the token contract, or else you could lose tokens
     function getFinder(uint proposalID) constant returns (address) {
         ProjectProposal p = projectsProposals[proposalID];
-        if(p.proposalPassed == false) throw;
+        if(msg.sender != p.finder) throw;           // only let a finder call this function
+        if(p.proposalPassed == false) throw;        // check if proposal passed
+        if(p.findersCollected = true) throw;        // check if the finder has already collected
+        p.findersCollected = true;                  // set the finders collection status to true
         return p.finder;
     }
 
+    // to get reward only call these functions indirectly from the token contract, or else you will have
+    // you may be eligible but you will not receive any tokens. in the future we will change this
+
     function eligibleForRewardFromProjectProposal(uint proposalID, address addr) constant returns (bool) {
         ProjectProposal p = projectsProposals[proposalID];
+        if(msg.sender != addr) throw;                 // for now only allow sender
         if(p.proposalPassed == false) return false;  // check if the project proposal passed
+        if(p.collected == true) return false;        // check if the user has already collected
         if(p.voted[addr] == false) return false;     // check if the address voted
+        p.collected[addr] = true;                     // the user has collected
         return true;
     }
 
     function eligibleForRewardFromLiquidationProposal(uint liquidationID, address addr) constant returns (bool) {
         LiquidationProposal l = LiquidationsProposals[liquidationID];
-        if(p.liquidationPassed == false) return false;  // check if the liquidation proposal passed
-        if(p.voted[addr] == false) return false;        // check if the address voted
+        if(msg.sender != addr) throw;                 // for now only allow sender
+        if(l.liquidationPassed == false) return false;  // check if the liquidation proposal passed
+        if(l.collected == true) return false;           // check if the user has already collected
+        if(l.voted[addr] == false) return false;        // check if the address voted
+        l.collected[addr] = true;                       // the user has collected
         return true;
     }
 
     function eligibleForRewardFromFinderProposal(uint findersId, address addr) constant returns (bool) {
         FinderProposal fP = findersProposals[findersId];
+        if(msg.sender != addr) throw;                 // for now only allow sender
         if(fP.findersPassed == false) return false;     // check if the proposal passed
+        if(fP.collected == true) return false;          // check if the user has already collected
         if(fP.voted[addr] == false) return false;       // check if the address voted
+        fP.collected = true;                            // the user has collected
+        return true;
     }
 
     // MUST FIX THE REWARD TO ONLY BE ABLE TO CALLED ONCE, PERHAPS A METHOD OF CHECKING WHETHER A USER HAS ALREADY CLAIMED THEIR REWARD, MUCH LIKE THE VOTING IS SET UP NOW.
-
-
 }
