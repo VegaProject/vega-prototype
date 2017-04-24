@@ -29,7 +29,7 @@ import './Club.sol';
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
-   string public version = "VEGA-1.0";
+   string public version = "1.0";
    uint public INITIAL_SUPPLY = 12000000000000000000000000; // uint256 in wei format
 
    uint public constant minimumMigrationDuration = 26 weeks;
@@ -134,6 +134,7 @@ import './Club.sol';
        status = false;
      } else if(clubAddress.eligibleForRewardFromFinderProposal(proposalID, msg.sender) == false) {
        status = false;
+       // add eligible for reward from reward proposal
      } else {
        status = true;
      }
