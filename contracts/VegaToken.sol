@@ -56,7 +56,7 @@ import './Club.sol';
      EtherDeltaAddress = EtherDelta(_etherDeltaAddress);
      clubAddress = Club(_clubAddress);
    }
-   
+
    /// EtherDelta exchange methods
    ///---------------------------------------------------------------------------------------------------------------------------------------
    function DepositAndCreateOrderProjectTokens(uint liquidationID) stoppable {
@@ -67,7 +67,7 @@ import './Club.sol';
      EtherDeltaAddress.depositToken(tokenAddress, volume);                  // depositing tokens into etherdelta, needed the approval from the line above
      //EtherDeltaAddress.order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce);  // place order on ether delta
    }
-   
+
    function WithdrawEther(uint liquidationID) onlyFromMigrationMaster stoppable {          // for now leave just for the migration master, untill better checks are in place, to authorize a withdrawl.
      uint amount = EtherDeltaAddress.balanceOf(EtherDeltaAddress, this);                   // getting balanceOf Vega in EtherDelta token, my thought is in Ether, but not sure.
      EtherDeltaAddress.withdraw(amount);                                                   // withdrawl that balance and send it back to this Vega contract
@@ -116,8 +116,8 @@ import './Club.sol';
      newToken.migrateFromOldContract(msg.sender, _value);
      OutgoingMigration(msg.sender, _value);
    }
-   
-   /// Finder reward methods
+
+   /// Finders fee & voting reward methods
    ///---------------------------------------------------------------------------------------------------------------------------------------
    function rewardFinder(uint proposalID) {
      address finder = clubAddress.getFinder(proposalID);
@@ -125,9 +125,22 @@ import './Club.sol';
      balances[finder] = safeAdd(balances[finder], amount);
      totalSupply = safeAdd(totalSupply, amount);
    }
-   
-   
-   
+
+   function rewardVoter(uint proposalID) {
+     var status = false;
+     if(clubAddress.eligibleForRewardFromProjectProposal(proposalID, msg.sender) == false) {
+       status = false;
+     } else if(clubAddress.eligibleForRewardFromLiquidationProposal(proposalID, msg.sender) == false) {
+       status = false;
+     } else {
+       status = true;
+     }
+     if(status == false) throw;
+     uint amount = clubAddress.reward();
+     balances[msg.sender] = safeAdd(balances[msg.sender], amount);
+     totalSupply = safeAdd(totalSupply, amount);
+   }
+
    /// ()
    ///---------------------------------------------------------------------------------------------------------------------------------------
    // just for testing as of now
