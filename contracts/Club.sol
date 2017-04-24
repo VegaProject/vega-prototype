@@ -25,7 +25,7 @@ contract Club is Ownable {
     event ProposalTallied(uint proposalID, int result, uint quorum, bool active);
     event ChangeOfRules(uint minimumQuorum, uint debatingPeriodInMinutes, address sharesTokenAddress);
 
-    struct Proposal {
+    struct ProjectProposal {
         address finder;
         address recipient;
         uint amount;
@@ -40,7 +40,7 @@ contract Club is Ownable {
         mapping (address => bool) voted;
     }
 
-    struct Liquidation {
+    struct LiquidationProposal {
         uint proposalID;
         uint etherAmount;
         uint tokens;
@@ -63,6 +63,18 @@ contract Club is Ownable {
         bytes32 findersHash;
         Vote[] votes;
         mapping (address => bool) voted;
+    }
+
+    struct RewardProposal {
+       uint rewardId;
+       uint reward;
+       uint votingDeadline;
+       bool executed;
+       bool rewardPassed;
+       uint numberOfVotes;
+       bytes32 rewardHash;
+       Vote[] votes;
+       mapping (address => bool) voted;
     }
 
     struct Vote {
