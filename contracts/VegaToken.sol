@@ -42,7 +42,6 @@ import './Club.sol';
    EtherDelta public EtherDeltaAddress;
    Club public clubAddress;
 
-
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
      _;
@@ -136,24 +135,6 @@ import './Club.sol';
      totalSupply = safeAdd(totalSupply, amount);
    }
    
-   // make a reward claim
-   
-/*
-   function rewardVoter(uint proposalID) {
-     var status = false;
-     if(clubAddress.eligibleForRewardFromLiquidationProposal(proposalID, msg.sender) == false) {
-       status = false;
-     } else if(clubAddress.eligibleForRewardFromFinderProposal(proposalID, msg.sender) == false) {
-       status = false;
-       // add eligible for reward from reward proposal
-     } else {
-       status = true;
-     }
-     if(status == false) throw;
-     uint amount = clubAddress.reward();
-     balances[msg.sender] = safeAdd(balances[msg.sender], amount);
-     totalSupply = safeAdd(totalSupply, amount);
-   }*/
 
    /// ()
    ///---------------------------------------------------------------------------------------------------------------------------------------

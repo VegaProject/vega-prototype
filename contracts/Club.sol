@@ -79,13 +79,12 @@ contract Club is Ownable, SafeMath {
     }
 
     struct RewardProposal {
-       uint rewardsId;
        uint reward;
        uint votingDeadline;
        bool executed;
-       bool rewardPassed;
+       bool rewardsPassed;
        uint numberOfVotes;
-       bytes32 rewardHash;
+       bytes32 rewardsHash;
        Vote[] votes;
        mapping (address => bool) voted;
     }
@@ -107,6 +106,7 @@ contract Club is Ownable, SafeMath {
         ChangeOfRules(minimumQuorum, debatingPeriodInMinutes, sharesTokenAddress);
     }
 
+    
     /// Project Proposal
     ///------------------------------------------------------------------------------------------------------------------------------
 
@@ -363,18 +363,95 @@ contract Club is Ownable, SafeMath {
         ProposalTallied(findersNumber, 1, quorum, fP.findersPassed);
     }
 
+    
     /// Reward Proposal
     ///------------------------------------------------------------------------------------------------------------------------------
 
-    function newRewardProposal() onlyShareholders returns (uint rewardsId);
-
+    function newRewardProposal(uint rewardRate, bytes transactionBytecode) onlyShareholders returns (uint rewardsId) {
+        rewardsId = rewardsProposals.length++;
+        RewardProposal rP = rewardsProposals[rewardsId];
+        rP.reward = rewardRate;
+        rP.votingDeadline = now + debatingPeriodInMinutes * 1 minutes;
+        rP.executed = false;
+        rP.rewardsPassed = false;
+        rP.numberOfVotes = 0;
+        rP.rewardsHash = sha3(rewardRate, transactionBytecode);
+        RewardProposalAdded(rewardsId, rewardRate);
+        numRewardsProposals = rewardsId+1;
+        
+        return rewardsId;
+    }
     
-   
+    function checkRewardsCode(uint rewardsNumber, uint rewardRate, bytes transactionBytecode) constant returns (bool codeChecksOut) {
+        RewardProposal rP = rewardsProposals[rewardsNumber];
+        return rP.rewardsHash == sha3(rewardRate, transactionBytecode);
+    }
+    
+    function rewardVote(uint rewardsNumber, bool supportsRewardProposal) onlyShareholders returns (uint voteID) {
+        RewardProposal rP = rewardsProposals[rewardsNumber];
+        if(rP.voted[msg.sender] == true) throw;
+        
+        voteID = rP.votes.length++;
+        rP.votes[voteID] = Vote({inSupport: supportsRewardProposal, voter: msg.sender});
+        rP.voted[msg.sender] = true;
+        rP.numberOfVotes = voteID +1;
+        Voted(rewardsNumber, supportsRewardProposal, msg.sender);
+        return voteID;
+    }
+    
+    function executeRewardsProposal(uint rewardsNumber) {
+        RewardProposal rP = rewardsProposals[rewardsNumber];
+        
+        if (now < rP.votingDeadline || rP.executed) throw;
+        
+        /* tally the votes */
+        uint quorum = 0;
+        uint yea = 0;
+        uint nay = 0;
+
+        for (uint i = 0; i < rP.votes.length; ++i) {
+            Vote v = rP.votes[i];
+            uint voteWeight = sharesTokenAddress.balanceOf(v.voter);
+            quorum += voteWeight;
+            if(v.inSupport) {
+                yea += voteWeight;
+            } else {
+                nay += voteWeight;
+            }
+        }
+
+        /* execute result */
+        if (quorum <= minimumQuorum) {
+            /* Not enough significant voters */
+            throw;
+        } else if (yea > nay ) {
+            /* has quorum and was approved */
+            rP.executed = true;
+            rP.rewardsPassed = true;
+
+            for (uint x = 0; x < rP.votes.length; ++x) {                
+                Vote vP = rP.votes[x];
+                uint newPoints = sharesTokenAddress.balanceOf(vP.voter);
+                points[vP.voter] += newPoints;                     
+            }
+            
+            
+        } else {
+            rP.rewardsPassed = false;
+        }
+        // Fire Events
+        ProposalTallied(rewardsNumber, 1, quorum, rP.rewardsPassed);
+        
+    }
+
     
     /// Finders fee methods
     ///------------------------------------------------------------------------------------------------------------------------------
     
-    /* Change to single functions later, not nessary rn */
+    /* 
+     * Change to single functions later, not nessary rn 
+     * if getFinder is called from here rather than Vega Token finder could loose their fee
+     */
 
     function getTokenAmount(uint liquidationID) returns (uint) {
         LiquidationProposal l = liquidationsProposals[liquidationID];
@@ -406,6 +483,8 @@ contract Club is Ownable, SafeMath {
     
     
     /// Points methods
+    ///------------------------------------------------------------------------------------------------------------------------------
+    
     function getPoints(address addr) constant returns (uint) {
         return points[addr];
     }
@@ -413,27 +492,6 @@ contract Club is Ownable, SafeMath {
     function removePoints(uint amount) {
         if(amount > points[msg.sender]) throw;
         points[msg.sender] -= amount;
-    }
-    
-    
-    function eligibleForRewardFromLiquidationProposal(uint liquidationID, address addr) external constant returns (bool) {
-        LiquidationProposal l = liquidationsProposals[liquidationID];
-        if(msg.sender != addr) throw;                 // for now only allow sender
-        if(l.liquidationPassed == false) return false;  // check if the liquidation proposal passed
-        if(l.collected[addr] == true) return false;           // check if the user has already collected
-        if(l.voted[addr] == false) return false;        // check if the address voted
-        l.collected[addr] = true;                       // the user has collected
-        return true;
-    }
-
-    function eligibleForRewardFromFinderProposal(uint findersId, address addr) external constant returns (bool) {
-        FinderProposal fP = findersProposals[findersId];
-        if(msg.sender != addr) throw;                 // for now only allow sender
-        if(fP.findersPassed == false) return false;     // check if the proposal passed
-        if(fP.collected[addr] == true) return false;          // check if the user has already collected
-        if(fP.voted[addr] == false) return false;       // check if the address voted
-        fP.collected[addr] = true;                            // the user has collected
-        return true;
     }
 
 }
