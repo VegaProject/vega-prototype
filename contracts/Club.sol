@@ -31,11 +31,6 @@ contract Club is Ownable, SafeMath {
     event ProposalTallied(uint proposalID, int result, uint quorum, bool active);
     event ChangeOfRules(uint minimumQuorum, uint debatingPeriodInMinutes, address sharesTokenAddress);
 
-    
-    struct Reward {
-        mapping (address => uint) points;
-    }
-    
     struct Vote {
         bool inSupport;
         address voter;
@@ -97,18 +92,15 @@ contract Club is Ownable, SafeMath {
        mapping (address => bool) collected;
     }
 
-    /* modifier that allows only shareholders to vote and create new proposals */
     modifier onlyShareholders {
         if (sharesTokenAddress.balanceOf(msg.sender) == 0) throw;
         _;
     }
 
-    /* First time setup */
     function Club(VegaToken sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate) payable {
         changeVotingRules(sharesAddress, minimumSharesToPassAVote, minutesForDebate);
     }
 
-    /*change rules*/
     function changeVotingRules(VegaToken sharesAddress, uint minimumSharesToPassAVote, uint minutesForDebate) onlyOwner {
         sharesTokenAddress = VegaToken(sharesAddress);
         if (minimumSharesToPassAVote == 0 ) minimumSharesToPassAVote = 1;
@@ -117,7 +109,7 @@ contract Club is Ownable, SafeMath {
         ChangeOfRules(minimumQuorum, debatingPeriodInMinutes, sharesTokenAddress);
     }
 
-    /// Project Proposals
+    /// Project Proposal
     ///------------------------------------------------------------------------------------------------------------------------------
 
     function newProjectProposal(address beneficiary, uint etherAmount, uint liquidateDate, string JobDescription, bytes transactionBytecode) onlyShareholders returns (uint proposalID) {
@@ -139,13 +131,11 @@ contract Club is Ownable, SafeMath {
         return proposalID;
     }
 
-    /* function to check if a proposal code matches */
     function checkProposalCode(uint proposalNumber, address beneficiary, uint etherAmount, uint liquidateDate, bytes transactionBytecode) constant returns (bool codeChecksOut) {
         ProjectProposal p = projectsProposals[proposalNumber];
         return p.proposalHash == sha3(beneficiary, etherAmount, liquidateDate, transactionBytecode);
     }
 
-    /* */
     function projectVote(uint proposalNumber, bool supportsProposal) onlyShareholders returns (uint voteID) {
         ProjectProposal p = projectsProposals[proposalNumber];
         if (p.voted[msg.sender] == true) throw;
@@ -201,10 +191,13 @@ contract Club is Ownable, SafeMath {
     }
 
 
-    /// Liquidation Proposals
+    /// Liquidation Proposal
     ///------------------------------------------------------------------------------------------------------------------------------
+    
     function newLiquidation(uint proposalID, uint etherAmount, uint tokens, bytes transactionBytecode) onlyShareholders returns (uint liquidationID) {
-
+        
+        ProjectProposal p = projectsProposals[proposalID];
+        if(p.maturity > now) throw;                             // project cannot be liquidated yet.
         liquidationID = liquidationsProposals.length++;
         LiquidationProposal l = liquidationsProposals[liquidationID];
         l.proposalID = proposalID;
@@ -278,7 +271,7 @@ contract Club is Ownable, SafeMath {
     }
 
     
-    /// Finder fee rate Proposals
+    /// Finder Proposal
     ///------------------------------------------------------------------------------------------------------------------------------
 
     function newFinderProposal(uint fee, bytes transactionBytecode) onlyShareholders returns (uint findersId) {
@@ -350,7 +343,7 @@ contract Club is Ownable, SafeMath {
         ProposalTallied(findersNumber, 1, quorum, fP.findersPassed);
     }
 
-    /// Project Proposals
+    /// Reward Proposal
     ///------------------------------------------------------------------------------------------------------------------------------
 
     function newRewardProposal() onlyShareholders returns (uint rewardsId) {
