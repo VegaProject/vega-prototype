@@ -3,14 +3,14 @@ pragma solidity ^0.4.8;
 import './deps/Ownable.sol';
 import './VegaToken.sol';
 
-contract Club is Ownable {
+contract Club is Ownable, SafeMath {
 
     /* Contract Variables and events */
     uint public minimumQuorum;
     uint public debatingPeriodInMinutes;
 
     ProjectProposal[] public projectsProposals;
-    LiquidationProposal[] public LiquidationsProposals;
+    LiquidationProposal[] public liquidationsProposals;
     FinderProposal[] public findersProposals;
     RewardProposal[] public rewardsProposals;
 
@@ -31,6 +31,16 @@ contract Club is Ownable {
     event ProposalTallied(uint proposalID, int result, uint quorum, bool active);
     event ChangeOfRules(uint minimumQuorum, uint debatingPeriodInMinutes, address sharesTokenAddress);
 
+    
+    struct Reward {
+        mapping (address => uint) points;
+    }
+    
+    struct Vote {
+        bool inSupport;
+        address voter;
+    }
+    
     struct ProjectProposal {
         address finder;
         bool findersCollected;
@@ -86,11 +96,6 @@ contract Club is Ownable {
        Vote[] votes;
        mapping (address => bool) voted;
        mapping (address => bool) collected;
-    }
-
-    struct Vote {
-        bool inSupport;
-        address voter;
     }
 
     /* modifier that allows only shareholders to vote and create new proposals */
@@ -149,7 +154,7 @@ contract Club is Ownable {
         uint liquidateDate,
         bytes transactionBytecode
     ) constant returns (bool codeChecksOut) {
-        ProjectProposal p = ProjectsProposals[proposalNumber];
+        ProjectProposal p = projectsProposals[proposalNumber];
         return p.proposalHash == sha3(beneficiary, etherAmount, liquidateDate, transactionBytecode);
     }
 
@@ -217,8 +222,8 @@ contract Club is Ownable {
         bytes transactionBytecode
     ) onlyShareholders returns (uint liquidationID) {
 
-        liquidationID = liquidations.length++;
-        Liquidation l = liquidations[liquidationID];
+        liquidationID = liquidationsProposals.length++;
+        LiquidationProposal l = liquidationsProposals[liquidationID];
         l.proposalID = proposalID;
         l.etherAmount = etherAmount;
         l.tokens = tokens;
@@ -227,8 +232,8 @@ contract Club is Ownable {
         l.executed = false;
         l.liquidationPassed = false;
         l.numberOfVotes = 0;
-        LiquidationAdded(liquidationID, proposalID, etherAmount, tokens);       // create event at the top
-        numLiquidations = liquidationID+1;
+        LiquidationProposalAdded(liquidationID, proposalID, etherAmount, tokens);       // create event at the top
+        numLiquidationsProposals = liquidationID+1;
 
         return liquidationID;
     }
@@ -240,12 +245,12 @@ contract Club is Ownable {
         uint tokens,
         bytes transactionBytecode
     ) constant returns (bool codeChecksOut) {
-        Liquidation l = liquidations[liquidationNumber];
+        LiquidationProposal l = liquidationsProposals[liquidationNumber];
         return l.liquidationHash == sha3(proposalID, etherAmount, tokens, transactionBytecode);
     }
 
     function liquidateVote(uint liquidatationNumber, bool supportsLiquidation) onlyShareholders returns (uint voteID) {
-        Liquidation l = liquidations[liquidatationNumber];
+        LiquidationProposal l = liquidationsProposals[liquidatationNumber];
         if(l.voted[msg.sender] == true) throw;
 
         voteID = l.votes.length++;
@@ -257,7 +262,7 @@ contract Club is Ownable {
     }
 
     function executeLiquidation(uint liquidationNumber, bytes transactionBytecode) {
-        Liquidation l = liquidations[liquidationNumber];
+        LiquidationProposal l = liquidationsProposals[liquidationNumber];
         /* Check if the liquidation can be executed */
         if (now < l.votingDeadline  /* has the voting deadline arrived? */
             || l.executed           /* has it been already executed? */
@@ -302,20 +307,20 @@ contract Club is Ownable {
         uint fee
     ) onlyShareholders returns (uint findersId) {
         findersId = findersProposals.length++;
-        FindersProposal fP = findersProposals[findersId];
+        FinderProposal fP = findersProposals[findersId];
         fP.fee = fee;
         fP.votingDeadline = now + debatingPeriodInMinutes * 1 minutes;
         fP.executed = false;
         fP.findersPassed = false;
         fP.numberOfVotes = 0;
-        FindersProposalAdded(findersId, fee);
+        FinderProposalAdded(findersId, fee);
         numFindersProposals = findersId+1;
 
         return findersId;
     }
 
     function findersProposalVote(uint findersNumber, bool supportsFindersProposal) onlyShareholders returns (uint voteID) {
-        FindersProposal fP = findersProposals[findersNumber];
+        FinderProposal fP = findersProposals[findersNumber];
         if(fP.voted[msg.sender] == true) throw;
 
         voteID = fP.votes.length++;
@@ -327,7 +332,7 @@ contract Club is Ownable {
     }
 
     function executeFindersProposal(uint findersNumber) {
-        FindersProposal fP = findersProposals[findersNumber];
+        FinderProposal fP = findersProposals[findersNumber];
         /* Check if the finders proposal can be executed */
         if (now < fP.votingDeadline || fP.executed) throw;
 
@@ -374,21 +379,21 @@ contract Club is Ownable {
     /* Change to single functions later, not nessary rn */
 
     function getTokenAmount(uint liquidationID) returns (uint) {
-        LiquidationProposal l = LiquidationsProposals[liquidationID];
+        LiquidationProposal l = liquidationsProposals[liquidationID];
         if(l.liquidationPassed != true) throw;
         return l.tokens;
     }
 
     function getEtherAmount(uint liquidationID) returns (uint) {
-        LiquidationProposal l = LiquidationsProposals[liquidationID];
+        LiquidationProposal l = liquidationsProposals[liquidationID];
         if(l.liquidationPassed != true) throw;
         return l.etherAmount;
     }
 
     function getTokenAddress(uint liquidationID) constant returns (address) {
-        LiquidationProposal l = LiquidationsProposals[liquidationID];
+        LiquidationProposal l = liquidationsProposals[liquidationID];
         if(l.liquidationPassed != true) throw;
-        Proposal p = proposals[l.proposalID];
+        ProjectProposal p = projectsProposals[l.proposalID];
         return p.recipient;
     }
 
@@ -405,35 +410,44 @@ contract Club is Ownable {
     // to get reward only call these functions indirectly from the token contract, or else you will have
     // you may be eligible but you will not receive any tokens. in the future we will change this
 
-    function eligibleForRewardFromProjectProposal(uint proposalID, address addr) constant returns (bool) {
+    function getRewardFromProjectProposal(uint proposalID) {
         ProjectProposal p = projectsProposals[proposalID];
-        if(msg.sender != addr) throw;                 // for now only allow sender
-        if(p.proposalPassed == false) return false;  // check if the project proposal passed
-        if(p.collected == true) return false;        // check if the user has already collected
-        if(p.voted[addr] == false) return false;     // check if the address voted
-        p.collected[addr] = true;                     // the user has collected
-        return true;
+        if(p.proposalPassed == false) throw;  // check if the project proposal passed
+        if(p.collected[msg.sender] == true) throw;        // check if the user has already collected
+        if(p.voted[msg.sender] == false) throw;     // check if the address voted
+        p.collected[msg.sender] = true;                     // the user has collected
+        //sharesTokenAddress.balances[msg.sender] = sharesTokenAddress.safeAdd(sharesTokenAddress.balances[msg.sender], reward);
+        sharesTokenAddress.totalSupply = sharesTokenAddress.safeAdd(sharesTokenAddress.totalSupply, reward);
     }
 
-    function eligibleForRewardFromLiquidationProposal(uint liquidationID, address addr) constant returns (bool) {
-        LiquidationProposal l = LiquidationsProposals[liquidationID];
-        if(msg.sender != addr) throw;                 // for now only allow sender
-        if(l.liquidationPassed == false) return false;  // check if the liquidation proposal passed
-        if(l.collected == true) return false;           // check if the user has already collected
-        if(l.voted[addr] == false) return false;        // check if the address voted
-        l.collected[addr] = true;                       // the user has collected
-        return true;
+    function getRewardFromLiquidationProposal(uint liquidationID) {
+        LiquidationProposal l = liquidationsProposals[liquidationID];
+        if(l.liquidationPassed == false) throw;  // check if the liquidation proposal passed
+        if(l.collected[msg.sender] == true) throw;           // check if the user has already collected
+        if(l.voted[msg.sender] == false) throw;        // check if the address voted
+        l.collected[msg.sender] = true;                       // the user has collected
+        sharesTokenAddress.balances[msg.sender] = sharesTokenAddress.safeAdd(sharesTokenAddress.balances[msg.sender], reward);
+        sharesTokenAddress.totalSupply = sharesTokenAddress.safeAdd(sharesTokenAddress.totalSupply, reward);
     }
 
-    function eligibleForRewardFromFinderProposal(uint findersId, address addr) constant returns (bool) {
-        FinderProposal fP = findersProposals[findersId];
-        if(msg.sender != addr) throw;                 // for now only allow sender
-        if(fP.findersPassed == false) return false;     // check if the proposal passed
-        if(fP.collected == true) return false;          // check if the user has already collected
-        if(fP.voted[addr] == false) return false;       // check if the address voted
-        fP.collected = true;                            // the user has collected
-        return true;
+    function getRewardFromFinderProposal(uint finderID) {
+        FinderProposal fP = findersProposals[finderID];
+        if(fP.findersPassed == false) throw;     // check if the proposal passed
+        if(fP.collected[msg.sender] == true) throw;          // check if the user has already collected
+        if(fP.voted[msg.sender] == false) throw;       // check if the address voted
+        fP.collected[msg.sender] = true;                            // the user has collected
+        sharesTokenAddress.balances[msg.sender] = sharesTokenAddress.safeAdd(sharesTokenAddress.balances[msg.sender], reward);
+        sharesTokenAddress.totalSupply = sharesTokenAddress.safeAdd(sharesTokenAddress.totalSupply, reward);
     }
-
-    // MUST FIX THE REWARD TO ONLY BE ABLE TO CALLED ONCE, PERHAPS A METHOD OF CHECKING WHETHER A USER HAS ALREADY CLAIMED THEIR REWARD, MUCH LIKE THE VOTING IS SET UP NOW.
+    /*
+    function getRewardFromRewardProposal(uint rewardID) {
+        RewardProposal r = rewardsProposals[rewardID];
+        if(r.rewardsPassed == false) throw;
+        if(r.collected[msg.sender] == true) throw;
+        if(r.voted[msg.sender] == false) throw;
+        r.collected[msg.sender] = true;
+        sharesTokenAddress.balances[msg.sender] = safeAdd(balances[msg.sender], reward);
+        sharesTokenAddress.totalSupply = safeAdd(totalSupply, reward);
+    }*/
+    
 }
