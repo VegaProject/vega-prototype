@@ -52,7 +52,6 @@ contract Club is Ownable, SafeMath {
         bytes32 proposalHash;
         Vote[] votes;
         mapping (address => bool) voted;
-        mapping (address => bool) collected;
     }
 
     struct LiquidationProposal {
@@ -66,7 +65,6 @@ contract Club is Ownable, SafeMath {
         bytes32 liquidationHash;
         Vote[] votes;
         mapping (address => bool) voted;
-        mapping (address => bool) collected;
     }
 
     struct FinderProposal {
@@ -78,7 +76,6 @@ contract Club is Ownable, SafeMath {
         bytes32 findersHash;
         Vote[] votes;
         mapping (address => bool) voted;
-        mapping (address => bool) collected;
     }
 
     struct RewardProposal {
@@ -91,7 +88,6 @@ contract Club is Ownable, SafeMath {
        bytes32 rewardHash;
        Vote[] votes;
        mapping (address => bool) voted;
-       mapping (address => bool) collected;
     }
 
     modifier onlyShareholders {
