@@ -21,6 +21,8 @@ contract Club is Ownable, SafeMath {
 
     uint public findersFee;
     uint public reward;
+    mapping(address => uint) public points;
+    
     VegaToken public sharesTokenAddress;
 
     event ProjectProposalAdded(uint proposalID, address recipient, uint amount, string description);
@@ -183,6 +185,13 @@ contract Club is Ownable, SafeMath {
                 throw;
             }
             p.proposalPassed = true;
+            
+            for (uint x = 0; x < p.votes.length; ++x) {                
+                Vote vP = p.votes[x];
+                uint newPoints = sharesTokenAddress.balanceOf(vP.voter);
+                points[vP.voter] += newPoints;                     
+            }
+            
         } else {
             p.proposalPassed = false;
         }
@@ -263,6 +272,13 @@ contract Club is Ownable, SafeMath {
             /* has quorum and was approved */
             l.executed = true;
             l.liquidationPassed = true;
+            
+            for (uint x = 0; x < l.votes.length; ++x) {                
+                Vote vP = l.votes[x];
+                uint newPoints = sharesTokenAddress.balanceOf(vP.voter);
+                points[vP.voter] += newPoints;                     
+            }
+            
         } else {
             l.liquidationPassed = false;
         }
@@ -336,6 +352,14 @@ contract Club is Ownable, SafeMath {
             fP.executed = true;
             fP.findersPassed = true;
             findersFee = fP.fee;
+            
+            for (uint x = 0; x < fP.votes.length; ++x) {                
+                Vote vP = fP.votes[x];
+                uint newPoints = sharesTokenAddress.balanceOf(vP.voter);
+                points[vP.voter] += newPoints;                     
+            }
+            
+            
         } else {
             fP.findersPassed = false;
         }
@@ -346,29 +370,14 @@ contract Club is Ownable, SafeMath {
     /// Reward Proposal
     ///------------------------------------------------------------------------------------------------------------------------------
 
-    function newRewardProposal() onlyShareholders returns (uint rewardsId) {
+    function newRewardProposal() onlyShareholders returns (uint rewardsId);
 
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
+   
+    
+    /// Finders fee methods
+    ///------------------------------------------------------------------------------------------------------------------------------
+    
     /* Change to single functions later, not nessary rn */
 
     function getTokenAmount(uint liquidationID) returns (uint) {
@@ -390,16 +399,25 @@ contract Club is Ownable, SafeMath {
         return p.recipient;
     }
 
-    // only call this function indirectly from the token contract, or else you could lose tokens
     function getFinder(uint proposalID) constant returns (address) {
         ProjectProposal p = projectsProposals[proposalID];
         if(msg.sender != p.finder) throw;           // only let a finder call this function
         if(p.proposalPassed == false) throw;        // check if proposal passed
-        if(p.findersCollected = true) throw;        // check if the finder has already collected
+        if(p.findersCollected == true) throw;       // check if the finder has already collected
         p.findersCollected = true;                  // set the finders collection status to true
         return p.finder;
     }
-
+    
+    
+    /// Points methods
+    function getPoints(address addr) constant returns (uint) {
+        return points[addr];
+    }
+    
+    function removePoints(uint amount) {
+        if(amount > points[msg.sender]) throw;
+        points[msg.sender] -= amount;
+    }
     
     
     function eligibleForRewardFromLiquidationProposal(uint liquidationID, address addr) external constant returns (bool) {

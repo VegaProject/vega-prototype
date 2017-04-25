@@ -125,7 +125,20 @@ import './Club.sol';
      balances[finder] = safeAdd(balances[finder], amount);
      totalSupply = safeAdd(totalSupply, amount);
    }
-
+   
+   function claimPointReward(uint claim) {
+     uint pointsBalance = clubAddress.getPoints(msg.sender);
+     uint reward = clubAddress.reward();
+     if(claim > pointsBalance) throw;               // checking if user has enough points
+     uint amount = safeMul(claim, reward);         // fix later to see how this actually works with pricing
+     clubAddress.removePoints(claim);
+     balances[msg.sender] = safeAdd(balances[msg.sender], amount);
+     totalSupply = safeAdd(totalSupply, amount);
+   }
+   
+   // make a reward claim
+   
+/*
    function rewardVoter(uint proposalID) {
      var status = false;
      if(clubAddress.eligibleForRewardFromLiquidationProposal(proposalID, msg.sender) == false) {
@@ -140,7 +153,7 @@ import './Club.sol';
      uint amount = clubAddress.reward();
      balances[msg.sender] = safeAdd(balances[msg.sender], amount);
      totalSupply = safeAdd(totalSupply, amount);
-   }
+   }*/
 
    /// ()
    ///---------------------------------------------------------------------------------------------------------------------------------------
