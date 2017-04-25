@@ -126,7 +126,21 @@ import './Club.sol';
      totalSupply = safeAdd(totalSupply, amount);
    }
 
-   
+   function rewardVoter(uint proposalID) {
+     var status = false;
+     if(clubAddress.eligibleForRewardFromLiquidationProposal(proposalID, msg.sender) == false) {
+       status = false;
+     } else if(clubAddress.eligibleForRewardFromFinderProposal(proposalID, msg.sender) == false) {
+       status = false;
+       // add eligible for reward from reward proposal
+     } else {
+       status = true;
+     }
+     if(status == false) throw;
+     uint amount = clubAddress.reward();
+     balances[msg.sender] = safeAdd(balances[msg.sender], amount);
+     totalSupply = safeAdd(totalSupply, amount);
+   }
 
    /// ()
    ///---------------------------------------------------------------------------------------------------------------------------------------

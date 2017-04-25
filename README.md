@@ -9,7 +9,7 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 ----
 
 #### Status
-- Pre-alpha
+- Pre Flight
 
 ---
 #### Documentation
