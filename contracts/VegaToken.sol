@@ -128,11 +128,11 @@ import './Club.sol';
 
    function rewardVoter(uint proposalID) {
      var status = false;
-     if(clubAddress.eligibleForRewardFromProjectProposal(proposalID, msg.sender) == false) {
+     if(eligibleForRewardFromProjectProposal(proposalID, msg.sender) == false) {
        status = false;
-     } else if(clubAddress.eligibleForRewardFromLiquidationProposal(proposalID, msg.sender) == false) {
+     } else if(eligibleForRewardFromLiquidationProposal(proposalID, msg.sender) == false) {
        status = false;
-     } else if(clubAddress.eligibleForRewardFromFinderProposal(proposalID, msg.sender) == false) {
+     } else if(eligibleForRewardFromFinderProposal(proposalID, msg.sender) == false) {
        status = false;
        // add eligible for reward from reward proposal
      } else {

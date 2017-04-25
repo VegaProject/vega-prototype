@@ -405,7 +405,7 @@ contract Club is Ownable {
     // to get reward only call these functions indirectly from the token contract, or else you will have
     // you may be eligible but you will not receive any tokens. in the future we will change this
 
-    function eligibleForRewardFromProjectProposal(uint proposalID, address addr) constant returns (bool) {
+    function eligibleForRewardFromProjectProposal(uint proposalID, address addr) internal constant returns (bool) {
         ProjectProposal p = projectsProposals[proposalID];
         if(msg.sender != addr) throw;                 // for now only allow sender
         if(p.proposalPassed == false) return false;  // check if the project proposal passed
@@ -415,7 +415,7 @@ contract Club is Ownable {
         return true;
     }
 
-    function eligibleForRewardFromLiquidationProposal(uint liquidationID, address addr) constant returns (bool) {
+    function eligibleForRewardFromLiquidationProposal(uint liquidationID, address addr) internal constant returns (bool) {
         LiquidationProposal l = LiquidationsProposals[liquidationID];
         if(msg.sender != addr) throw;                 // for now only allow sender
         if(l.liquidationPassed == false) return false;  // check if the liquidation proposal passed
@@ -425,7 +425,7 @@ contract Club is Ownable {
         return true;
     }
 
-    function eligibleForRewardFromFinderProposal(uint findersId, address addr) constant returns (bool) {
+    function eligibleForRewardFromFinderProposal(uint findersId, address addr) internal constant returns (bool) {
         FinderProposal fP = findersProposals[findersId];
         if(msg.sender != addr) throw;                 // for now only allow sender
         if(fP.findersPassed == false) return false;     // check if the proposal passed
@@ -435,5 +435,4 @@ contract Club is Ownable {
         return true;
     }
 
-    // MUST FIX THE REWARD TO ONLY BE ABLE TO CALLED ONCE, PERHAPS A METHOD OF CHECKING WHETHER A USER HAS ALREADY CLAIMED THEIR REWARD, MUCH LIKE THE VOTING IS SET UP NOW.
 }
