@@ -23,6 +23,7 @@ A decentralized, crowd-managed, venture capital and crowdfunding platform built 
 	testrpc			// do this in new terminal
 	truffle compile		
 	truffle build			
+	truffle migrate
 	npm run dev			
 
 ---
