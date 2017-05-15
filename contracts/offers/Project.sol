@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 import './../deps/Ownable.sol';
-import './../VegaTokenTest.sol';
+import './../VegaToken.sol';
 
 
 /// @title Project contract - Project Offer.
@@ -8,17 +8,17 @@ import './../VegaTokenTest.sol';
 contract Project is Ownable {
 
 
-  VegaTokenTest public VT;
+  VegaToken public VT;
   mapping (address => uint) public points;
   mapping (address => mapping(address => uint)) public extraPoints;
   Offer[] offers;
 
-  function Project(VegaTokenTest _vegaTokenAddr) {
-    VT = VegaTokenTest(_vegaTokenAddr);
+  function Project(VegaToken _vegaTokenAddr) {
+    VT = VegaToken(_vegaTokenAddr);
   }
 
-  function newVegaToken(VegaTokenTest _vegaTokenAddr) onlyOwner {
-    VT = VegaTokenTest(_vegaTokenAddr);
+  function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {
+    VT = VegaToken(_vegaTokenAddr);
   }
   
   modifier onlyShareholders {

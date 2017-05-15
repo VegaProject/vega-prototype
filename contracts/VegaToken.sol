@@ -3,8 +3,10 @@ pragma solidity ^0.4.8;
 import './deps/StandardToken.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
+import './offers/Project.sol';
 import './offers/Rewards.sol';
 import './offers/Finders.sol';
+import './offers/Quorum.sol';
 
 
  contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
@@ -21,26 +23,27 @@ import './offers/Finders.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
-
+   
+   Project public projectContract;
    Rewards public rewardsContract;
    Finders public findersContract;
+   Quorum public quorumContract;
    
 
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
      _;
    }
-   uint public finders = 15;
-    uint public quorum = 300;
 
-
-   function VegaToken(address _migrationMaster, address _rewardsContract, address _findersContract) {
+   function VegaToken(address _migrationMaster, address _projectContract, address _rewardsContract, address _findersContract, address _quorumContract) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
+     projectContract = Project(_projectContract);
      rewardsContract = Rewards(_rewardsContract);
      findersContract = Finders(_findersContract);
+     quorumContract = Quorum(_quorumContract);
    }
 
    function rewardRate() public constant returns (uint rate) {
@@ -52,8 +55,21 @@ import './offers/Finders.sol';
      return amount;
    }
    
-   function findersPoints() public constant returns (uint finders) {
+   function finders() public constant returns (uint finders) {
      return findersContract.finders(); 
+   }
+   
+   function quorum() public constant returns (uint quorum) {
+    return quorumContract.quorum();
+   }
+   
+   // make this all nice
+   function exchangePointsForTokens(address _from) returns (bool success) {
+    uint amountOne = projectContract.points(msg.sender);
+    uint amountTwo = projectContract.extraPoints(_from, (msg.sender));
+    uint total = amountOne + amountTwo;
+    uint newTokens = total * rewardRate();
+    balances[msg.sender] = safeAdd(balances[msg.sender], newTokens);
    }
 
 
@@ -65,6 +81,11 @@ import './offers/Finders.sol';
      if (_master == 0) throw;
      migrationMaster = _master;
    }
+   
+   function changeProjectContract(address _projectContract) onlyFromMigrationMaster external {
+     if(_projectContract == 0) throw;
+     projectContract = Project(_projectContract);
+   }
 
    function changeRewardsContract(address _rewardsContract) onlyFromMigrationMaster external {
      if(_rewardsContract == 0) throw;
@@ -72,8 +93,13 @@ import './offers/Finders.sol';
    }
    
    function changeFindersContract(address _findersContract) onlyFromMigrationMaster external {
-       if(_findersContract == 0) throw;
-       findersContract = Finders(_findersContract);
+     if(_findersContract == 0) throw;
+     findersContract = Finders(_findersContract);
+   }
+   
+   function changeQuorumContract(address _quorumContract) onlyFromMigrationMaster external {
+     if(_quorumContract == 0) throw;
+     quorumContract = Quorum(_quorumContract);
    }
 
    function finalizeOutgoingMigration() onlyFromMigrationMaster external {
