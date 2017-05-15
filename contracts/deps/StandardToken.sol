@@ -19,7 +19,7 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
   mapping (address => mapping (address => uint)) allowed;
   mapping (address => mapping (address => uint)) managed;
   mapping (address => uint) fee;
-  mapping (address => uint) totalManaged;
+  mapping (address => uint) public totalManaged;
   address[] public managedArr;
   bool public  stopped;
 
@@ -73,8 +73,16 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
   function forward(address _proxy, uint _value) returns (bool success) {
     managed[msg.sender][_proxy] = _value;
     managedArr.push(msg.sender);
-    totalManaged[_proxy] = safeAdd(totalManaged[_proxy] _value);
+    totalManaged[_proxy] = safeAdd(totalManaged[_proxy], _value);
     return true;
+  }
+  
+  function getItemsInManagedArr() constant returns (uint items) {
+    return managedArr.length;
+  }
+  
+  function getSingleItemInMangedArr(uint _item) constant returns (address) {
+    return managedArr[_item];
   }
 
   function backward(address _who, uint _value) returns (bool success) {
@@ -82,7 +90,7 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
     totalManaged[msg.sender] = safeSub(totalManaged[msg.sender], _value);
   }
 
-  function managedWeight(address _owner, address _manager) constant returns (uint managed) {
+  function managedWeight(address _owner, address _manager) constant returns (uint amount) {
     return managed[_owner][_manager];
   }
 
@@ -91,8 +99,8 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
     return true;
   }
 
-  function feeAmount(address _who) constant returns (uint fee) {
-    if(totalManaged > 0) throw;
+  function feeAmount(address _who) constant returns (uint amount) {
+    if(totalManaged[_who] > 0) throw;
     return fee[_who];
   }
 

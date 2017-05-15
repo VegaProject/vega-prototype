@@ -1,18 +1,14 @@
-var VegaToken = artifacts.require("./VegaToken.sol");
-var Club = artifacts.require("./Club.sol");
-var EtherDelta = artifacts.require("./EtherDelta.sol");
+var VegaTokenTest = artifacts.require("./VegaTokenTest.sol");
+var Project = artifacts.require("./offers/Project.sol");
 
 module.exports = function(deployer) {
   deployer.deploy(
-    VegaToken,
+    VegaTokenTest,
     web3.eth.accounts[0],
     web3.eth.accounts[0],
     web3.eth.accounts[0]
   );
   deployer.deploy(
-    Club
-  );
-  deployer.deploy(
-    EtherDelta
+    Project
   );
 };

@@ -5,21 +5,26 @@ import './../VegaTokenTest.sol';
 
 /// @title Project contract - Project Offer.
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
-contract Project is VegaToken {
+contract Project is Ownable {
 
 
   VegaTokenTest public VT;
   mapping (address => uint) public points;
-  mapping (address => uint) public extraPoints;
+  mapping (address => mapping(address => uint)) public extraPoints;
   Offer[] offers;
 
   function Project(VegaTokenTest _vegaTokenAddr) {
     VT = VegaTokenTest(_vegaTokenAddr);
   }
 
-  function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {
+  function newVegaToken(VegaTokenTest _vegaTokenAddr) onlyOwner {
     VT = VegaTokenTest(_vegaTokenAddr);
   }
+  
+  modifier onlyShareholders {
+        if (VT.balanceOf(msg.sender) == 0) throw;
+        _;
+    }
 
   struct Vote {
       bool inSupport;
@@ -44,7 +49,6 @@ contract Project is VegaToken {
       mapping (address => bool) voted;
   }
 
-  /// @required approve Project address to spend tokens
   /// @param _recipient Offer recipient address.
   /// @param _requestedAmount Amount of tokens.
   /// @param _token Token address, if NULL default is ETH.
@@ -82,19 +86,17 @@ contract Project is VegaToken {
     o.executed = false;
     o.numberOfVotes = 1;
     o.offerHash = sha3(_recipient, _requestedAmount, _token, _description, _openFor, _offerHash);
-    Vote[] votes;
-    mapping (address => bool) voted;
     return offerId;
   }
 
   /// @param _id Id of Offer.
-    /// @param _recipient Offer recipient address.
-    /// @param _requestedAmount Amount of tokens.
-    /// @param _token Token address, if NULL default is ETH.
-    /// @param _description Description of the Offer.
-    /// @param _openFor Time allowed to vote, must be under 30 days.
-    /// @param _offerHash Hash of Offer.
-    /// @return codeChecksOut bool for if the hash matches.
+  /// @param _recipient Offer recipient address.
+  /// @param _requestedAmount Amount of tokens.
+  /// @param _token Token address, if NULL default is ETH.
+  /// @param _description Description of the Offer.
+  /// @param _openFor Time allowed to vote, must be under 30 days.
+  /// @param _offerHash Hash of Offer.
+  /// @return codeChecksOut bool for if the hash matches.
   function checkOffer(
     uint _id,
     address _recipient,
@@ -131,55 +133,64 @@ contract Project is VegaToken {
   }
 
   /// @param _id Id of Offer.
+  /// @param _transactionBytecode Hash of the Offer.
+  function checkIfOfferCanExecute(uint _id, bytes _transactionBytecode) private constant returns (bool) {
+    Offer o = offers[_id];
+    if (now < o.openFor || o.executed || o.offerHash != sha3(o.recipient, o.requestAmount, o.token, o.description, o.openFor, _transactionBytecode)) throw;
+    return true;
+  }
+  
+  /// @param _id Id of Offer.
+  function countVotes(uint _id) private returns (uint yes, uint no, uint total) {
+    Offer o = offers[_id];
+    uint quorum = 0;
+    uint yea = 0;
+    uint nay = 0;
+    for (uint i = 0; i < o.votes.length; i++) {
+      Vote v = o.votes[i];
+      uint weight = VT.balanceOf(v.voter);
+      uint extraWeight = VT.totalManaged(v.voter);
+      quorum += weight + extraWeight;
+      if(v.inSupport) {
+        yea += weight + extraWeight;
+      } else {
+        nay += weight + extraWeight;
+      }
+    }
+    quorum += o.creatorsDeposit;
+    yea += o.creatorsDeposit;
+    return (yea, nay, quorum);
+  }
+
+  /// @param _id Id of Offer.
   /// @param _transactionBytecode Hash of Offer.
   function executeOffer(
     uint _id,
     bytes _transactionBytecode
     )
   {
+    checkIfOfferCanExecute(_id, _transactionBytecode);
+    var (yea, nay, quorum) = countVotes(_id);
+    
     Offer o = offers[_id];
-    if (
-      now < o.openFor ||
-      o.executed ||
-      o.offerHash != sha3(o.recipient, requestAmount, token, description, openFor, _transactionBytecode)
-      )
-      throw;
-
-    uint quorum = 0;
-    uint yea = 0;
-    uint nay = 0;
-
-    for (uint i = 0; i < o.votes.length; ++i) {
-      Vote v = o.votes[i];
-      uint voteWeight = VT.balanceOf(v.voter);
-      for (uint iX = 0; iX < VT.managedArr.length; ++iX){
-        uint extraWeight += VT.managedWeight(VT.managedArr[iX], v.voter);
-      }
-      quorum += voteWeight + extraWeight;
-      if(v.inSupport) {
-        yea += voteWeight + extraWeight;
-      } else {
-        nay += voteWeight + extraWeight;
-      }
-    }
-
-    quorum += o.creatorsDeposit;
-    yea += o.creatorsDeposit;
 
     if(quorum <= VT.quorum()) {
       throw;
     } else if (yea > nay) {
       o.executed = true;
-      /*if(!o.recipient.call.value(o.requestAmount * 1 ether)(transactionBytecode)) {
+      if(!o.recipient.call.value(o.requestAmount * 1 ether)(_transactionBytecode)) {
         throw;
-      }*/ // make function that makes the mint contract able to spend the tokens, this checks for errors.
+      }
+      
       o.offerPassed = true;
       for (uint x = 0; x < o.votes.length; x++) {
         Vote vP = o.votes[x];
-        uint points = VT.balanceOf(vP.voter);
+        uint numPoints = VT.balanceOf(vP.voter);
         uint fee = VT.feeAmount(vP.voter);
-        points[vP.voter] += points + fee;
-        extraPoints[vP.voter][managedArr[iXX]] += VT.managedWeight(VT.managedArr[iXX], v.voter) - fee;
+        points[vP.voter] += numPoints + fee;
+        for(uint iXX = 0; iXX < VT.getItemsInManagedArr(); iXX++) {
+          extraPoints[vP.voter][VT.getSingleItemInMangedArr(iXX)] += VT.managedWeight(VT.getSingleItemInMangedArr(iXX), vP.voter) - fee;
+        }
       }
       uint finderVotingPoints = o.creatorsDeposit;
       uint findersReward = VT.finders() +  finderVotingPoints;

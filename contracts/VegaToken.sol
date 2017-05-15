@@ -1,29 +1,11 @@
 pragma solidity ^0.4.8;
 
 import './deps/StandardToken.sol';
-import './deps/EtherDelta.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
-import './Club.sol';
+import './offers/Rewards.sol';
+import './offers/Finders.sol';
 
-/*
- * Vega Token
- * ERC20 Token standard provided by OpenZeppelin.
- * Note: When creating this contract, it needs to know
- * the address of the Club contract. The Club contract
- * when it is created needs to know the VegaToken contract
- * address. Just simply create the VegaToken contract
- * first with a incorect Club contract address, create
- * the Club contract with the VegaToken address, then go
- * back to the VegaToken contract and perform a change
- * to add the real address of the Club to the VegaToken
- * contract.
- *
- * Idea behind stoppable and migrations:
- * When state is stoped, transfer, transferFrom, payable and trade functions no longer work.
- * However migration functions still will work during a stoped state, therefore, tokens
- * could transfered to a new contract provided by the migration master.
- */
 
  contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
    string public name = "Vega";
@@ -39,68 +21,43 @@ import './Club.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
-   //EtherDelta public EtherDeltaAddress;
-   //Club public clubAddress;
-   Project public projectContract;
+
    Rewards public rewardsContract;
+   Finders public findersContract;
+   
 
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
      _;
    }
+   uint public finders = 15;
+    uint public quorum = 300;
 
 
-   function VegaToken(address _migrationMaster, address _etherDeltaAddress, address _clubAddress, address _rewardsAddress) {
+   function VegaToken(address _migrationMaster, address _rewardsContract, address _findersContract) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
-     EtherDeltaAddress = EtherDelta(_etherDeltaAddress);
-     clubAddress = Club(_clubAddress);
-     rewardsContract = Rewards(_rewardsAddress);
+     rewardsContract = Rewards(_rewardsContract);
+     findersContract = Finders(_findersContract);
    }
 
-   function rewardRate() external returns (uint) {
-     return rewardsContract.getRate();
+   function rewardRate() public constant returns (uint rate) {
+     return rewardsContract.rate();
    }
 
-   function creatorsDeposit(uint _requestedAmount) external returns (uint) {
-     uint deposit = _requestedAmount * rewardRate();
-     return deposit;
+   function creatorsDeposit(uint _requestedAmount) public constant returns (uint deposit) {
+     uint amount = _requestedAmount * rewardRate();
+     return amount;
    }
-
-   function getPoints(address _who) public constant returns (uint) {
-
-     projectContract.points[_who];
-     // do for all offers
-   }
-
-   function getExtraPoints(address _from, address _who) public constant returns (uint) {
-     managed(_from)
-     projectContract.extraPoints[_from];
+   
+   function findersPoints() public constant returns (uint finders) {
+     return findersContract.finders(); 
    }
 
 
 
-
-
-
-
-   /// EtherDelta exchange methods
-   ///---------------------------------------------------------------------------------------------------------------------------------------
-   function DepositAndCreateOrderProjectTokens(uint liquidationID) stoppable {
-     uint volume = clubAddress.getTokenAmount(liquidationID);               // getting volume of tokens of the liquidation
-     uint etherAmount = clubAddress.getEtherAmount(liquidationID);          // getting ether amount of the liquidation
-     address tokenAddress = clubAddress.getTokenAddress(liquidationID);     // getting token address from project
-     approveSelfSpender(EtherDeltaAddress, volume);                         // this contract is approving etherDelta to spend tokens from itself, on behalf of this contract
-     EtherDeltaAddress.depositToken(tokenAddress, volume);                  // depositing tokens into etherdelta, needed the approval from the line above
-     //EtherDeltaAddress.order(address tokenGet, uint amountGet, address tokenGive, uint amountGive, uint expires, uint nonce);  // place order on ether delta
-   }
-
-   function WithdrawEther(uint liquidationID) onlyFromMigrationMaster stoppable {          // for now leave just for the migration master, untill better checks are in place, to authorize a withdrawl.
-     uint amount = EtherDeltaAddress.balanceOf(EtherDeltaAddress, this);                   // getting balanceOf Vega in EtherDelta token, my thought is in Ether, but not sure.
-     EtherDeltaAddress.withdraw(amount);                                                   // withdrawl that balance and send it back to this Vega contract
-   }
 
    // Migration methods
    ///---------------------------------------------------------------------------------------------------------------------------------------
@@ -109,14 +66,14 @@ import './Club.sol';
      migrationMaster = _master;
    }
 
-   function changeClubAddr(address _clubAddress) onlyFromMigrationMaster external {
-     if(_clubAddress == 0) throw;
-     clubAddress = Club(_clubAddress);
+   function changeRewardsContract(address _rewardsContract) onlyFromMigrationMaster external {
+     if(_rewardsContract == 0) throw;
+     rewardsContract = Rewards(_rewardsContract);
    }
-
-   function changeEtherDeltaAddr(address _etherDeltaAddress) onlyFromMigrationMaster external {
-       if(_etherDeltaAddress == 0) throw;
-       EtherDeltaAddress = EtherDelta(_etherDeltaAddress);
+   
+   function changeFindersContract(address _findersContract) onlyFromMigrationMaster external {
+       if(_findersContract == 0) throw;
+       findersContract = Finders(_findersContract);
    }
 
    function finalizeOutgoingMigration() onlyFromMigrationMaster external {
@@ -146,24 +103,7 @@ import './Club.sol';
      OutgoingMigration(msg.sender, _value);
    }
 
-   /// Finders fee & voting reward methods
-   ///---------------------------------------------------------------------------------------------------------------------------------------
-   function rewardFinder(uint proposalID) {
-     address finder = clubAddress.getFinder(proposalID);
-     uint amount = clubAddress.findersFee();
-     balances[finder] = safeAdd(balances[finder], amount);
-     totalSupply = safeAdd(totalSupply, amount);
-   }
-
-   function claimPointReward(uint claim) {
-     uint pointsBalance = clubAddress.getPoints(msg.sender);
-     uint reward = clubAddress.reward();
-     if(claim > pointsBalance) throw;               // checking if user has enough points
-     uint amount = safeMul(claim, reward);         // fix later to see how this actually works with pricing
-     clubAddress.removePoints(claim);
-     balances[msg.sender] = safeAdd(balances[msg.sender], amount);
-     totalSupply = safeAdd(totalSupply, amount);
-   }
+  
 
 
    /// ()
