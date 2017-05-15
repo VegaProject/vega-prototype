@@ -147,8 +147,10 @@ contract Project is VegaToken {
     for (uint i = 0; i < o.votes.length; ++i) {
       Vote v = o.votes[i];
       uint voteWeight = VT.balanceOf(v.voter);
-      uint extraWeight = VT.extraWeight(v.voter);
-      quorum += voteWeight;
+      for (uint iX = 0; iX < VT.managedArr.length; ++iX){
+        uint extraWeight += VT.managedWeight(VT.managedArr[iX], v.voter);
+      }
+      quorum += voteWeight + extraWeight;
       if(v.inSupport) {
         yea += voteWeight + extraWeight;
       } else {
@@ -170,11 +172,9 @@ contract Project is VegaToken {
       for (uint x = 0; x < o.votes.length; x++) {
         Vote vP = o.votes[x];
         uint points = VT.balanceOf(vP.voter);
-        uint fee = VT.fee(vP.voter);
-        uint extraPoints = VT.totalManaged(vP.voter) - fee;
+        uint fee = VT.feeAmount(vP.voter);
         points[vP.voter] += points + fee;
-        extraPoints[vP.voter] += extraPoints;
-
+        extraPoints[vP.voter][managedArr[iXX]] += VT.managedWeight(VT.managedArr[iXX], v.voter) - fee;
       }
       uint finderVotingPoints = o.creatorsDeposit;
       uint findersReward = VT.finders() +  finderVotingPoints;

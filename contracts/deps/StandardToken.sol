@@ -20,6 +20,7 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
   mapping (address => mapping (address => uint)) managed;
   mapping (address => uint) fee;
   mapping (address => uint) totalManaged;
+  address[] public managedArr;
   bool public  stopped;
 
   modifier stoppable {
@@ -71,8 +72,14 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
 
   function forward(address _proxy, uint _value) returns (bool success) {
     managed[msg.sender][_proxy] = _value;
-    totalManaged[_proxy] += _value;
+    managedArr.push(msg.sender);
+    totalManaged[_proxy] = safeAdd(totalManaged[_proxy] _value);
     return true;
+  }
+
+  function backward(address _who, uint _value) returns (bool success) {
+    managed[_who][msg.sender] = _value;
+    totalManaged[msg.sender] = safeSub(totalManaged[msg.sender], _value);
   }
 
   function managedWeight(address _owner, address _manager) constant returns (uint managed) {
