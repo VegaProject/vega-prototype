@@ -39,22 +39,52 @@ import './Club.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
-   EtherDelta public EtherDeltaAddress;
-   Club public clubAddress;
+   //EtherDelta public EtherDeltaAddress;
+   //Club public clubAddress;
+   Project public projectContract;
+   Rewards public rewardsContract;
 
    modifier onlyFromMigrationMaster() {
      if (msg.sender != migrationMaster) throw;
      _;
    }
 
-   function VegaToken(address _migrationMaster, address _etherDeltaAddress, address _clubAddress) {
+
+   function VegaToken(address _migrationMaster, address _etherDeltaAddress, address _clubAddress, address _rewardsAddress) {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
      totalSupply = INITIAL_SUPPLY;
      balances[msg.sender] = INITIAL_SUPPLY;
      EtherDeltaAddress = EtherDelta(_etherDeltaAddress);
      clubAddress = Club(_clubAddress);
+     rewardsContract = Rewards(_rewardsAddress);
    }
+
+   function rewardRate() external returns (uint) {
+     return rewardsContract.getRate();
+   }
+
+   function creatorsDeposit(uint _requestedAmount) external returns (uint) {
+     uint deposit = _requestedAmount * rewardRate();
+     return deposit;
+   }
+
+   function getPoints(address _who) public constant returns (uint) {
+
+     projectContract.points[_who];
+     // do for all offers
+   }
+
+   function getExtraPoints(address _from, address _who) public constant returns (uint) {
+     managed(_from)
+     projectContract.extraPoints[_from];
+   }
+
+
+
+
+
+
 
    /// EtherDelta exchange methods
    ///---------------------------------------------------------------------------------------------------------------------------------------
@@ -124,7 +154,7 @@ import './Club.sol';
      balances[finder] = safeAdd(balances[finder], amount);
      totalSupply = safeAdd(totalSupply, amount);
    }
-   
+
    function claimPointReward(uint claim) {
      uint pointsBalance = clubAddress.getPoints(msg.sender);
      uint reward = clubAddress.reward();
@@ -134,7 +164,7 @@ import './Club.sol';
      balances[msg.sender] = safeAdd(balances[msg.sender], amount);
      totalSupply = safeAdd(totalSupply, amount);
    }
-   
+
 
    /// ()
    ///---------------------------------------------------------------------------------------------------------------------------------------

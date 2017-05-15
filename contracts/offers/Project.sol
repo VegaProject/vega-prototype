@@ -6,6 +6,8 @@ contract Project is VegaToken {
 
 
   VegaToken public VT;
+  mapping (address => uint) public points;
+  mapping (address => uint) public extraPoints;
   Offer[] offers;
 
   function Project(VegaToken _vegaTokenAddr) {
@@ -59,14 +61,14 @@ contract Project is VegaToken {
     external
     returns (uint offerId)
   {
-    if(VT.creatorsDeposit() > VT.balanceOf(msg.sender)) throw;
+    if(VT.creatorsDeposit(_requestedAmount) > VT.balanceOf(msg.sender)) throw;
     if(_openFor < now + 7 days || _openFor > now + 30 days) throw;
     offerId = offers.length++;
     Offer o = offers[offerId];
     o.finder = msg.sender;
     o.findersCollected = false;
-    VT.transferFrom(msg.sender, this, VT.creatorsDeposit());
-    o.creatorsDeposit = VT.creatorsDeposit();
+    VT.transferFrom(msg.sender, this, VT.creatorsDeposit(_requestedAmount));
+    o.creatorsDeposit = VT.creatorsDeposit(_requestedAmount);
     o.recipient = _recipient;
     o.requestAmount = _requestedAmount;
     o.token = _token;
@@ -145,11 +147,12 @@ contract Project is VegaToken {
     for (uint i = 0; i < o.votes.length; ++i) {
       Vote v = o.votes[i];
       uint voteWeight = VT.balanceOf(v.voter);
+      uint extraWeight = VT.extraWeight(v.voter);
       quorum += voteWeight;
       if(v.inSupport) {
-        yea += voteWeight;
+        yea += voteWeight + extraWeight;
       } else {
-        nay += voteWeight;
+        nay += voteWeight + extraWeight;
       }
     }
 
@@ -160,24 +163,28 @@ contract Project is VegaToken {
       throw;
     } else if (yea > nay) {
       o.executed = true;
-      if(!o.recipient.call.value(o.requestAmount * 1 ether)(transactionBytecode)) {
+      /*if(!o.recipient.call.value(o.requestAmount * 1 ether)(transactionBytecode)) {
         throw;
-      }
+      }*/ // make function that makes the mint contract able to spend the tokens, this checks for errors.
       o.offerPassed = true;
       for (uint x = 0; x < o.votes.length; x++) {
         Vote vP = o.votes[x];
         uint points = VT.balanceOf(vP.voter);
-        VT.setPoints(vP.voter, points);
+        uint fee = VT.fee(vP.voter);
+        uint extraPoints = VT.totalManaged(vP.voter) - fee;
+        points[vP.voter] += points + fee;
+        extraPoints[vP.voter] += extraPoints;
+
       }
       uint finderVotingPoints = o.creatorsDeposit;
       uint findersReward = VT.finders() +  finderVotingPoints;
-      VT.setPoints(o.finder, findersReward);
+      points[o.finder] += findersReward;
 
     } else {
       o.offerPassed = false;
     }
-
   }
+
 
 
 /// Helper functions

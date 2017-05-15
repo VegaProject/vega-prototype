@@ -15,8 +15,11 @@ import './ds-auth.sol';
  */
 contract StandardToken is DSAuth, ERC20, SafeMath {
 
-  mapping(address => uint) balances;
+  mapping (address => uint) balances;
   mapping (address => mapping (address => uint)) allowed;
+  mapping (address => mapping (address => uint)) managed;
+  mapping (address => uint) fee;
+  mapping (address => uint) totalManaged;
   bool public  stopped;
 
   modifier stoppable {
@@ -64,6 +67,26 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
 
   function allowance(address _owner, address _spender) constant returns (uint remaining) {
     return allowed[_owner][_spender];
+  }
+
+  function forward(address _proxy, uint _value) returns (bool success) {
+    managed[msg.sender][_proxy] = _value;
+    totalManaged[_proxy] += _value;
+    return true;
+  }
+
+  function managedWeight(address _owner, address _manager) constant returns (uint managed) {
+    return managed[_owner][_manager];
+  }
+
+  function setFee(uint _fee) returns (bool success) {
+    fee[msg.sender] = _fee;
+    return true;
+  }
+
+  function feeAmount(address _who) constant returns (uint fee) {
+    if(totalManaged > 0) throw;
+    return fee[_who];
   }
 
   function approveSelfSpender(address _spender, uint _value) returns (bool success) {
