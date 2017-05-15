@@ -1,21 +1,24 @@
 pragma solidity ^0.4.8;
 import './../deps/Ownable.sol';
-import './../VegaToken';
+import './../VegaTokenTest.sol';
 
+
+/// @title Project contract - Project Offer.
+/// @author George K. Van Hoomissen - <georgek@vega.fund>
 contract Project is VegaToken {
 
 
-  VegaToken public VT;
+  VegaTokenTest public VT;
   mapping (address => uint) public points;
   mapping (address => uint) public extraPoints;
   Offer[] offers;
 
-  function Project(VegaToken _vegaTokenAddr) {
-    VT = VegaToken(_vegaTokenAddr);
+  function Project(VegaTokenTest _vegaTokenAddr) {
+    VT = VegaTokenTest(_vegaTokenAddr);
   }
 
   function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {
-    VT = VegaToken(_vegaTokenAddr);
+    VT = VegaTokenTest(_vegaTokenAddr);
   }
 
   struct Vote {
@@ -127,6 +130,8 @@ contract Project is VegaToken {
     return voteId;
   }
 
+  /// @param _id Id of Offer.
+  /// @param _transactionBytecode Hash of Offer.
   function executeOffer(
     uint _id,
     bytes _transactionBytecode
