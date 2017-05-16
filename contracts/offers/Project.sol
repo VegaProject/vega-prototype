@@ -227,33 +227,4 @@ contract Project is Ownable {
   }
 
   function () payable {}
-
-/// Helper functions
-
-/*
-  function getFinder(uint id) public constant returns (address) {
-    return offers[id].finder;
-  }
-
-  function getFindersCollected(uint id) public constant returns (bool) {
-    return offers[id].findersCollected;
-  }
-
-  function getRecipient(uint id) public constant returns (address) {
-    return offers[id].recipient;
-  }
-
-  function getRequestAmount(uint id) public constant returns (uint) {
-    return offers[id].requestAmount;
-  }
-
-  function getDescription(uint id) public constant returns (string) {
-    return offers[id].description;
-  }
-
-  function getCreationTime(uint id) public constant returns (uint) {
-    return offers[id].creationTime;
-  }
-
-*/
 }
