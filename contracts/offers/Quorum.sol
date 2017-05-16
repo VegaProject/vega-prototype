@@ -88,7 +88,6 @@ contract Quorum is Ownable {
 
   /// @param _id Id of Offer.
   /// @param _quorum Quorum amount.
-  /// @param _token Token address, if NULL default is ETH.
   /// @param _openFor Time allowed to vote, must be under 30 days.
   /// @param _offerHash Hash of Offer.
   /// @return codeChecksOut True if the hash matches.
