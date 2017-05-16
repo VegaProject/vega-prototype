@@ -3,7 +3,7 @@ import './../deps/Ownable.sol';
 import './../VegaToken.sol';
 
 
-/// @title Project contract - Project Offer.
+/// @title Project Contract - Project Offer.
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
 contract Project is Ownable {
 
@@ -79,11 +79,10 @@ contract Project is Ownable {
     bytes _offerHash
     )
     onlyShareholders
-    external
     returns (uint offerId)
   {
     if(VT.creatorsDeposit(_requestedAmount) > VT.balanceOf(msg.sender)) throw;
-    if(_openFor < now + 7 days || _openFor > now + 30 days) throw;
+    //if(_openFor < now + 7 days || _openFor > now + 30 days) throw;
     offerId = offers.length++;
     Offer o = offers[offerId];
     o.finder = msg.sender;

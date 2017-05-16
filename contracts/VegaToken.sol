@@ -167,7 +167,7 @@ import './offers/Quorum.sol';
    function convertRewardsPoints(uint _value) public returns (bool success) {
      uint amount = getRewardsOfferPoints(msg.sender);
      if(amount < _value) throw;
-     rewardsContract.points(msg.sender) = safeSub(amount, _value);
+     rewardsContract.removePoints(msg.sender, _value);
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
@@ -177,7 +177,7 @@ import './offers/Quorum.sol';
    function convertRewardsExtraPoints(uint _value, address _manager) public returns (bool success) {
      uint amount = getRewardsOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
-     rewardsContract.extraPoints(_manager, (msg.sender)) = safeSub(amount, _value);
+     rewardsContract.removeExtraPoints(msg.sender, _manager, _value);
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
@@ -187,7 +187,7 @@ import './offers/Quorum.sol';
    function convertFindersPoints(uint _value) public returns (bool success) {
      uint amount = getFindersOfferPoints(msg.sender);
      if(amount < _value) throw;
-     findersContract.points(msg.sender) = safeSub(amount, _value);
+     findersContract.removePoints(msg.sender, _value);
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
@@ -197,7 +197,7 @@ import './offers/Quorum.sol';
    function convertFindersExtraPoints(uint _value, address _manager) public returns (bool success) {
      uint amount = getFindersOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
-     findersContract.extraPoints(_manager, (msg.sender)) = safeSub(amount, _value);
+     findersContract.removeExtraPoints(msg.sender, _manager, _value);
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
@@ -207,7 +207,7 @@ import './offers/Quorum.sol';
    function convertQuorumPoints(uint _value) public returns (bool success) {
      uint amount = getQuorumOfferPoints(msg.sender);
      if(amount < _value) throw;
-     //quorumContract.points(msg.sender) = safeSub(amount, _value);
+     quorumContract.removePoints(msg.sender, _value);
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
@@ -217,7 +217,7 @@ import './offers/Quorum.sol';
    function convertQuorumExtraPoints(uint _value, address _manager) public returns (bool success) {
      uint amount = getQuorumOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
-     //quorumContract.extraPoints(_manager, (msg.sender)) = safeSub(amount, _value);
+     quorumContract.removeExtraPoints(msg.sender, _manager, _value);
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
