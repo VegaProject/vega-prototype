@@ -41,6 +41,12 @@ contract Project is Ownable {
      return true;
    }
 
+   function removeFindersFee(address _who, address _manager, uint _value) external returns (bool success) {
+     if(_who != msg.sender) throw;
+     findersRefund[_who] -= _value;
+     return true;
+   }
+
   struct Vote {
       bool inSupport;
       address voter;
@@ -206,14 +212,14 @@ contract Project is Ownable {
       }
       uint finderVotingPoints = o.creatorsDeposit;
       uint findersReward = VT.finders() +  finderVotingPoints;
-      ;
       points[o.finder] += findersReward;
+      refundFinder[o.finder] += o.creatorsDeposit;
 
     } else {
       o.offerPassed = false;
     }
   }
-  
+
   function getOfferStatus(uint _id) public constant returns (bool, uint, address) {
     Offer o = offers[_id];
     return(o.offerPassed, o.creatorsDeposit, o.finder);
