@@ -79,7 +79,7 @@ import './offers/Quorum.sol';
    }
 
    function finders() public constant returns (uint finders) {
-     return findersContract.finders();
+     return findersContract.currentFinders();
    }
 
    function quorum() public constant returns (uint quorum) {
