@@ -12,11 +12,13 @@ contract Project is Ownable {
   mapping (address => uint) public points;
   mapping (address => mapping(address => uint)) public extraPoints;
   Offer[] offers;
-
+  
+  /// @param _vegaTokenAddr VegaToken contract address.
   function Project(VegaToken _vegaTokenAddr) {
     VT = VegaToken(_vegaTokenAddr);
   }
-
+  
+  /// @param _vegaTokenAddr VegaToken contract address.
   function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {
     VT = VegaToken(_vegaTokenAddr);
   }
@@ -200,8 +202,8 @@ contract Project is Ownable {
       o.offerPassed = false;
     }
   }
-
-
+  
+  function () stoppable payable {}
 
 /// Helper functions
 

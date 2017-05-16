@@ -8,7 +8,8 @@ import './offers/Rewards.sol';
 import './offers/Finders.sol';
 import './offers/Quorum.sol';
 
-
+ /// @title VegaToken contract - Vega Tokens.
+ /// @author George K. Van Hoomissen - <georgek@vega.fund>
  contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
    string public name = "Vega";
    string public symbol = "VEGA";
@@ -23,6 +24,7 @@ import './offers/Quorum.sol';
    uint public allowOutgoingMigrationsUntilAtLeast;
    bool public allowOutgoingMigrations = false;
    address public migrationMaster;
+   mapping (address => uint) public totalPoints;
    
    Project public projectContract;
    Rewards public rewardsContract;
@@ -34,8 +36,21 @@ import './offers/Quorum.sol';
      if (msg.sender != migrationMaster) throw;
      _;
    }
-
-   function VegaToken(address _migrationMaster, address _projectContract, address _rewardsContract, address _findersContract, address _quorumContract) {
+   
+   /// @dev Creates VegaTokens.
+   /// @param _migrationMaster Migration Master.
+   /// @param _projectContract Project Offer contract.
+   /// @param _rewardsContract Rewards Offer contract.
+   /// @param _findersContract Finders Offer contract.
+   /// @param _quorumContract Quorum Offer contract.
+   function VegaToken(
+    address _migrationMaster,
+    address _projectContract,
+    address _rewardsContract,
+    address _findersContract,
+    address _quorumContract
+    )
+   {
      if (_migrationMaster == 0) throw;
      migrationMaster = _migrationMaster;
      totalSupply = INITIAL_SUPPLY;
@@ -45,13 +60,21 @@ import './offers/Quorum.sol';
      findersContract = Finders(_findersContract);
      quorumContract = Quorum(_quorumContract);
    }
+ 
+   
+   /**
+    * Offer State
+   **/
 
-   function rewardRate() public constant returns (uint rate) {
-     return rewardsContract.rate();
+   function rewardRate() public constant returns (uint numerator, uint denominator) {
+    uint one = rewardsContract.numerator();
+    uint two = rewardsContract.denominator();
+    return (one, two);
    }
-
+   
    function creatorsDeposit(uint _requestedAmount) public constant returns (uint deposit) {
-     uint amount = _requestedAmount * rewardRate();
+     var (num, den) = rewardRate();
+     uint amount = converter(_requestedAmount, num, den);
      return amount;
    }
    
@@ -63,20 +86,146 @@ import './offers/Quorum.sol';
     return quorumContract.quorum();
    }
    
-   // make this all nice
-   function exchangePointsForTokens(address _from) returns (bool success) {
-    uint amountOne = projectContract.points(msg.sender);
-    uint amountTwo = projectContract.extraPoints(_from, (msg.sender));
-    uint total = amountOne + amountTwo;
-    uint newTokens = total * rewardRate();
-    balances[msg.sender] = safeAdd(balances[msg.sender], newTokens);
+   // Helper function used to multiply fixed point numbers with a decimal rate.
+   function converter(uint _value, uint _numer, uint _denom) public constant returns (uint) {
+        uint value = (_value * _numer) / _denom;
+    }
+   
+   
+   /**
+    * Offer Points
+   **/
+   
+   function getProjectOfferPoints(address _who) private constant returns (uint points) {
+    uint amount = projectContract.points(_who);
+    
+    return amount;
    }
 
+   function getProjectOfferExtraPoints(address _who, address _from) private constant returns (uint extraPoints) {
+     uint amount = projectContract.extraPoints(_from, (_who));
+     return amount;
+   }
 
+   function getRewardsOfferPoints(address _who) private constant returns (uint points) {
+    uint amount = rewardsContract.points(_who);
+    return amount;
+   }
 
+   function getRewardsOfferExtraPoints(address _who, address _from) private constant returns (uint extraPoints) {
+     uint amount = rewardsContract.extraPoints(_from, (_who));
+     return amount;
+   }
 
-   // Migration methods
-   ///---------------------------------------------------------------------------------------------------------------------------------------
+   function getFindersOfferPoints(address _who) private constant returns (uint points) {
+    uint amount = findersContract.points(_who);
+    return amount;
+   }
+
+   function getFindersOfferExtraPoints(address _who, address _from) private constant returns (uint extraPoints) {
+     uint amount = findersContract.extraPoints(_from, (_who));
+     return amount;
+   }
+
+   function getQuorumOfferPoints(address _who) private constant returns (uint points) {
+     uint amount = quorumContract.points(_who);
+     return amount;
+   }
+
+   function getQuorumOfferExtraPoints(address _who, address _from) private constant returns (uint extraPoints) {
+     uint amount = quorumContract.extraPoints(_from, (_who));
+     return amount;
+   }
+   
+   
+   /**
+    * Offer Point Conversion
+   **/
+   
+   function convertProjectPoints(uint _value) public returns (bool success) {
+     uint amount = getProjectOfferPoints(msg.sender);
+     if(amount < _value) throw;
+     projectContract.points(msg.sender) = safeSub(amount, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     return true;
+   }
+
+   function convertProjectExtraPoints(uint _value, address _manager) public returns (bool success) {
+     uint amount = getProjectOfferExtraPoints(msg.sender, address _manager);
+     if(amount < _value) throw;
+     projectContract.extraPoints(_manager, (msg.sender)) = safeSub(amount, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     return true;
+   }
+   
+   function convertRewardsPoints(uint _value) public returns (bool success) {
+     uint amount = getRewardsOfferPoints(msg.sender);
+     if(amount < _value) throw;
+     rewardsContract.points(msg.sender) = safeSub(amount, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     return true;
+   }
+   
+   function convertRewardsExtraPoints(uint _value, address _manager) public returns (bool success) {
+     uint amount = getRewardsOfferExtraPoints(msg.sender, address _manager);
+     if(amount < _value) throw;
+     rewardsContract.extraPoints(_manager, (msg.sender)) = safeSub(amount, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     return true;
+   }
+   
+   function convertFindersPoints(uint _value) public returns (bool success) {
+     uint amount = getFindersOfferPoints(msg.sender);
+     if(amount < _value) throw;
+     findersContract.points(msg.sender) = safeSub(amount, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     return true;
+   }
+   
+   function convertFindersExtraPoints(uint _value, address _manager) public returns (bool success) {
+     uint amount = getFindersOfferExtraPoints(msg.sender, address _manager);
+     if(amount < _value) throw;
+     findersContract.extraPoints(_manager, (msg.sender)) = safeSub(amount, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     return true;
+   }
+   
+   function convertQuorumPoints(uint _value) public returns (bool success) {
+     uint amount = getQuorumOfferPoints(msg.sender);
+     if(amount < _value) throw;
+     quorumContract.points(msg.sender) = safeSub(amount, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     return true;
+   }
+   
+   function convertQuorumExtraPoints(uint _value, address _manager) public returns (bool success) {
+     uint amount = getQuorumOfferExtraPoints(msg.sender, address _manager);
+     if(amount < _value) throw;
+     quorumContract.extraPoints(_manager, (msg.sender)) = safeSub(amount, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     return true;
+   }
+   
+   
+   /**
+    * Migrations
+   **/
    function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
      if (_master == 0) throw;
      migrationMaster = _master;

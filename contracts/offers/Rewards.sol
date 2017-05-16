@@ -5,5 +5,6 @@ import './../VegaToken.sol';
 /// @title Rewards contract - Rewards Offer.
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
 contract Rewards {
-    uint public rate = 5;
+    uint public numerator = 5;
+    uint public denominator = 10;
 }
