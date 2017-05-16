@@ -83,7 +83,7 @@ import './offers/Quorum.sol';
    }
 
    function quorum() public constant returns (uint quorum) {
-    return quorumContract.quorum();
+    return quorumContract.currentQuorum();
    }
 
    // Helper function used to multiply fixed point numbers with a decimal rate.

@@ -155,6 +155,7 @@ contract Project is Ownable {
   function checkIfOfferCanExecute(uint _id, bytes _transactionBytecode) private constant returns (bool) {
     Offer o = offers[_id];
     if (now < o.openFor || o.executed || o.offerHash != sha3(o.recipient, o.requestAmount, o.token, o.description, o.openFor, _transactionBytecode)) throw;
+    if (now > o.creationTime + 30 days) throw;
     return true;
   }
 
