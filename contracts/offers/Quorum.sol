@@ -151,8 +151,6 @@ contract Quorum is Ownable {
         nay += weight + extraWeight;
       }
     }
-    quorum += o.creatorsDeposit;
-    yea += o.creatorsDeposit;
     return (yea, nay, quorum);
   }
 
