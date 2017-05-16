@@ -11,6 +11,7 @@ contract Project is Ownable {
   VegaToken public VT;
   mapping (address => uint) public points;
   mapping (address => mapping(address => uint)) public extraPoints;
+  mapping (address => uint) public findersRefund;
   Offer[] offers;
 
   /// @param _vegaTokenAddr VegaToken contract address.
@@ -85,7 +86,6 @@ contract Project is Ownable {
     offerId = offers.length++;
     Offer o = offers[offerId];
     o.finder = msg.sender;
-    o.findersCollected = false;
     VT.transferFrom(msg.sender, this, VT.creatorsDeposit(_requestedAmount));
     o.creatorsDeposit = VT.creatorsDeposit(_requestedAmount);
     o.recipient = _recipient;
@@ -206,12 +206,17 @@ contract Project is Ownable {
       }
       uint finderVotingPoints = o.creatorsDeposit;
       uint findersReward = VT.finders() +  finderVotingPoints;
-      VT.balances[o.finder] += o.creatorsDeposit;
+      ;
       points[o.finder] += findersReward;
 
     } else {
       o.offerPassed = false;
     }
+  }
+  
+  function getOfferStatus(uint _id) public constant returns (bool, uint, address) {
+    Offer o = offers[_id];
+    return(o.offerPassed, o.creatorsDeposit, o.finder);
   }
 
   function () payable {}
