@@ -12,28 +12,28 @@ contract Project is Ownable {
   mapping (address => uint) public points;
   mapping (address => mapping(address => uint)) public extraPoints;
   Offer[] offers;
-  
+
   /// @param _vegaTokenAddr VegaToken contract address.
   function Project(VegaToken _vegaTokenAddr) {
     VT = VegaToken(_vegaTokenAddr);
   }
-  
+
   /// @param _vegaTokenAddr VegaToken contract address.
   function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {
     VT = VegaToken(_vegaTokenAddr);
   }
-  
+
   modifier onlyShareholders {
         if (VT.balanceOf(msg.sender) == 0) throw;
         _;
     }
-    
+
   function removePoints(address _who, uint _value) external returns (bool success) {
    if(_who != msg.sender) throw;
    points[_who] -= _value;
    return true;
   }
-  
+
   function removeExtraPoints(address _who, address _manager, uint _value) external returns (bool success) {
      if(_who != msg.sender) throw;
      extraPoints[_manager][_who] -= _value;
@@ -47,7 +47,6 @@ contract Project is Ownable {
 
   struct Offer {
       address finder;
-      bool findersCollected;
       uint creatorsDeposit;
       address recipient;
       uint requestAmount;
@@ -152,7 +151,7 @@ contract Project is Ownable {
     if (now < o.openFor || o.executed || o.offerHash != sha3(o.recipient, o.requestAmount, o.token, o.description, o.openFor, _transactionBytecode)) throw;
     return true;
   }
-  
+
   /// @param _id Id of Offer.
   function countVotes(uint _id) private returns (uint yes, uint no, uint total) {
     Offer o = offers[_id];
@@ -184,7 +183,7 @@ contract Project is Ownable {
   {
     checkIfOfferCanExecute(_id, _transactionBytecode);
     var (yea, nay, quorum) = countVotes(_id);
-    
+
     Offer o = offers[_id];
 
     if(quorum <= VT.quorum()) {
@@ -194,7 +193,7 @@ contract Project is Ownable {
       if(!o.recipient.call.value(o.requestAmount * 1 ether)(_transactionBytecode)) {
         throw;
       }
-      
+
       o.offerPassed = true;
       for (uint x = 0; x < o.votes.length; x++) {
         Vote vP = o.votes[x];
@@ -207,13 +206,14 @@ contract Project is Ownable {
       }
       uint finderVotingPoints = o.creatorsDeposit;
       uint findersReward = VT.finders() +  finderVotingPoints;
+      VT.balances[o.finder] += o.creatorsDeposit;
       points[o.finder] += findersReward;
 
     } else {
       o.offerPassed = false;
     }
   }
-  
+
   function () payable {}
 
 /// Helper functions
