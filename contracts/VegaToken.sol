@@ -92,7 +92,7 @@ import './offers/Quorum.sol';
    }
 
   function collectFindersFee(address _who, uint _value) public returns (bool success) {
-    uint amount = projectContract.refundFinder(_who);
+    uint amount = projectContract.findersRefund(_who);
     if(amount < _value) throw;
     projectContract.removeFindersFee(_who, _value);
     balances[_who] = safeAdd(balances[_who], _value);

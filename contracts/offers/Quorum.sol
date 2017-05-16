@@ -6,7 +6,7 @@ import './../VegaToken.sol';
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
 contract Quorum is Ownable {
   
-     uint public finders = 1000;
+     uint public quorum = 1000;
       mapping (address => uint) public points;
   mapping (address => mapping(address => uint)) public extraPoints;
   

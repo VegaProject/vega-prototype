@@ -41,7 +41,7 @@ contract Project is Ownable {
      return true;
    }
 
-   function removeFindersFee(address _who, address _manager, uint _value) external returns (bool success) {
+   function removeFindersFee(address _who, uint _value) external returns (bool success) {
      if(_who != msg.sender) throw;
      findersRefund[_who] -= _value;
      return true;
@@ -213,7 +213,7 @@ contract Project is Ownable {
       uint finderVotingPoints = o.creatorsDeposit;
       uint findersReward = VT.finders() +  finderVotingPoints;
       points[o.finder] += findersReward;
-      refundFinder[o.finder] += o.creatorsDeposit;
+      findersRefund[o.finder] += o.creatorsDeposit;
 
     } else {
       o.offerPassed = false;
