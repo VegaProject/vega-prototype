@@ -4,7 +4,7 @@ import './../VegaToken.sol';
 
 /// @title Rewards contract - Rewards Offer.
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
-contract Rewards {
+contract Rewards is Ownable {
 
     VegaToken public VT;
     mapping (address => uint) public points;
@@ -194,4 +194,3 @@ contract Rewards {
     }
 
   }
-}
