@@ -7,4 +7,6 @@ import './../VegaToken.sol';
 contract Rewards {
     uint public numerator = 5;
     uint public denominator = 10;
+      mapping (address => uint) public points;
+  mapping (address => mapping(address => uint)) public extraPoints;
 }
