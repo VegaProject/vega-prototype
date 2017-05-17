@@ -44,13 +44,14 @@ contract Redeem is Ownable, Helpers, TokenTracker {
 
   function getProportionOfCurrentTotalSupply(address _who) public constant returns (uint) {
     uint amount = VT.balanceOf(_who);
-    uint totalAmount = VT.totalSupply;
-    uint proportion = converter(amount)
+    uint totalAmount = VT.totalSupply();
+    uint proportion = converter(amount, amount, totalAmount);
     return proportion;
   }
 
   function getBalanceOfToken(address _token) public constant returns (uint) {
-    uint amount = Token(_token).balanceOf(Prj);
+    uint amount = ERC20(_token).balanceOf(Prj);
     return amount;
   }
+  
 }
