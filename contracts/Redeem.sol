@@ -31,6 +31,9 @@ contract Redeem is Ownable, Helpers, TokenTracker {
   VegaToken public VT;
   Project public Prj;
 
+  mapping(address => uint) public currentBalance;
+
+
   /// @param _vegaTokenAddr VegaToken contract address.
   function Redeem(VegaToken _vegaTokenAddr, Project _projectAddr) {
     VT = VegaToken(_vegaTokenAddr);
@@ -54,11 +57,14 @@ contract Redeem is Ownable, Helpers, TokenTracker {
     return amount;
   }
 
-
-  function getBalanceForEachToken() public constant returns (uint) {
+  function getBalanceForEachToken() public constant returns (bool) {
     for(uint i = 0; i < getAddressCount(); ++i) {
       uint amount = getBalanceOfToken(getAddressAtIndex(i));
+      currentBalance[getAddressAtIndex(i), amount];
    }
+   return true;
   }
-  
+
+  // next function will get the amount of tokens for each token address and convert it to the amount of tokens that a Vega holder is entitled to, by using the getProportionOfCurrentTotalSupply.
+
 }
