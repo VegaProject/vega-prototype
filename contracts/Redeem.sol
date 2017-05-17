@@ -60,7 +60,7 @@ contract Redeem is Ownable, Helpers, TokenTracker {
   function getBalanceForEachToken() public constant returns (bool) {
     for(uint i = 0; i < getAddressCount(); ++i) {
       uint amount = getBalanceOfToken(getAddressAtIndex(i));
-      currentBalance[getAddressAtIndex(i), amount];
+      currentBalance[getAddressAtIndex(i)] = amount;
    }
    return true;
   }
