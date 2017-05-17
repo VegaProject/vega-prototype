@@ -53,5 +53,12 @@ contract Redeem is Ownable, Helpers, TokenTracker {
     uint amount = ERC20(_token).balanceOf(Prj);
     return amount;
   }
+
+
+  function getBalanceForEachToken() public constant returns (uint) {
+    for(uint i = 0; i < getAddressCount(); ++i) {
+      uint amount = getBalanceOfToken(getAddressAtIndex(i));
+   }
+  }
   
 }
