@@ -1,2 +1,4 @@
 TODO:
-- Make method to check when a transfer or transfer from happens, check if the msg.sender has voted, fire event to update
+- get redeem contract working
+- get liquidation contract to work
+- get mint contract to work

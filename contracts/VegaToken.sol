@@ -1,6 +1,7 @@
 pragma solidity ^0.4.8;
 
 import './deps/StandardToken.sol';
+import './deps/Helpers.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
 import './offers/Project.sol';
@@ -10,7 +11,7 @@ import './offers/Quorum.sol';
 
  /// @title VegaToken contract - Vega Tokens.
  /// @author George K. Van Hoomissen - <georgek@vega.fund>
- contract VegaToken is OutgoingMigrationTokenInterface, StandardToken {
+ contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Helpers {
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;

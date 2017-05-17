@@ -35,4 +35,8 @@ contract Redeem is Ownable{
     uint proportion = converter(amount)
     return proportion;
   }
+
+  function getSupplyOfGivenToken(address _token) public constant returns (uint) {
+    uint amount = Prj.
+  }
 }
