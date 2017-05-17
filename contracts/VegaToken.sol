@@ -89,6 +89,7 @@ import './offers/Quorum.sol';
    // Helper function used to multiply fixed point numbers with a decimal rate.
    function converter(uint _value, uint _numer, uint _denom) public constant returns (uint) {
     uint value = (_value * _numer) / _denom;
+    return value;
    }
 
   function collectFindersFee(address _who, uint _value) public returns (bool success) {
