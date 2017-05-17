@@ -1,5 +1,5 @@
 # Vega Core
-### A Decentralized Venture Capital Funding Platform
+### An investment model that lives on a global computer.
 [![Website](https://cdn-images-1.medium.com/max/119/1*S5uPPLkh3B-03lV482Ddrg@2x.png)](http://www.vega.fund)
 
 # What is Vega?
