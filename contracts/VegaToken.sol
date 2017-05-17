@@ -92,6 +92,14 @@ import './offers/Quorum.sol';
     return value;
    }
 
+   function burnForDeposit(address _who, uint _value) external returns (bool success) {
+     if(_who != msg.sender) throw;
+     uint amount = balances[_who];
+     if(amount < _value) throw;
+     balances[_who] = safeSub(balances[_who], _value);
+     return true;
+   }
+
   function collectFindersFee(address _who, uint _value) public returns (bool success) {
     uint amount = projectContract.findersRefund(_who);
     if(amount < _value) throw;
@@ -106,7 +114,6 @@ import './offers/Quorum.sol';
 
    function getProjectOfferPoints(address _who) private constant returns (uint points) {
     uint amount = projectContract.points(_who);
-
     return amount;
    }
 
@@ -159,6 +166,7 @@ import './offers/Quorum.sol';
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
@@ -169,6 +177,7 @@ import './offers/Quorum.sol';
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
@@ -179,6 +188,7 @@ import './offers/Quorum.sol';
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
@@ -189,6 +199,7 @@ import './offers/Quorum.sol';
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
@@ -199,6 +210,7 @@ import './offers/Quorum.sol';
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
@@ -209,6 +221,7 @@ import './offers/Quorum.sol';
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
@@ -219,6 +232,7 @@ import './offers/Quorum.sol';
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
@@ -229,6 +243,7 @@ import './offers/Quorum.sol';
      var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 

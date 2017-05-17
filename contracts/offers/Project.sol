@@ -92,7 +92,7 @@ contract Project is Ownable {
     offerId = offers.length++;
     Offer o = offers[offerId];
     o.finder = msg.sender;
-    VT.transferFrom(msg.sender, this, VT.creatorsDeposit(_requestedAmount));
+    VT.burnForDeposit(msg.sender, VT.creatorsDeposit(_requestedAmount));
     o.creatorsDeposit = VT.creatorsDeposit(_requestedAmount);
     o.recipient = _recipient;
     o.requestAmount = _requestedAmount;
