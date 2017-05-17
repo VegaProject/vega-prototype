@@ -87,12 +87,6 @@ import './offers/Quorum.sol';
     return quorumContract.currentQuorum();
    }
 
-   // Helper function used to multiply fixed point numbers with a decimal rate.
-   function converter(uint _value, uint _numer, uint _denom) public constant returns (uint) {
-    uint value = (_value * _numer) / _denom;
-    return value;
-   }
-
    function burnForDeposit(address _who, uint _value) external returns (bool success) {
      if(_who != msg.sender) throw;
      uint amount = balances[_who];
