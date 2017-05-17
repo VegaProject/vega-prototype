@@ -36,28 +36,28 @@ contract Rewards is Ownable {
     }
 
     function removeExtraPoints(address _who, address _manager, uint _value) external returns (bool success) {
-       if(_who != msg.sender) throw;
-       extraPoints[_manager][_who] -= _value;
-       return true;
-     }
+     if(_who != msg.sender) throw;
+     extraPoints[_manager][_who] -= _value;
+     return true;
+    }
 
     struct Vote {
-        bool inSupport;
-        address voter;
+      bool inSupport;
+      address voter;
     }
 
     struct Offer {
-        uint numerator;
-        uint denominator;
-        string description;
-        uint openFor;
-        uint creationTime;
-        bool offerPassed;
-        bool executed;
-        uint numberOfVotes;
-        bytes32 offerHash;
-        Vote[] votes;
-        mapping (address => bool) voted;
+      uint numerator;
+      uint denominator;
+      string description;
+      uint openFor;
+      uint creationTime;
+      bool offerPassed;
+      bool executed;
+      uint numberOfVotes;
+      bytes32 offerHash;
+      Vote[] votes;
+      mapping (address => bool) voted;
     }
 
     /// @param _numerator Numberator of fraction.

@@ -1,7 +1,7 @@
 {
   "contracts": "contracts",
 
-  "deploy": ["Project", "VegaToken", "Rewards", "Finders", "Quorum"],
+  "deploy": ["Redeem", "Project", "VegaToken", "Rewards", "Finders", "Quorum"],
 
   "env": {
     "block": {
