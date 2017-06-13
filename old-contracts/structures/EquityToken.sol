@@ -1,12 +1,11 @@
-pragma solidity ^0.4.8;
+/*pragma solidity ^0.4.6;
 
-import "./VestedToken.sol";
+import "../../installed_contracts/zeppelin/contracts/token/StandardToken.sol";
 /*
  * CrowdsaleToken
  *
  * Simple ERC20 Token example, with crowdsale token creation
- */
-contract EquityToken is VestedToken {
+contract EquityToken is StandardToken {
 
   string public name;
   string public symbol;
@@ -21,7 +20,7 @@ contract EquityToken is VestedToken {
     symbol = _symbol;
     decimals = _decimals;
     price = _price;
-    max_supply = _max_issue;
+    max_supply = _max_supply;
   }
 
   function () payable {
@@ -43,3 +42,4 @@ contract EquityToken is VestedToken {
     return price;
   }
 }
+ */
