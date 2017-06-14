@@ -18,19 +18,14 @@ Vega is decentralized funding organization, that creates value for investors and
 	npm install			
 	testrpc			// do this in new terminal
 	truffle compile		
-	truffle build			
 	truffle migrate
-	npm run start			
+	npm run -s vega [command] [option]			
 
 ---
 
 ---
 #### License
-<<<<<<< HEAD
+
 - [MIT](https://github.com/VegaProject/vega/blob/master/LICENSE)
 README
-=======
-- [Fair](https://github.com/VegaProject/vega/blob/master/LICENSE)
 
----
->>>>>>> 224014a8369d93f97f3693764ef6703cbd1176c9

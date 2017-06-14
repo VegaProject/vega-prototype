@@ -7,7 +7,9 @@
     "test": "mocha",
     "start": "webpack-dev-server",
     "build": "webpack",
-    "dev": "webpack-dev-server"
+    "dev": "webpack-dev-server",
+    "vega": "babel-node ./bin/vegargs.js",
+    "lint": "eslint ./"
   },
   "author": "George K. Van Hoomissen",
   "devDependencies": {
@@ -32,6 +34,7 @@
     "style-loader": "^0.13.1",
     "truffle-contract": "^1.1.6",
     "web3": "^0.18.2",
+    "yargs": "^6.6.0",    
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
   },

@@ -1,4 +1,4 @@
-var bip39 = require("bip39");
+/*var bip39 = require("bip39");
 var hdkey = require('ethereumjs-wallet/hdkey');
 var ProviderEngine = require("web3-provider-engine");
 var WalletSubprovider = require('web3-provider-engine/subproviders/wallet.js');
@@ -27,11 +27,26 @@ module.exports = {
       network_id: 3,    // Official ropsten network id
       provider: engine, // Use our custom provider
       from: address     // Use the address we derived
+    },
+    // Add staging network?
+    development: {
+      host: "localhost",
+      port: 8545,
+      network_id: "*"
     }
-  },
-  rpc: {
-    // Use the default host and port when not using ropsten
-    host: "localhost",
-    port: 8545
   }
 };
+*/
+// This require hook will bind itself to node's require and automatically
+// compile files on the fly.
+require('babel-register')
+
+module.exports = {
+  networks: {
+    development: {
+      host: 'localhost',
+      port: 8545,
+      network_id: '*' // Match any network id
+    }
+  }
+}

@@ -36,7 +36,7 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
     stopped = false;
   }
 
-  function transfer(address _to, uint _value) stoppable returns (bool success) {
+  function transfer(address _to, uint _value) stoppable returns (bool) {
     balances[msg.sender] = safeSub(balances[msg.sender], _value);
     balances[_to] = safeAdd(balances[_to], _value);
     Transfer(msg.sender, _to, _value);
@@ -53,10 +53,10 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
     balances[_from] = safeSub(balances[_from], _value);
     allowed[_from][msg.sender] = safeSub(_allowance, _value);
     Transfer(_from, _to, _value);
-    return true;
+    success =  true;
   }
 
-  function balanceOf(address _owner) constant returns (uint balance) {
+  function balanceOf(address _owner) constant returns (uint) {
     return balances[_owner];
   }
 
@@ -88,6 +88,7 @@ contract StandardToken is DSAuth, ERC20, SafeMath {
   function backward(address _who, uint _value) returns (bool success) {
     managed[_who][msg.sender] = _value;
     totalManaged[msg.sender] = safeSub(totalManaged[msg.sender], _value);
+    return true;
   }
 
   function managedWeight(address _owner, address _manager) constant returns (uint amount) {

@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 import './../deps/Ownable.sol';
-import './../VegaToken.sol';
+import { VegaToken } from'./../VegaToken.sol';
 
 /// @title Quorum Contract - Quorum Offer.
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
@@ -13,10 +13,6 @@ contract Quorum is Ownable {
 
   uint public currentQuorum;
 
-  /// @param _vegaTokenAddr VegaToken contract address.
-  function Quorum(VegaToken _vegaTokenAddr) {
-    VT = VegaToken(_vegaTokenAddr);
-  }
 
   /// @param _vegaTokenAddr VegaToken contract address.
   function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {

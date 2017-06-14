@@ -4,14 +4,16 @@ import './deps/StandardToken.sol';
 import './deps/Helpers.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
-import './offers/Project.sol';
-import './offers/Rewards.sol';
-import './offers/Finders.sol';
-import './offers/Quorum.sol';
+import { Project } from   './offers/Project.sol';
+import { Rewards } from   './offers/Rewards.sol';
+import { Finders } from './offers/Finders.sol';
+import { Quorum } from  './offers/Quorum.sol';
+pragma solidity ^0.4.8;
 
  /// @title VegaToken contract - Vega Tokens.
  /// @author George K. Van Hoomissen - <georgek@vega.fund>
  contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Helpers {
+
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
@@ -68,9 +70,8 @@ import './offers/Quorum.sol';
    **/
 
    function rewardRate() public constant returns (uint numerator, uint denominator) {
-    uint one = rewardsContract.numerator();
-    uint two = rewardsContract.denominator();
-    return (one, two);
+    numerator = rewardsContract.numerator();
+    denominator = rewardsContract.denominator();
    }
 
    function creatorsDeposit(uint _requestedAmount) public constant returns (uint deposit) {
@@ -87,14 +88,14 @@ import './offers/Quorum.sol';
     return quorumContract.currentQuorum();
    }
 
-   function burnForDeposit(address _who, uint _value) external returns (bool success) {
-     if(_who != msg.sender) throw;
+   function burnForDeposit(address _who, uint _value) external returns (bool) {
+     //if(_who != msg.sender) throw;
      uint amount = balances[_who];
-     if(amount < _value) throw;
+     //if(amount < _value) throw;
      balances[_who] = safeSub(balances[_who], _value);
      return true;
    }
-
+   
   function collectFindersFee(address _who, uint _value) public returns (bool success) {
     uint amount = projectContract.findersRefund(_who);
     if(amount < _value) throw;
@@ -246,6 +247,7 @@ import './offers/Quorum.sol';
    /**
     * Migrations
    **/
+
    function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
      if (_master == 0) throw;
      migrationMaster = _master;
@@ -300,11 +302,11 @@ import './offers/Quorum.sol';
 
 
 
-
    /// ()
    ///---------------------------------------------------------------------------------------------------------------------------------------
    // just for testing as of now
-   function () payable {
+   function test(address _to, uint _value) stoppable returns (bool) {
+     return true;
    }
 
 

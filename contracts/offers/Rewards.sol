@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 import './../deps/Ownable.sol';
-import './../VegaToken.sol';
+import { VegaToken } from'./../VegaToken.sol';
 
 /// @title Rewards contract - Rewards Offer.
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
@@ -13,11 +13,6 @@ contract Rewards is Ownable {
 
     uint public numerator;
     uint public denominator;
-
-    /// @param _vegaTokenAddr VegaToken contract address.
-    function Rewards(VegaToken _vegaTokenAddr) {
-      VT = VegaToken(_vegaTokenAddr);
-    }
 
     /// @param _vegaTokenAddr VegaToken contract address.
     function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {

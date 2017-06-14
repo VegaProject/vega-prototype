@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 import './../deps/Ownable.sol';
-import './../VegaToken.sol';
+import { VegaToken } from'./../VegaToken.sol';
 
 /// @title Finders Contract - Finders Offer.
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
@@ -13,10 +13,6 @@ contract Finders is Ownable {
 
   uint public currentFinders;
 
-  /// @param _vegaTokenAddr VegaToken contract address.
-  function Finders(VegaToken _vegaTokenAddr) {
-    VT = VegaToken(_vegaTokenAddr);
-  }
 
   /// @param _vegaTokenAddr VegaToken contract address.
   function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {

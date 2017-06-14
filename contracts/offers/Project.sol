@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
 import './../deps/Ownable.sol';
-import './../VegaToken.sol';
+import { VegaToken } from'./../VegaToken.sol';
 
 
 /// @title Project Contract - Project Offer.
@@ -14,10 +14,6 @@ contract Project is Ownable {
   mapping (address => uint) public findersRefund;
   Offer[] offers;
 
-  /// @param _vegaTokenAddr VegaToken contract address.
-  function Project(VegaToken _vegaTokenAddr) {
-    VT = VegaToken(_vegaTokenAddr);
-  }
 
   /// @param _vegaTokenAddr VegaToken contract address.
   function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {
