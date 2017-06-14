@@ -3,7 +3,7 @@
 [![Website](https://cdn-images-1.medium.com/max/119/1*S5uPPLkh3B-03lV482Ddrg@2x.png)](http://www.vega.fund)
 
 # What is Vega?
-Vega is decentralized funding organization, that creates value for investors and projects all around the globe. Vega uses Ethereum smart contract technology to operate autonomously on The Internet. Vega Core is the software which enables the interaction with the organization.
+Vega is decentralized autonomous decision-making software built using Ethereum Smart Contracts.
 
 ----
 
