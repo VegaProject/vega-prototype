@@ -188,6 +188,6 @@ if (command === 'balance') {
   let { host, port, vega, account } = argv
   let vegaFund = initializeLib(host, port, vega, account)
   vegaFund.balanceOf(account)
-    .then((result) => console.log('Account ' + account + " has " + result.c ))
+    .then((result) => console.log('Succesfully checked balance of  ' + account ))
     .catch((e) => console.log(e))    
 }
