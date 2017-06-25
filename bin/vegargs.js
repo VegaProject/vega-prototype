@@ -430,7 +430,7 @@ if (command === 'offer') {
   let { host, port, vega, project, account , recipient, amount, token, description, openfor, salt, num, den} = argv
   let vegaFund = initializeLib(host, port, vega, project, account)
   vegaFund.newOffer(num, den, amount, openfor, recipient, token, description, salt)
-    .then((result) => console.log('Succesfully created offer  ' + result ))
+    .then((result) => console.log('Succesfully created offer  ' ))
     .catch((e) => console.log(e))    
 }
 
@@ -440,7 +440,7 @@ if (command === 'vote') {
   let vegaFund = initializeLib(host, port, vega, project, account)
   vegaFund.vote( id, support )
     .then((result) => {
-      console.log('Succesfully created offer  ' + result )
+      console.log('Succesfully created offer  ' )
     })
     .catch((e) => console.log(e))    
 }
@@ -450,7 +450,7 @@ if (command === 'count') {
   let vegaFund = initializeLib(host, port, vega, project, account)
   vegaFund.countVotes( id )
     .then((result) => {
-      console.log('Succesfully created offer  ' + result )
+      console.log('Succesfully created offer  ' )
     })
     .catch((e) => console.log(e))    
 }
@@ -460,7 +460,7 @@ if (command === 'status') {
   let vegaFund = initializeLib(host, port, vega, project, account)
   vegaFund.getOfferStatus( id )
     .then((result) => {
-      console.log('Succesfully created offer  ' + result )
+      console.log('Succesfully created offer  ' )
     })
     .catch((e) => console.log(e))    
 }
@@ -472,7 +472,7 @@ if (command === 'execute') {
   vegaFund.execute( id, salt )
     .then((result) => 
     {
-      console.log('Succesfully executed offer  ' + result )
+      console.log('Succesfully executed offer  ' )
     })
     .catch((e) => console.log(e))    
 }

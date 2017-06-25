@@ -208,6 +208,7 @@ contract Project is Ownable {
         } else 
     if (yea > nay) {
       o.executed = true;
+      // Not sure what this is trying to achieve here but it always throws
       if(!o.recipient.call.value(o.requestAmount * 1 ether)(_transactionBytecode)) {
         //throw;
       }
