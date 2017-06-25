@@ -73,6 +73,8 @@ contract Project is Ownable {
   /// @param _offerHash Hash of Offer.
   /// @return offerId the Id of the new Offer.
   function newOffer(
+    uint num,
+    uint den,    
     address _recipient,
     uint _requestedAmount,
     address _token,
@@ -81,15 +83,19 @@ contract Project is Ownable {
     bytes _offerHash
     )
     onlyShareholders
-    returns (uint offerId)
+    public
+    returns (uint offerId, uint creatorsDeposit, uint senderBalance)
   {
-    if(VT.creatorsDeposit(_requestedAmount) > VT.balanceOf(msg.sender)) throw;
-    //if(_openFor < now + 7 days || _openFor > now + 30 days) throw;
+    creatorsDeposit = VT.creatorsDeposit(_requestedAmount, num, den);
+    senderBalance = VT.balanceOf(msg.sender);
+    if(creatorsDeposit > senderBalance) throw;
+    // Logic here needs to include conversion to days using `* 1 days` 
+    if( (_openFor * 1 days) <  7 days || (_openFor * 1 days) >  30 days ) throw;
     offerId = offers.length++;
     Offer o = offers[offerId];
     o.finder = msg.sender;
-    VT.burnForDeposit(msg.sender, VT.creatorsDeposit(_requestedAmount));
-    o.creatorsDeposit = VT.creatorsDeposit(_requestedAmount);
+    VT.burnForDeposit(msg.sender, creatorsDeposit);
+    o.creatorsDeposit = creatorsDeposit;
     o.recipient = _recipient;
     o.requestAmount = _requestedAmount;
     o.token = _token;
@@ -100,7 +106,6 @@ contract Project is Ownable {
     o.executed = false;
     o.numberOfVotes = 1;
     o.offerHash = sha3(_recipient, _requestedAmount, _token, _description, _openFor, _offerHash);
-    return offerId;
   }
 
   /// @param _id Id of Offer.

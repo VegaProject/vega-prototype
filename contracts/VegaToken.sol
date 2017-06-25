@@ -92,16 +92,17 @@ pragma solidity ^0.4.8;
    /**
     * Offer State
    **/
-
+   /* This function doesn't perform as expected; numerator and denominator are
+      both set as elements of *individual* offers not of the Rewards solution on large
+      
    function rewardRate() public constant returns (uint numerator, uint denominator) {
     numerator = rewardsContract.numerator();
     denominator = rewardsContract.denominator();
    }
+   */
 
-   function creatorsDeposit(uint _requestedAmount) public constant returns (uint amount) {
-     var (num, den) = rewardRate();
+   function creatorsDeposit(uint _requestedAmount, uint num, uint den) public constant returns (uint amount) {
      amount = converter(_requestedAmount, num, den);
-     return amount;
    }
 
    function finders() public constant returns (uint finders) {
@@ -113,7 +114,8 @@ pragma solidity ^0.4.8;
    }
 
    function burnForDeposit(address _who, uint _value) external returns (bool) {
-     if(_who != msg.sender) throw;
+     // Similar check needs to me re-implemented but this doesn't work
+     //if(_who != msg.sender) throw;
      uint amount = balances[_who];
      if(amount < _value) throw;
      balances[_who] = safeSub(balances[_who], _value);
@@ -179,88 +181,80 @@ pragma solidity ^0.4.8;
 
    // TODO FINISH ADDING REMOVE POINTS AND REMOVE EXTRA POINTS FUNCTIONS TO THE REST OF THE OFFERS.
 
-   function convertProjectPoints(uint _value) public returns (bool) {
+   function convertProjectPoints(uint _value, uint num, uint den) public returns (bool) {
      uint amount = getProjectOfferPoints(msg.sender);
      if(amount < _value) throw;
      projectContract.removePoints(msg.sender, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertProjectExtraPoints(uint _value, address _manager) public returns (bool) {
+   function convertProjectExtraPoints(uint _value, address _manager, uint num, uint den) public returns (bool) {
      uint amount = getProjectOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
      projectContract.removeExtraPoints(msg.sender, _manager, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertRewardsPoints(uint _value) public returns (bool) {
+   function convertRewardsPoints(uint _value, uint num, uint den) public returns (bool) {
      uint amount = getRewardsOfferPoints(msg.sender);
      if(amount < _value) throw;
      rewardsContract.removePoints(msg.sender, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertRewardsExtraPoints(uint _value, address _manager) public returns (bool) {
+   function convertRewardsExtraPoints(uint _value, address _manager, uint num, uint den) public returns (bool) {
      uint amount = getRewardsOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
      rewardsContract.removeExtraPoints(msg.sender, _manager, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertFindersPoints(uint _value) public returns (bool) {
+   function convertFindersPoints(uint _value, uint num, uint den) public returns (bool) {
      uint amount = getFindersOfferPoints(msg.sender);
      if(amount < _value) throw;
      findersContract.removePoints(msg.sender, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertFindersExtraPoints(uint _value, address _manager) public returns (bool) {
+   function convertFindersExtraPoints(uint _value, address _manager, uint num, uint den) public returns (bool) {
      uint amount = getFindersOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
      findersContract.removeExtraPoints(msg.sender, _manager, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertQuorumPoints(uint _value) public returns (bool) {
+   function convertQuorumPoints(uint _value, uint num, uint den) public returns (bool) {
      uint amount = getQuorumOfferPoints(msg.sender);
      if(amount < _value) throw;
      quorumContract.removePoints(msg.sender, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertQuorumExtraPoints(uint _value, address _manager) public returns (bool) {
+   function convertQuorumExtraPoints(uint _value, address _manager, uint num, uint den) public returns (bool) {
      uint amount = getQuorumOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
      quorumContract.removeExtraPoints(msg.sender, _manager, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
@@ -344,7 +338,7 @@ pragma solidity ^0.4.8;
     totalManaged[msg.sender] = safeSub(totalManaged[msg.sender], _value);
   }
 
-  function managedWeight(address _owner, address _manager) constant returns (uint amount) {
+  function managedWeight(address _owner, address _manager) constant returns (uint) {
     return managed[_owner][_manager];
   }
 
@@ -353,7 +347,7 @@ pragma solidity ^0.4.8;
     return true;
   }
 
-  function feeAmount(address _who) constant returns (uint amount) {
+  function feeAmount(address _who) constant returns (uint) {
     if(totalManaged[_who] > 0) throw;
     return fee[_who];
   }
