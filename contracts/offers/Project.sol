@@ -162,8 +162,8 @@ contract Project is Ownable {
   /// @param _transactionBytecode Hash of the Offer.
   function checkIfOfferCanExecute(uint _id, bytes _transactionBytecode) private constant returns (bool) {
     Offer o = offers[_id];
-    //if ( (now - o.creationTime * 1 days)  < o.openFor * 1 days || o.executed || o.salt != sha3(o.recipient, o.requestAmount, o.token, o.description, o.openFor, _transactionBytecode)) throw;
-    //if (now > o.creationTime * 1 days + 30 days) throw;
+    if ( (now - o.creationTime * 1 days)  < o.openFor * 1 days || o.executed || o.salt != sha3(o.recipient, o.requestAmount, o.token, o.description, o.openFor, _transactionBytecode)) throw;
+    if (now > o.creationTime * 1 days + 30 days) throw;
     return true;
   }
 
@@ -198,14 +198,14 @@ contract Project is Ownable {
     bytes _transactionBytecode
     )
   {
-    //checkIfOfferCanExecute(_id, _transactionBytecode);
+    checkIfOfferCanExecute(_id, _transactionBytecode);
     var (yea, nay, quorum) = countVotes(_id);
 
     Offer o = offers[_id];
     //Quorum not properly setup
-/*if(quorum <= VT.quorum()) {
-      //throw;
-    } else */
+    if(quorum <= VT.quorum()) {
+          throw;
+        } else 
     if (yea > nay) {
       o.executed = true;
       if(!o.recipient.call.value(o.requestAmount * 1 ether)(_transactionBytecode)) {

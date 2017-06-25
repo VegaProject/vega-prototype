@@ -241,17 +241,17 @@ var args = yargs
       alias: 'j',
       type: 'string'
     })
-    .option('salt', {
+    .option('support', {
       description: 'The hash for the offer',
       alias: 's',
-      type: 'string'
+      type: 'boolean'
     })
     .option('id', {
       description: 'The hash for the offer',
       alias: 'i',
       type: 'string'
     })            
-    .demand(['vega', 'project', 'account', 'id', 'salt'])
+    .demand(['vega', 'project', 'account', 'id', 'support'])
   })
   .command('count', 'Count', (yargs) => {
     return yargs.option('host', {
@@ -436,9 +436,9 @@ if (command === 'offer') {
 
 
 if (command === 'vote') {
-  let { host, port, vega, project, account, salt, id } = argv
+  let { host, port, vega, project, account, support, id } = argv
   let vegaFund = initializeLib(host, port, vega, project, account)
-  vegaFund.vote( id, salt )
+  vegaFund.vote( id, support )
     .then((result) => {
       console.log('Succesfully created offer  ' + result )
     })

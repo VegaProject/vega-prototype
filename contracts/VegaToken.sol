@@ -43,7 +43,7 @@ pragma solidity ^0.4.8;
    uint public decimals = 18;
    string public version = "1.0";
    uint public INITIAL_SUPPLY = 12000000000000000000000000; // uint256 in wei format
-
+   uint public totalSupply = INITIAL_SUPPLY;
    uint public constant minimumMigrationDuration = 26 weeks;
    uint public totalMigrated;
 
@@ -110,7 +110,7 @@ pragma solidity ^0.4.8;
    }
 
    function quorum() public constant returns (uint quorum) {
-    return quorumContract.currentQuorum();
+    quorum =  totalSupply / 2;
    }
 
    function burnForDeposit(address _who, uint _value) external returns (bool) {
