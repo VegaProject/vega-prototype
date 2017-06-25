@@ -50,43 +50,49 @@ contract Project is Ownable {
 
   struct Offer {
       address finder;
-      uint creatorsDeposit;
       address recipient;
-      uint requestAmount;
       address token;
-      string description;
+      uint creatorsDeposit;
+      uint requestAmount;
       uint openFor;
       uint creationTime;
-      bool offerPassed;
-      bool executed;
       uint numberOfVotes;
-      bytes32 offerHash;
+      string description;
+      bool offerPassed;
+      bool executed;      
+      bytes32 salt;
       Vote[] votes;
       mapping (address => bool) voted;
   }
+
+    event OfferEvent(
+        uint indexed _offerId,
+        uint indexed _creatorsDeposit,
+        uint indexed _senderBalance
+    );
 
   /// @param _recipient Offer recipient address.
   /// @param _requestedAmount Amount of tokens.
   /// @param _token Token address, if NULL default is ETH.
   /// @param _description Description of the Offer.
   /// @param _openFor Time allowed to vote, must be under 30 days.
-  /// @param _offerHash Hash of Offer.
+  /// @param _salt Hash of Offer.
   /// @return offerId the Id of the new Offer.
   function newOffer(
-    uint num,
-    uint den,    
-    address _recipient,
+    uint _num,
+    uint _den,    
     uint _requestedAmount,
+    uint _openFor,
+    address _recipient,
     address _token,
     string _description,
-    uint _openFor,
-    bytes _offerHash
+    bytes _salt
     )
     onlyShareholders
     public
     returns (uint offerId, uint creatorsDeposit, uint senderBalance)
   {
-    creatorsDeposit = VT.creatorsDeposit(_requestedAmount, num, den);
+    creatorsDeposit = VT.creatorsDeposit(_requestedAmount, _num, _den);
     senderBalance = VT.balanceOf(msg.sender);
     if(creatorsDeposit > senderBalance) throw;
     // Logic here needs to include conversion to days using `* 1 days` 
@@ -105,7 +111,8 @@ contract Project is Ownable {
     o.offerPassed = false;
     o.executed = false;
     o.numberOfVotes = 1;
-    o.offerHash = sha3(_recipient, _requestedAmount, _token, _description, _openFor, _offerHash);
+    o.salt = sha3(_recipient, _requestedAmount, _token, _description, _openFor, _salt);
+    OfferEvent(offerId, creatorsDeposit, senderBalance);
   }
 
   /// @param _id Id of Offer.
@@ -114,7 +121,7 @@ contract Project is Ownable {
   /// @param _token Token address, if NULL default is ETH.
   /// @param _description Description of the Offer.
   /// @param _openFor Time allowed to vote, must be under 30 days.
-  /// @param _offerHash Hash of Offer.
+  /// @param _salt Hash of Offer.
   /// @return codeChecksOut bool for if the hash matches.
   function checkOffer(
     uint _id,
@@ -123,13 +130,13 @@ contract Project is Ownable {
     address _token,
     string _description,
     uint _openFor,
-    bytes _offerHash
+    bytes _salt
     )
     constant
     returns (bool codeChecksOut)
   {
     Offer o = offers[_id];
-    return o.offerHash == sha3(_recipient, _requestedAmount, _token, _description, _openFor, _offerHash);
+    return o.salt == sha3(_recipient, _requestedAmount, _token, _description, _openFor, _salt);
   }
 
   /// @param _id Id of Offer.
@@ -155,13 +162,13 @@ contract Project is Ownable {
   /// @param _transactionBytecode Hash of the Offer.
   function checkIfOfferCanExecute(uint _id, bytes _transactionBytecode) private constant returns (bool) {
     Offer o = offers[_id];
-    if (now < o.openFor || o.executed || o.offerHash != sha3(o.recipient, o.requestAmount, o.token, o.description, o.openFor, _transactionBytecode)) throw;
+    if (now < o.openFor || o.executed || o.salt != sha3(o.recipient, o.requestAmount, o.token, o.description, o.openFor, _transactionBytecode)) throw;
     if (now > o.creationTime + 30 days) throw;
     return true;
   }
 
   /// @param _id Id of Offer.
-  function countVotes(uint _id) private returns (uint yes, uint no, uint total) {
+  function countVotes(uint _id) public constant returns (uint yes, uint no, uint total) {
     Offer o = offers[_id];
     uint quorum = 0;
     uint yea = 0;

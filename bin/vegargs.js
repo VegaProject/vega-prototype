@@ -193,9 +193,9 @@ var args = yargs
       alias: 'o',
       type: 'string'
     })              
-    .option('offerhash', {
+    .option('salt', {
       description: 'The hash for the offer',
-      alias: 'f',
+      alias: 's',
       type: 'string'
     })
     .option('num', {
@@ -213,8 +213,150 @@ var args = yargs
       alias: 'j',
       type: 'string'
     })              
-    .demand(['vega','project', 'account', 'recipient', 'amount', 'token', 'description', 'openfor', 'offerhash', 'num', 'den'])
+    .demand(['vega','project', 'account', 'recipient', 'amount', 'token', 'description', 'openfor', 'salt', 'num', 'den'])
   })
+  .command('vote', 'Vote', (yargs) => {
+    return yargs.option('host', {
+      description: 'HTTP host of Ethereum node',
+      alias: 'h',
+      default: RPC_HOST
+    })
+    .option('port', {
+      description: 'HTTP port',
+      alias: 'p',
+      default: RPC_PORT
+    })
+    .option('vega', {
+      description: 'The address of vega-token',
+      alias: 'v',
+      type: 'string'
+    })
+    .option('account', {
+      description: 'The account to be used',
+      alias: 'a',
+      type: 'string'
+    })            
+    .option('project', {
+      description: 'The project contract address',
+      alias: 'j',
+      type: 'string'
+    })
+    .option('salt', {
+      description: 'The hash for the offer',
+      alias: 's',
+      type: 'string'
+    })
+    .option('id', {
+      description: 'The hash for the offer',
+      alias: 'i',
+      type: 'string'
+    })            
+    .demand(['vega', 'project', 'account', 'id', 'salt'])
+  })
+  .command('count', 'Count', (yargs) => {
+    return yargs.option('host', {
+      description: 'HTTP host of Ethereum node',
+      alias: 'h',
+      default: RPC_HOST
+    })
+    .option('port', {
+      description: 'HTTP port',
+      alias: 'p',
+      default: RPC_PORT
+    })
+    .option('vega', {
+      description: 'The address of vega-token',
+      alias: 'v',
+      type: 'string'
+    })
+    .option('account', {
+      description: 'The account to be used',
+      alias: 'a',
+      type: 'string'
+    })            
+    .option('project', {
+      description: 'The project contract address',
+      alias: 'j',
+      type: 'string'
+    })
+    .option('id', {
+      description: 'The hash for the offer',
+      alias: 'i',
+      type: 'string'
+    })            
+    .demand(['vega', 'project', 'account', 'id'])
+  })
+  .command('status', 'Status', (yargs) => {
+    return yargs.option('host', {
+      description: 'HTTP host of Ethereum node',
+      alias: 'h',
+      default: RPC_HOST
+    })
+    .option('port', {
+      description: 'HTTP port',
+      alias: 'p',
+      default: RPC_PORT
+    })
+    .option('vega', {
+      description: 'The address of vega-token',
+      alias: 'v',
+      type: 'string'
+    })
+    .option('account', {
+      description: 'The account to be used',
+      alias: 'a',
+      type: 'string'
+    })            
+    .option('project', {
+      description: 'The project contract address',
+      alias: 'j',
+      type: 'string'
+    })
+    .option('id', {
+      description: 'The hash for the offer',
+      alias: 'i',
+      type: 'string'
+    })            
+    .demand(['vega', 'project', 'account', 'id'])
+  })     
+  .command('execute', 'Execute', (yargs) => {
+    return yargs.option('host', {
+      description: 'HTTP host of Ethereum node',
+      alias: 'h',
+      default: RPC_HOST
+    })
+    .option('port', {
+      description: 'HTTP port',
+      alias: 'p',
+      default: RPC_PORT
+    })
+    .option('vega', {
+      description: 'The address of vega-token',
+      alias: 'v',
+      type: 'string'
+    })
+    .option('account', {
+      description: 'The account to be used',
+      alias: 'a',
+      type: 'string'
+    })            
+    .option('project', {
+      description: 'The project contract address',
+      alias: 'j',
+      type: 'string'
+    })
+    .option('salt', {
+      description: 'The hash for the offer',
+      alias: 's',
+      type: 'string'
+    })
+    .option('id', {
+      description: 'The hash for the offer',
+      alias: 'i',
+      type: 'string'
+    })            
+    .demand(['vega', 'project', 'account', 'id', 'salt'])
+  })        
   .command('generic', 'Placeholder', (yargs) => {
     return yargs.option('host', {
       description: 'HTTP host of Ethereum node',
@@ -241,11 +383,10 @@ var args = yargs
       alias: 'j',
       type: 'string'
     })    
-    .demand(['vega', 'account'])
-  })
+    .demand(['vega', 'project', 'account'])
+  })  
   .help()
   .usage('Usage: $0 [command] [options]')
-
 let { argv } = args
 
 if (argv._.length === 0) {
@@ -286,10 +427,52 @@ if (command === 'balance') {
 }
 
 if (command === 'offer') {
-  let { host, port, vega, project, account , recipient, amount, token, description, openfor, offerhash, num, den} = argv
+  let { host, port, vega, project, account , recipient, amount, token, description, openfor, salt, num, den} = argv
   let vegaFund = initializeLib(host, port, vega, project, account)
-  vegaFund.newOffer(recipient, amount, token, description, openfor, offerhash, num, den)
+  vegaFund.newOffer(num, den, amount, openfor, recipient, token, description, salt)
     .then((result) => console.log('Succesfully created offer  ' + result ))
     .catch((e) => console.log(e))    
 }
 
+
+if (command === 'vote') {
+  let { host, port, vega, project, account, salt, id } = argv
+  let vegaFund = initializeLib(host, port, vega, project, account)
+  vegaFund.vote( id, salt )
+    .then((result) => {
+      console.log('Succesfully created offer  ' + result )
+    })
+    .catch((e) => console.log(e))    
+}
+
+if (command === 'count') {
+  let { host, port, vega, project, account, id } = argv
+  let vegaFund = initializeLib(host, port, vega, project, account)
+  vegaFund.countVotes( id )
+    .then((result) => {
+      console.log('Succesfully created offer  ' + result )
+    })
+    .catch((e) => console.log(e))    
+}
+
+if (command === 'status') {
+  let { host, port, vega, project, account, id } = argv
+  let vegaFund = initializeLib(host, port, vega, project, account)
+  vegaFund.getOfferStatus( id )
+    .then((result) => {
+      console.log('Succesfully created offer  ' + result )
+    })
+    .catch((e) => console.log(e))    
+}
+
+
+if (command === 'execute') {
+  let { host, port, vega, project, account, salt, id } = argv
+  let vegaFund = initializeLib(host, port, vega, project, account)
+  vegaFund.execute( id, salt )
+    .then((result) => 
+    {
+      console.log('Succesfully executed offer  ' + result )
+    })
+    .catch((e) => console.log(e))    
+}
