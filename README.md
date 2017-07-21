@@ -8,7 +8,7 @@ Vega is decentralized autonomous decision-making software built using Ethereum S
 ----
 
 #### Documentation
-- [Wiki](https://github.com/VegaProject/vega/wiki/)
+- [Wiki](https://github.com/VegaProject/wiki/wiki/)
 
 ----
 
