@@ -1,14 +1,11 @@
 # Vega Core
-### An investment model that lives on a global computer.
 [![Website](https://cdn-images-1.medium.com/max/119/1*S5uPPLkh3B-03lV482Ddrg@2x.png)](http://www.vega.fund)
 
-# What is Vega?
-Vega is a decentralized funding organization, that creates value for investors and projects all around the globe. Vega uses Ethereum smart contract technology to operate autonomously on The Internet. Vega Core is the software which enables the interaction with the organization.
 
 ----
 
 #### Documentation
-- [Wiki](https://github.com/VegaProject/vega/wiki/)
+- [Wiki](https://github.com/VegaProject/wiki/wiki/)
 
 ----
 
