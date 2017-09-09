@@ -385,31 +385,31 @@ var args = yargs
     })
     .option('currentValue', {
       description: 'The current value of the decision',
-      alias: 'c',
+      alias: 'cv',
     })
     .option('startingValue', {
       description: 'The starting value of the decision',
       alias: 's',
     })
     .option('vegaPeriod', {
-      description: 'The starting value of the decision',
-      alias: 'v',
+      description: 'The set period of the decision',
+      alias: 'vp',
     })
     .option('stake', {
-      description: 'The starting value of the decision',
+      description: 'The individual stake of the actor',
       alias: 'k',
     })
     .option('absTotalRewards', {
-      description: 'The starting value of the decision',
-      alias: 'a',
+      description: 'The total rewards value of the decision',
+      alias: 'abs',
     })
     .option('tokenConversion', {
-      description: 'The starting value of the decision',
+      description: 'The token converstion rate for the decision',
       alias: 't',
     })
     .option('currentBalance', {
-      description: 'The starting value of the decision',
-      alias: 'c',
+      description: 'The current balance of the decision',
+      alias: 'cb',
     })                        
     .demand(['vega', 'project', 'account','currentValue', 'startingValue', 'vegaPeriod', 'stake', 'absTotalRewards', 'tokenConversion', 'currentBalance'])
   })        

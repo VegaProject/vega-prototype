@@ -3,6 +3,7 @@ var Project = artifacts.require("./offers/Project.sol");
 var Rewards = artifacts.require('./offers/Rewards.sol');
 var Finders = artifacts.require('./offers/Finders.sol');
 var Quorum = artifacts.require('./offers/Quorum.sol');
+var CDR = artifacts.require('./CDR.sol');
 
 module.exports = function(deployer) {
   deployer.deploy(Project).then((project) => {
@@ -31,5 +32,6 @@ module.exports = function(deployer) {
     })
   }).catch(function(e){
       console.log(e)
-  })  
+  })
+  deployer.deploy(CDR)
 }

@@ -17,7 +17,7 @@ contract Math {
 
 }
 
-contract CDRCalculator is Math {
+contract CDR is Math {
     
  
    function returnOnDecision(uint _currentValue, uint _startingValue) public constant returns (uint) {
