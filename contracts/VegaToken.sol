@@ -6,7 +6,6 @@ import "./zeppelin/Stoppable.sol";
 
 
 import './deps/Helpers.sol';
-import './deps/ds-auth.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
 import { Project } from   './offers/Project.sol';

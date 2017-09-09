@@ -356,6 +356,62 @@ var args = yargs
       type: 'string'
     })            
     .demand(['vega', 'project', 'account', 'id', 'salt'])
+  })
+  .command('cdr', 'Decision Rewards', (yargs) => {
+    return yargs.option('host', {
+      description: 'HTTP host of Ethereum node',
+      alias: 'h',
+      default: RPC_HOST
+    })
+    .option('port', {
+      description: 'HTTP port',
+      alias: 'p',
+      default: RPC_PORT
+    })
+    .option('vega', {
+      description: 'The address of vega-token',
+      alias: 'v',
+      type: 'string'
+    })
+    .option('account', {
+      description: 'The account to be used',
+      alias: 'a',
+      type: 'string'
+    })            
+    .option('project', {
+      description: 'The project contract address',
+      alias: 'j',
+      type: 'string'
+    })
+    .option('currentValue', {
+      description: 'The current value of the decision',
+      alias: 'c',
+    })
+    .option('startingValue', {
+      description: 'The starting value of the decision',
+      alias: 's',
+    })
+    .option('vegaPeriod', {
+      description: 'The starting value of the decision',
+      alias: 'v',
+    })
+    .option('stake', {
+      description: 'The starting value of the decision',
+      alias: 'k',
+    })
+    .option('absTotalRewards', {
+      description: 'The starting value of the decision',
+      alias: 'a',
+    })
+    .option('tokenConversion', {
+      description: 'The starting value of the decision',
+      alias: 't',
+    })
+    .option('currentBalance', {
+      description: 'The starting value of the decision',
+      alias: 'c',
+    })                        
+    .demand(['vega', 'project', 'account','currentValue', 'startingValue', 'vegaPeriod', 'stake', 'absTotalRewards', 'tokenConversion', 'currentBalance'])
   })        
   .command('generic', 'Placeholder', (yargs) => {
     return yargs.option('host', {
@@ -397,14 +453,14 @@ let command = argv._[0]
 
 if (command === 'transfer') {
   let {host, port, vega, project, account, receiver, amount} = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.transfer(amount, receiver)
     .then(() => console.log('Made transfer of ' + amount))
 }
 
 if (command === 'transferFrom') {
   let {host, port, vega, project, account, receiver, amount} = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.transferFrom(account, receiver, amount)
     .then(() => console.log('Made transfer of ' + amount))
     .catch((e) => console.log(e))
@@ -412,7 +468,7 @@ if (command === 'transferFrom') {
 
 if (command === 'approve') {
   let { host, port, vega, project, account, spender, amount } = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.approve(amount, spender)
     .then(() => console.log('Approved transfer of ' + amount + ' for ' + spender))
     .catch((e) => console.log(e))    
@@ -420,7 +476,7 @@ if (command === 'approve') {
 
 if (command === 'balance') {
   let { host, port, vega, project, account } = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.balanceOf(account)
     .then((result) => console.log('Succesfully checked balance of  ' + account ))
     .catch((e) => console.log(e))    
@@ -428,7 +484,7 @@ if (command === 'balance') {
 
 if (command === 'offer') {
   let { host, port, vega, project, account , recipient, amount, token, description, openfor, salt, num, den} = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.newOffer(num, den, amount, openfor, recipient, token, description, salt)
     .then((result) => console.log('Succesfully created offer  ' ))
     .catch((e) => console.log(e))    
@@ -437,7 +493,7 @@ if (command === 'offer') {
 
 if (command === 'vote') {
   let { host, port, vega, project, account, support, id } = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.vote( id, support )
     .then((result) => {
       console.log('Succesfully created offer  ' )
@@ -447,7 +503,7 @@ if (command === 'vote') {
 
 if (command === 'count') {
   let { host, port, vega, project, account, id } = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.countVotes( id )
     .then((result) => {
       console.log('Succesfully created offer  ' )
@@ -457,7 +513,7 @@ if (command === 'count') {
 
 if (command === 'status') {
   let { host, port, vega, project, account, id } = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.getOfferStatus( id )
     .then((result) => {
       console.log('Succesfully created offer  ' )
@@ -468,11 +524,23 @@ if (command === 'status') {
 
 if (command === 'execute') {
   let { host, port, vega, project, account, salt, id } = argv
-  let vegaFund = initializeLib(host, port, vega, project, account)
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.execute( id, salt )
     .then((result) => 
     {
       console.log('Succesfully executed offer  ' )
+    })
+    .catch((e) => console.log(e))    
+}
+
+
+if (command === 'cdr') {
+  let { host, port, vega, project, account, id, currentValue, startingValue, vegaPeriod, stake, absTotalRewards, tokenConversion, currentBalance } = argv
+  let vegaFund = initializeLib(host, port, vega, project, account, cdr)
+  vegaFund.execute( id, salt )
+    .then((result) => 
+    {
+      console.log('Succesfully checked CDR' )
     })
     .catch((e) => console.log(e))    
 }

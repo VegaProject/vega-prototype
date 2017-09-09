@@ -2,7 +2,7 @@
   "name": "vega",
   "version": "0.0.1",
   "license": "MIT",
-  "description": "A decentralized VC funding platform, built on Ethereum.",
+  "description": "Core contracts needed to run Vega Fund token and network.",
   "scripts": {
     "test": "mocha",
     "start": "webpack-dev-server",
