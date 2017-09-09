@@ -40,8 +40,13 @@ var args = yargs
       description: 'The project contract address',
       alias: 'j',
       type: 'string'
-    })          
-    .demand(['vega', 'project', 'receiver', 'amount', 'account'])
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
+    })           
+    .demand(['vega', 'project', 'receiver', 'amount', 'account', 'cdr'])
   })
   .command('transferFrom', 'Transfer from the account specified to the recepient', (yargs) => {
     return yargs.option('host', {
@@ -78,8 +83,13 @@ var args = yargs
       description: 'The project contract address',
       alias: 'j',
       type: 'string'
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
     })           
-    .demand(['vega', 'project,', 'receiver', 'amount', 'account'])
+    .demand(['vega', 'project,', 'receiver', 'amount', 'account', 'cdr'])
   })  
   .command('approve', 'Authorize a transfer', (yargs) => {
     return yargs.option('host', {
@@ -116,8 +126,13 @@ var args = yargs
       description: 'The project contract address',
       alias: 'j',
       type: 'string'
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
     })                     
-    .demand(['vega', 'project', 'spender', 'amount', 'account'])
+    .demand(['vega', 'project', 'spender', 'amount', 'account', 'cdr'])
   })
   .command('balance', 'Get balance for account', (yargs) => {
     return yargs.option('host', {
@@ -144,8 +159,13 @@ var args = yargs
       description: 'The project contract address',
       alias: 'j',
       type: 'string'
-    })           
-    .demand(['vega', 'project', 'account'])
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
+    })         
+    .demand(['vega', 'project', 'account', 'cdr'])
   })  
   .command('offer', 'Offer', (yargs) => {
     return yargs.option('host', {
@@ -212,8 +232,13 @@ var args = yargs
       description: 'The project contract address',
       alias: 'j',
       type: 'string'
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
     })              
-    .demand(['vega','project', 'account', 'recipient', 'amount', 'token', 'description', 'openfor', 'salt', 'num', 'den'])
+    .demand(['vega','project', 'account', 'recipient', 'amount', 'token', 'description', 'openfor', 'salt', 'num', 'den', 'cdr'])
   })
   .command('vote', 'Vote', (yargs) => {
     return yargs.option('host', {
@@ -250,8 +275,13 @@ var args = yargs
       description: 'The hash for the offer',
       alias: 'i',
       type: 'string'
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
     })            
-    .demand(['vega', 'project', 'account', 'id', 'support'])
+    .demand(['vega', 'project', 'account', 'id', 'support', 'cdr'])
   })
   .command('count', 'Count', (yargs) => {
     return yargs.option('host', {
@@ -283,8 +313,13 @@ var args = yargs
       description: 'The hash for the offer',
       alias: 'i',
       type: 'string'
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
     })            
-    .demand(['vega', 'project', 'account', 'id'])
+    .demand(['vega', 'project', 'account', 'id', 'cdr'])
   })
   .command('status', 'Status', (yargs) => {
     return yargs.option('host', {
@@ -316,8 +351,13 @@ var args = yargs
       description: 'The hash for the offer',
       alias: 'i',
       type: 'string'
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
     })            
-    .demand(['vega', 'project', 'account', 'id'])
+    .demand(['vega', 'project', 'account', 'id', 'cdr'])
   })     
   .command('execute', 'Execute', (yargs) => {
     return yargs.option('host', {
@@ -354,8 +394,13 @@ var args = yargs
       description: 'The hash for the offer',
       alias: 'i',
       type: 'string'
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
     })            
-    .demand(['vega', 'project', 'account', 'id', 'salt'])
+    .demand(['vega', 'project', 'account', 'id', 'salt', 'cdr'])
   })
   .command('cdr', 'Decision Rewards', (yargs) => {
     return yargs.option('host', {
@@ -402,7 +447,7 @@ var args = yargs
     .option('absTotalRewards', {
       description: 'The total rewards value of the decision',
       alias: 'abs',
-    })
+    })  
     .option('tokenConversion', {
       description: 'The token converstion rate for the decision',
       alias: 't',
@@ -410,8 +455,13 @@ var args = yargs
     .option('currentBalance', {
       description: 'The current balance of the decision',
       alias: 'cb',
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
     })                        
-    .demand(['vega', 'project', 'account','currentValue', 'startingValue', 'vegaPeriod', 'stake', 'absTotalRewards', 'tokenConversion', 'currentBalance'])
+    .demand(['vega', 'project', 'account','currentValue', 'startingValue', 'vegaPeriod', 'stake', 'absTotalRewards', 'tokenConversion', 'currentBalance', 'cdr'])
   })        
   .command('generic', 'Placeholder', (yargs) => {
     return yargs.option('host', {
@@ -438,8 +488,13 @@ var args = yargs
       description: 'The project contract address',
       alias: 'j',
       type: 'string'
-    })    
-    .demand(['vega', 'project', 'account'])
+    })
+    .option('cdr', {
+      description: 'The CDR contract address',
+      alias: 'cdr',
+      type: 'string'
+    })       
+    .demand(['vega', 'project', 'account', 'cdr'])
   })  
   .help()
   .usage('Usage: $0 [command] [options]')
@@ -452,14 +507,14 @@ if (argv._.length === 0) {
 let command = argv._[0]
 
 if (command === 'transfer') {
-  let {host, port, vega, project, account, receiver, amount} = argv
+  let {host, port, vega, project, account, receiver, amount, cdr} = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.transfer(amount, receiver)
     .then(() => console.log('Made transfer of ' + amount))
 }
 
 if (command === 'transferFrom') {
-  let {host, port, vega, project, account, receiver, amount} = argv
+  let {host, port, vega, project, account, receiver, amount, cdr} = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.transferFrom(account, receiver, amount)
     .then(() => console.log('Made transfer of ' + amount))
@@ -467,7 +522,7 @@ if (command === 'transferFrom') {
 }
 
 if (command === 'approve') {
-  let { host, port, vega, project, account, spender, amount } = argv
+  let { host, port, vega, project, account, spender, amount, cdr } = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.approve(amount, spender)
     .then(() => console.log('Approved transfer of ' + amount + ' for ' + spender))
@@ -475,7 +530,7 @@ if (command === 'approve') {
 }
 
 if (command === 'balance') {
-  let { host, port, vega, project, account } = argv
+  let { host, port, vega, project, account, cdr } = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.balanceOf(account)
     .then((result) => console.log('Succesfully checked balance of  ' + account ))
@@ -483,7 +538,7 @@ if (command === 'balance') {
 }
 
 if (command === 'offer') {
-  let { host, port, vega, project, account , recipient, amount, token, description, openfor, salt, num, den} = argv
+  let { host, port, vega, project, account , recipient, amount, cdr, token, description, openfor, salt, num, den} = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.newOffer(num, den, amount, openfor, recipient, token, description, salt)
     .then((result) => console.log('Succesfully created offer  ' ))
@@ -492,7 +547,7 @@ if (command === 'offer') {
 
 
 if (command === 'vote') {
-  let { host, port, vega, project, account, support, id } = argv
+  let { host, port, vega, project, account, support, id, cdr } = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.vote( id, support )
     .then((result) => {
@@ -502,7 +557,7 @@ if (command === 'vote') {
 }
 
 if (command === 'count') {
-  let { host, port, vega, project, account, id } = argv
+  let { host, port, vega, project, account, id, cdr } = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.countVotes( id )
     .then((result) => {
@@ -512,7 +567,7 @@ if (command === 'count') {
 }
 
 if (command === 'status') {
-  let { host, port, vega, project, account, id } = argv
+  let { host, port, vega, project, account, id, cdr } = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.getOfferStatus( id )
     .then((result) => {
@@ -523,7 +578,7 @@ if (command === 'status') {
 
 
 if (command === 'execute') {
-  let { host, port, vega, project, account, salt, id } = argv
+  let { host, port, vega, project, account, salt, id, cdr } = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
   vegaFund.execute( id, salt )
     .then((result) => 
@@ -535,9 +590,9 @@ if (command === 'execute') {
 
 
 if (command === 'cdr') {
-  let { host, port, vega, project, account, id, currentValue, startingValue, vegaPeriod, stake, absTotalRewards, tokenConversion, currentBalance } = argv
+  let { host, port, vega, project, account, id, currentValue, startingValue, vegaPeriod, stake, absTotalRewards, tokenConversion, currentBalance, cdr } = argv
   let vegaFund = initializeLib(host, port, vega, project, account, cdr)
-  vegaFund.execute( id, salt )
+  vegaFund.calcCDR( currentValue, startingValue, vegaPeriod, stake, absTotalRewards, tokenConversion, currentBalance )
     .then((result) => 
     {
       console.log('Succesfully checked CDR' )
