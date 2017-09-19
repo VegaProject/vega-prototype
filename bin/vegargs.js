@@ -281,7 +281,7 @@ var args = yargs
       alias: 'cdr',
       type: 'string'
     })            
-    .demand(['vega', 'project', 'account', 'id', 'support', 'cdr'])
+    .demand(['vega', 'project', 'account', 'id', 'support', 'cdr', 'support'])
   })
   .command('count', 'Count', (yargs) => {
     return yargs.option('host', {

@@ -94,9 +94,9 @@ contract Project is Ownable {
   {
     creatorsDeposit = VT.creatorsDeposit(_requestedAmount, _num, _den);
     senderBalance = VT.balanceOf(msg.sender);
-    if(creatorsDeposit > senderBalance) throw;
+    //if(creatorsDeposit > senderBalance) throw;
     // Logic here needs to include conversion to days using `* 1 days` 
-    if( (_openFor * 1 days) <  7 days || (_openFor * 1 days) >  30 days ) throw;
+    //if( (_openFor * 1 days) <  7 days || (_openFor * 1 days) >  30 days ) throw;
     offerId = offers.length++;
     Offer o = offers[offerId];
     o.finder = msg.sender;
