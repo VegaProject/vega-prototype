@@ -42,11 +42,17 @@ module.exports = {
 require('babel-register')
 
 module.exports = {
+  build: "webpack",
   networks: {
-    development: {
-      host: 'localhost',
-      port: 8545,
-      network_id: '*' // Match any network id
+    "ropsten": {
+      network_id: 3,    // Official ropsten network id
+      provider: engine, // Use our custom provider
+      from: address     // Use the address we derived
     }
+  },
+  rpc: {
+    // Use the default host and port when not using ropsten
+    host: "localhost",
+    port: 8545
   }
-}
+};

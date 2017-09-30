@@ -261,6 +261,16 @@ pragma solidity ^0.4.8;
      return true;
    }
 
+   function convertQuorumPoints(uint _value) public returns (bool success) {
+     uint amount = getQuorumOfferPoints(msg.sender);
+     if(amount < _value) throw;
+     quorumContract.removePoints(msg.sender, _value);
+     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
+     return true;
+   }
 
    /**
     * Migrations
@@ -357,5 +367,14 @@ pragma solidity ^0.4.8;
     Approval(this, _spender, _value);
     return true;
   }
+
+
+
+   /// ()
+   ///---------------------------------------------------------------------------------------------------------------------------------------
+   // just for testing as of now
+   function () payable {
+   }
+
 
  }
