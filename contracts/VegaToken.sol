@@ -1,23 +1,49 @@
 pragma solidity ^0.4.8;
 
-import './deps/StandardToken.sol';
+import "./zeppelin/token/StandardToken.sol";
+
+import "./zeppelin/Stoppable.sol";
+
+
 import './deps/Helpers.sol';
+import './deps/ds-auth.sol';
 import './OutgoingMigrationTokenInterface.sol';
 import './IncomingMigrationTokenInterface.sol';
-import './offers/Project.sol';
-import './offers/Rewards.sol';
-import './offers/Finders.sol';
-import './offers/Quorum.sol';
+import { Project } from   './offers/Project.sol';
+import { Rewards } from   './offers/Rewards.sol';
+import { Finders } from './offers/Finders.sol';
+import { Quorum } from  './offers/Quorum.sol';
+pragma solidity ^0.4.8;
 
  /// @title VegaToken contract - Vega Tokens.
  /// @author George K. Van Hoomissen - <georgek@vega.fund>
- contract VegaToken is OutgoingMigrationTokenInterface, StandardToken, Helpers {
+ contract VegaToken is DSAuth, OutgoingMigrationTokenInterface, StandardToken, Helpers {
+    // Port from 'StandardToken'
+    mapping (address => mapping (address => uint)) managed;
+    mapping (address => uint) fee;
+    mapping (address => uint) public totalManaged;
+    address[] public managedArr;
+    bool public  stopped;
+
+    modifier stoppable {
+      assert (!stopped);
+      _;
+    }
+
+    function stop() auth {
+      stopped = true;
+    }
+
+    function start() auth {
+      stopped = false;
+    }
+
    string public name = "Vega";
    string public symbol = "VEGA";
    uint public decimals = 18;
    string public version = "1.0";
    uint public INITIAL_SUPPLY = 12000000000000000000000000; // uint256 in wei format
-
+   uint public totalSupply = INITIAL_SUPPLY;
    uint public constant minimumMigrationDuration = 26 weeks;
    uint public totalMigrated;
 
@@ -66,17 +92,17 @@ import './offers/Quorum.sol';
    /**
     * Offer State
    **/
-
+   /* This function doesn't perform as expected; numerator and denominator are
+      both set as elements of *individual* offers not of the Rewards solution on large
+      
    function rewardRate() public constant returns (uint numerator, uint denominator) {
-    uint one = rewardsContract.numerator();
-    uint two = rewardsContract.denominator();
-    return (one, two);
+    numerator = rewardsContract.numerator();
+    denominator = rewardsContract.denominator();
    }
+   */
 
-   function creatorsDeposit(uint _requestedAmount) public constant returns (uint deposit) {
-     var (num, den) = rewardRate();
-     uint amount = converter(_requestedAmount, num, den);
-     return amount;
+   function creatorsDeposit(uint _requestedAmount, uint num, uint den) public constant returns (uint amount) {
+     amount = converter(_requestedAmount, num, den);
    }
 
    function finders() public constant returns (uint finders) {
@@ -84,18 +110,19 @@ import './offers/Quorum.sol';
    }
 
    function quorum() public constant returns (uint quorum) {
-    return quorumContract.currentQuorum();
+    quorum =  totalSupply / 2;
    }
 
-   function burnForDeposit(address _who, uint _value) external returns (bool success) {
-     if(_who != msg.sender) throw;
+   function burnForDeposit(address _who, uint _value) external returns (bool) {
+     // Similar check needs to me re-implemented but this doesn't work
+     //if(_who != msg.sender) throw;
      uint amount = balances[_who];
      if(amount < _value) throw;
      balances[_who] = safeSub(balances[_who], _value);
      return true;
    }
-
-  function collectFindersFee(address _who, uint _value) public returns (bool success) {
+   
+  function collectFindersFee(address _who, uint _value) public returns (bool) {
     uint amount = projectContract.findersRefund(_who);
     if(amount < _value) throw;
     projectContract.removeFindersFee(_who, _value);
@@ -154,66 +181,80 @@ import './offers/Quorum.sol';
 
    // TODO FINISH ADDING REMOVE POINTS AND REMOVE EXTRA POINTS FUNCTIONS TO THE REST OF THE OFFERS.
 
-   function convertProjectPoints(uint _value) public returns (bool success) {
+   function convertProjectPoints(uint _value, uint num, uint den) public returns (bool) {
      uint amount = getProjectOfferPoints(msg.sender);
      if(amount < _value) throw;
      projectContract.removePoints(msg.sender, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertProjectExtraPoints(uint _value, address _manager) public returns (bool success) {
+   function convertProjectExtraPoints(uint _value, address _manager, uint num, uint den) public returns (bool) {
      uint amount = getProjectOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
      projectContract.removeExtraPoints(msg.sender, _manager, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertRewardsPoints(uint _value) public returns (bool success) {
+   function convertRewardsPoints(uint _value, uint num, uint den) public returns (bool) {
      uint amount = getRewardsOfferPoints(msg.sender);
      if(amount < _value) throw;
      rewardsContract.removePoints(msg.sender, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertRewardsExtraPoints(uint _value, address _manager) public returns (bool success) {
+   function convertRewardsExtraPoints(uint _value, address _manager, uint num, uint den) public returns (bool) {
      uint amount = getRewardsOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
      rewardsContract.removeExtraPoints(msg.sender, _manager, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertFindersPoints(uint _value) public returns (bool success) {
+   function convertFindersPoints(uint _value, uint num, uint den) public returns (bool) {
      uint amount = getFindersOfferPoints(msg.sender);
      if(amount < _value) throw;
      findersContract.removePoints(msg.sender, _value);
-     var (num, den) = rewardRate();
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
      return true;
    }
 
-   function convertFindersExtraPoints(uint _value, address _manager) public returns (bool success) {
+   function convertFindersExtraPoints(uint _value, address _manager, uint num, uint den) public returns (bool) {
      uint amount = getFindersOfferExtraPoints(msg.sender, _manager);
      if(amount < _value) throw;
      findersContract.removeExtraPoints(msg.sender, _manager, _value);
-     var (num, den) = rewardRate();
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
+     return true;
+   }
+
+   function convertQuorumPoints(uint _value, uint num, uint den) public returns (bool) {
+     uint amount = getQuorumOfferPoints(msg.sender);
+     if(amount < _value) throw;
+     quorumContract.removePoints(msg.sender, _value);
+     uint tokens = converter(_value, num, den);
+     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
+     totalSupply = safeAdd(totalSupply, tokens);
+     return true;
+   }
+
+   function convertQuorumExtraPoints(uint _value, address _manager, uint num, uint den) public returns (bool) {
+     uint amount = getQuorumOfferExtraPoints(msg.sender, _manager);
+     if(amount < _value) throw;
+     quorumContract.removeExtraPoints(msg.sender, _manager, _value);
      uint tokens = converter(_value, num, den);
      balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
      totalSupply = safeAdd(totalSupply, tokens);
@@ -231,21 +272,10 @@ import './offers/Quorum.sol';
      return true;
    }
 
-   function convertQuorumExtraPoints(uint _value, address _manager) public returns (bool success) {
-     uint amount = getQuorumOfferExtraPoints(msg.sender, _manager);
-     if(amount < _value) throw;
-     quorumContract.removeExtraPoints(msg.sender, _manager, _value);
-     var (num, den) = rewardRate();
-     uint tokens = converter(_value, num, den);
-     balances[msg.sender] = safeAdd(balances[msg.sender], tokens);
-     totalSupply = safeAdd(totalSupply, tokens);
-     return true;
-   }
-
-
    /**
     * Migrations
    **/
+
    function changeMigrationMaster(address _master) onlyFromMigrationMaster external {
      if (_master == 0) throw;
      migrationMaster = _master;
@@ -298,6 +328,45 @@ import './offers/Quorum.sol';
      OutgoingMigration(msg.sender, _value);
    }
 
+     function forward(address _proxy, uint _value) returns (bool) {
+    managed[msg.sender][_proxy] = _value;
+    managedArr.push(msg.sender);
+    totalManaged[_proxy] = safeAdd(totalManaged[_proxy], _value);
+    return true;
+  }
+  
+  function getItemsInManagedArr() constant returns (uint items) {
+    return managedArr.length;
+  }
+  
+  function getSingleItemInMangedArr(uint _item) constant returns (address) {
+    return managedArr[_item];
+  }
+
+  function backward(address _who, uint _value) returns (bool) {
+    managed[_who][msg.sender] = _value;
+    totalManaged[msg.sender] = safeSub(totalManaged[msg.sender], _value);
+  }
+
+  function managedWeight(address _owner, address _manager) constant returns (uint) {
+    return managed[_owner][_manager];
+  }
+
+  function setFee(uint _fee) returns (bool) {
+    fee[msg.sender] = _fee;
+    return true;
+  }
+
+  function feeAmount(address _who) constant returns (uint) {
+    if(totalManaged[_who] > 0) throw;
+    return fee[_who];
+  }
+
+  function approveSelfSpender(address _spender, uint _value) returns (bool) {
+    allowed[this][_spender] = _value;
+    Approval(this, _spender, _value);
+    return true;
+  }
 
 
 

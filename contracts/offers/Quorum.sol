@@ -1,6 +1,6 @@
 pragma solidity ^0.4.8;
-import './../deps/Ownable.sol';
-import './../VegaToken.sol';
+import { Ownable } from '../zeppelin/Ownable.sol';
+import { VegaToken } from'./../VegaToken.sol';
 
 /// @title Quorum Contract - Quorum Offer.
 /// @author George K. Van Hoomissen - <georgek@vega.fund>
@@ -13,10 +13,6 @@ contract Quorum is Ownable {
 
   uint public currentQuorum;
 
-  /// @param _vegaTokenAddr VegaToken contract address.
-  function Quorum(VegaToken _vegaTokenAddr) {
-    VT = VegaToken(_vegaTokenAddr);
-  }
 
   /// @param _vegaTokenAddr VegaToken contract address.
   function newVegaToken(VegaToken _vegaTokenAddr) onlyOwner {
@@ -142,7 +138,9 @@ contract Quorum is Ownable {
     for (uint i = 0; i < o.votes.length; i++) {
       Vote v = o.votes[i];
       uint weight = VT.balanceOf(v.voter);
-      uint extraWeight = VT.totalManaged(v.voter);
+      // Extra weight needs to be implemented
+      //uint extraWeight = VT.totalManaged(v.voter);
+      uint extraWeight = 0;
       quorum += weight + extraWeight;
       if(v.inSupport) {
         yea += weight + extraWeight;
